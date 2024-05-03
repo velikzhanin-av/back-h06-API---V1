@@ -1,19 +1,17 @@
 import {BlogDbType, PostDbType} from "../../db/dbTypes";
 import {
-    getTotalCount,
-    getTotalCountPosts,
-    helper,
     mapToOutputBlogs,
     searchNameTerm
 } from "../blogs/blogsMongoQueryRepository";
 import {mapToOutputPosts} from "./postsMongoRepository";
 import {blogCollection, postCollection} from "../../db/mongoDb";
+import {getTotalCount, helper} from "../utils";
 
 export const findAllPosts = async (query: any) => {
     const params: any = helper(query)
     const filter = searchNameTerm(params.searchNameTerm)
     let posts: PostDbType[] = await getPostsFromBD(params, filter)
-    const totalCount: number = await getTotalCountPosts(filter)
+    const totalCount: number = await getTotalCount(filter, 'post')
     return {
         pagesCount: Math.ceil(totalCount / params.pageSize),
         page: params.pageNumber,
