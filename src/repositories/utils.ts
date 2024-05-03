@@ -19,4 +19,24 @@ export const getTotalCount = async (filter: any, section: string) => {
     } else if (section === 'users') {
         return await userCollection.countDocuments(filter)
     }
+    return 0
+}
+
+export const getFromBD = async (params: any, filter: any, sector: string) => {
+    if (sector === 'blog') {
+        return await blogCollection
+            .find(filter)
+            .sort(params.sortBy, params.sortDirection)
+            .skip((params.pageNumber - 1) * params.pageSize)
+            .limit(params.pageSize)
+            .toArray() as any[] /*SomePostType[]*/
+    } else if (sector === 'user') {
+        return await userCollection
+            .find(filter)
+            .sort(params.sortBy, params.sortDirection)
+            .skip((params.pageNumber - 1) * params.pageSize)
+            .limit(params.pageSize)
+            .toArray() as any[] /*SomePostType[]*/
+    }
+    return []
 }
