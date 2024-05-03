@@ -18,7 +18,7 @@ type UsersOutType = {
 }
 
 export const getAllUsers = async (req: Request, res: Response) => {
-    const users: UsersOutType = await findAllUsers(req.query)
+    const users: any = await findAllUsers(req.query)
     res
         .status(200)
         .json(users)

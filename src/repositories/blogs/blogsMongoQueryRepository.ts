@@ -42,14 +42,6 @@ const getBlogsFromBD = async (params: any, filter: any) => {
         .toArray() as any[] /*SomePostType[]*/
 }
 
-// export const getTotalCount = async (filter: any) => {
-//     return await blogCollection.countDocuments(filter)
-// }
-
-export const getTotalCountPosts = async (filter: any) => {
-    return await postCollection.countDocuments(filter)
-}
-
 export const searchNameTerm = (searchNameTerm: any) => {
     const search = searchNameTerm
         ? {name: {$regex: searchNameTerm, $options: 'i'}}
