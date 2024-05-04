@@ -2,6 +2,20 @@ import {BlogDbType, UserDbType} from "../../db/dbTypes";
 import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsMongoQueryRepository";
 import {getFromBD, getTotalCount, helper} from "../utils";
 
+type UsersOutType = {
+    "pagesCount": number,
+    "page": number,
+    "pageSize": number,
+    "totalCount": number,
+    "items": [
+        {
+            "id": string,
+            "login": string,
+            "email": string,
+            "createdAt": string
+        }
+    ]
+}
 
 export const mapToOutputUsers = (user: any) => {
     return {
@@ -31,17 +45,18 @@ export const findAllUsers = async (query: any) => {
 }
 
 
-// return {
-//     "pagesCount": 0,
-//     "page": 0,
-//     "pageSize": 0,
-//     "totalCount": 0,
-//     "items": [
-//         {
-//             "id": "string",
-//             "login": "string",
-//             "email": "string",
-//             "createdAt": "2024-05-03T10:45:30.047Z"
-//         }
-//     ]
+//     return {
+//         "pagesCount": 0,
+//         "page": 0,
+//         "pageSize": 0,
+//         "totalCount": 0,
+//         "items": [
+//             {
+//                 "id": "string",
+//                 "login": "string",
+//                 "email": "string",
+//                 "createdAt": "2024-05-03T10:45:30.047Z"
+//             }
+//         ]
+//     }
 // }
