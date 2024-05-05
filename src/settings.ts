@@ -10,10 +10,12 @@ export const SETTINGS = {
     DB_NAME: 'h03-API',
     BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || 'blogs',
     POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || 'posts',
+    USER_COLLECTION_NAME: process.env.USER_COLLECTION_NAME || 'users',
     PATH: {
         BLOGS: '/blogs',
         TESTING: '/testing',
-        POSTS: '/posts'
+        POSTS: '/posts',
+        USERS: '/users',
     },
 }
 

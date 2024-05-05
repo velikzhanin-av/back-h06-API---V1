@@ -2,6 +2,7 @@ import {blogCollection, postCollection} from "../../db/mongoDb";
 import {BlogDbType, PostDbType} from "../../db/dbTypes";
 import {SortDirection} from "mongodb";
 import {mapToOutputPosts} from "../posts/postsMongoRepository";
+import {getTotalCount, helper} from "../utils";
 
 export const mapToOutputBlogs = (blog: any) => {
     return {
@@ -14,21 +15,13 @@ export const mapToOutputBlogs = (blog: any) => {
     }
 }
 
-export const helper = (query: any) => {
-    return {
-        pageNumber: query.pageNumber ? +query.pageNumber : 1,
-        pageSize: query.pageSize !== undefined ? +query.pageSize : 10,
-        sortBy: query.sortBy ? query.sortBy : 'createdAt',
-        sortDirection: query.sortDirection ? query.sortDirection as SortDirection : 'desc',
-        searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null,
-    }
-}
+
 
 export const findAllBlogs = async (query: any) => {
     const params: any = helper(query)
     const filter = searchNameTerm(params.searchNameTerm)
     let blogs: BlogDbType[] = await getBlogsFromBD(params, filter)
-    const totalCount: number = await getTotalCount(filter)
+    const totalCount: number = await getTotalCount(filter, 'blog')
     return {
         pagesCount: Math.ceil(totalCount / params.pageSize),
         page: params.pageNumber,
@@ -49,14 +42,6 @@ const getBlogsFromBD = async (params: any, filter: any) => {
         .toArray() as any[] /*SomePostType[]*/
 }
 
-export const getTotalCount = async (filter: any) => {
-    return await blogCollection.countDocuments(filter)
-}
-
-export const getTotalCountPosts = async (filter: any) => {
-    return await postCollection.countDocuments(filter)
-}
-
 export const searchNameTerm = (searchNameTerm: any) => {
     const search = searchNameTerm
         ? {name: {$regex: searchNameTerm, $options: 'i'}}
@@ -69,7 +54,7 @@ export const searchNameTerm = (searchNameTerm: any) => {
 export const findPostsByBlogId = async (id: string, query: any) => {
     const params = helper(query)
     const filter = {blogId: id}
-    const totalCount: number = await getTotalCountPosts(filter)
+    const totalCount: number = await getTotalCount(filter, 'post')
     if (!totalCount) {
         return
     }

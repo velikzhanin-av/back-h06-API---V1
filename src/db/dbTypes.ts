@@ -18,3 +18,10 @@ export type PostDbType = {
     blogName: string
     createdAt: string
 }
+
+export type UserDbType = {
+    _id?: ObjectId
+    login: string
+    email: string
+    createdAt: string
+}
