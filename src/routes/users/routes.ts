@@ -1,9 +1,9 @@
 import {Router} from "express";
-import {blogsRouter} from "../blogs/routes";
 import {getAllUsers} from "../../controllers/users/getAllUsers";
+import {postUser} from "../../controllers/users/postUser";
 
 export const usersRouter = Router()
 
 usersRouter.get('/', getAllUsers)
-usersRouter.post('/', )
+usersRouter.post('/', postUser)
 usersRouter.delete('/:id', )

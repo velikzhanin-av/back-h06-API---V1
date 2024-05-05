@@ -16,13 +16,6 @@ export const mapToOutputPosts = (post: any) => { // TODO не работает �
     }
 }
 
-export const findAllPosts = async () => {
-    let res = await postCollection.find().toArray()
-    return res.map((post: PostDbType) => {
-        return mapToOutputPosts(post)
-    })
-}
-
 export const createPost = async (req: Request) => {
     const newPost =
         {

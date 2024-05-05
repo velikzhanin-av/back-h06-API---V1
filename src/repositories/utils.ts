@@ -16,7 +16,7 @@ export const getTotalCount = async (filter: any, section: string) => {
         return await blogCollection.countDocuments(filter)
     } else if (section === 'post') {
         return await postCollection.countDocuments(filter)
-    } else if (section === 'users') {
+    } else if (section === 'user') {
         return await userCollection.countDocuments(filter)
     }
     return 0

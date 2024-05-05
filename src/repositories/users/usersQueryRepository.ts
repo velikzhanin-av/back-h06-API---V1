@@ -1,6 +1,7 @@
 import {BlogDbType, UserDbType} from "../../db/dbTypes";
 import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsMongoQueryRepository";
 import {getFromBD, getTotalCount, helper} from "../utils";
+import {mapToOutputUsers} from "./usersRepository";
 
 type UsersOutType = {
     "pagesCount": number,
@@ -17,21 +18,10 @@ type UsersOutType = {
     ]
 }
 
-export const mapToOutputUsers = (user: any) => {
-    return {
-        id: user._id.toString(),
-        name: user.name,
-        description: user.description,
-        websiteUrl: user.websiteUrl,
-        createdAt: user.createdAt,
-        isMembership: user.isMembership
-    }
-}
-
 export const findAllUsers = async (query: any) => {
     const params: any = helper(query)
     const filter = searchNameTerm(params.searchNameTerm)
-    let users = await getFromBD(params, filter, 'user')
+    const users: any[] = await getFromBD(params, filter, 'user')
     const totalCount: number = await getTotalCount(filter, 'user')
     return {
         pagesCount: Math.ceil(totalCount / params.pageSize),
