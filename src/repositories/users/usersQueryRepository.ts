@@ -2,6 +2,7 @@ import {BlogDbType, UserDbType} from "../../db/dbTypes";
 import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsMongoQueryRepository";
 import {getFromBD, getTotalCount, helper} from "../utils";
 import {mapToOutputUsers} from "./usersRepository";
+import {userCollection} from "../../db/mongoDb";
 
 type UsersOutType = {
     "pagesCount": number,
@@ -33,6 +34,20 @@ export const findAllUsers = async (query: any) => {
         })
     }
 }
+
+export const searchLoginTerm = (searchLoginTerm: any) => {
+    const search = searchLoginTerm
+        ? {name: {$regex: searchLoginTerm, $options: 'i'}}
+        : {}
+    return {
+        ...search,
+    }
+}
+
+// $or: [
+//     { field1: { $regex: /pattern1/ } },
+//     { field2: { $regex: /pattern2/ } }
+// ]
 
 
 //     return {
