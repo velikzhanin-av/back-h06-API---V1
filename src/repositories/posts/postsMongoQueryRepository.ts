@@ -24,10 +24,11 @@ export const findAllPosts = async (query: any) => {
 }
 
 const getPostsFromBD = async (params: any, filter: any) => {
-    console.log(`${params.sortBy} ${params.sortDirection}`)
+    // TODO насколько правильно сделано??? в документации этого нет
+    const sort = {[params.sortBy]: params.sortDirection, _id: params.sortDirection}
     return await postCollection
         .find(filter)
-        .sort(params.sortBy, params.sortDirection)
+        .sort(sort)
         .skip((params.pageNumber - 1) * params.pageSize)
         .limit(params.pageSize)
         .toArray() as any[] /*SomePostType[]*/

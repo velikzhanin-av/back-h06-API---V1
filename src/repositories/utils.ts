@@ -8,6 +8,8 @@ export const helper = (query: any) => {
         sortBy: query.sortBy ? query.sortBy : 'createdAt',
         sortDirection: query.sortDirection ? query.sortDirection as SortDirection : 'desc',
         searchNameTerm: query.searchNameTerm ? query.searchNameTerm : null,
+        searchLoginTerm: query.searchLoginTerm ? query.searchLoginTerm : null,
+        searchEmailTerm: query.searchEmailTerm ? query.searchEmailTerm : null,
     }
 }
 

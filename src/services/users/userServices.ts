@@ -1,7 +1,9 @@
-import {createUserInDB} from "../../repositories/users/usersRepository";
+import {createUserInDB, deleteUserInBD} from "../../repositories/users/usersRepository";
 
 export const createUser = async (body: any) => {
-    const res = await createUserInDB(body)
-    console.log(res)
-    return res
+    return await createUserInDB(body)
+}
+
+export const deleteUser = async (id: string) => {
+    return await deleteUserInBD(id)
 }
