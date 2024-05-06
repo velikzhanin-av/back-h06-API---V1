@@ -6,8 +6,6 @@ export const login = async (body: any) => {
     if (!user) {
         return false
     } else {
-        const hash: string = await bcryptService.generateHash(body.password)
-        return user.password === hash
-
+        return await bcryptService.checkPassword(body.password, user.password)
     }
 }
