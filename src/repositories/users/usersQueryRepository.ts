@@ -21,7 +21,7 @@ type UsersOutType = {
 
 export const findAllUsers = async (query: any) => {
     const params: any = helper(query)
-    const filter = searchNameTerm(params.searchNameTerm)
+    const filter = searchLoginOrEmailTerm(params.searchLoginTerm, params.searchEmailTerm)
     const users: any[] = await getFromBD(params, filter, 'user')
     const totalCount: number = await getTotalCount(filter, 'user')
     return {
@@ -35,33 +35,17 @@ export const findAllUsers = async (query: any) => {
     }
 }
 
-export const searchLoginTerm = (searchLoginTerm: any) => {
-    const search = searchLoginTerm
-        ? {name: {$regex: searchLoginTerm, $options: 'i'}}
-        : {}
-    return {
-        ...search,
+export const searchLoginOrEmailTerm = (loginTerm: string, emailTerm: string) => {
+    const search: any = {
+        $or: []
     }
+    if (loginTerm) {
+        search.$or.push({ login: { $regex: loginTerm, $options: 'i' } })}
+
+    if (emailTerm) {
+        search.$or.push({ email: { $regex: emailTerm, $options: 'i' } })}
+    if (search.$or.length === 0) {
+        return {}
+    }
+    return search
 }
-
-// $or: [
-//     { field1: { $regex: /pattern1/ } },
-//     { field2: { $regex: /pattern2/ } }
-// ]
-
-
-//     return {
-//         "pagesCount": 0,
-//         "page": 0,
-//         "pageSize": 0,
-//         "totalCount": 0,
-//         "items": [
-//             {
-//                 "id": "string",
-//                 "login": "string",
-//                 "email": "string",
-//                 "createdAt": "2024-05-03T10:45:30.047Z"
-//             }
-//         ]
-//     }
-// }
