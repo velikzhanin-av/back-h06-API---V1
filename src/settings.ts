@@ -11,11 +11,13 @@ export const SETTINGS = {
     BLOG_COLLECTION_NAME: process.env.BLOG_COLLECTION_NAME || 'blogs',
     POST_COLLECTION_NAME: process.env.POST_COLLECTION_NAME || 'posts',
     USER_COLLECTION_NAME: process.env.USER_COLLECTION_NAME || 'users',
+    AUTH_COLLECTION_NAME: process.env.AUTH_COLLECTION_NAME || 'auth',
     PATH: {
         BLOGS: '/blogs',
         TESTING: '/testing',
         POSTS: '/posts',
         USERS: '/users',
+        AUTH: '/auth',
     },
 }
 

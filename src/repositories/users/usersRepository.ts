@@ -1,6 +1,6 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {usersRouter} from "../../routes/users/routes";
+import {bcryptService} from "../../services/bcriptServices";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -12,10 +12,12 @@ export const mapToOutputUsers = (user: any) => { // TODO не работает �
 }
 
 export const createUserInDB = async (body: any) => {
+    const passwordHash = await bcryptService.generateHash(body.password)
+    console.log(typeof passwordHash)
     const newUser =
         {
             login: body.login,
-            password: body.password,
+            password: passwordHash,
             email: body.email,
             createdAt: new Date().toISOString()
         }
@@ -34,6 +36,6 @@ export const deleteUserInBD = async (id: string) => {
     }
 }
 
-// const findByLoginOrEmail = async (LoginOrEmail: string) => {
-//     return await userCollection()
-// }
+export const findByLoginOrEmail = async (loginOrEmail: string) => {
+    return await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+}

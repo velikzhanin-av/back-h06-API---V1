@@ -5,12 +5,14 @@ import {testingRouter} from "./routes/testing/routes";
 import {postsRouter} from "./routes/posts/routes";
 import {connectToDB} from "./db/mongoDb";
 import {usersRouter} from "./routes/users/routes";
+import {authRouter} from "./routes/authRoutes";
 
 const start = async () => {
     app.use(SETTINGS.PATH.BLOGS, blogsRouter)
     app.use(SETTINGS.PATH.POSTS, postsRouter)
     app.use(SETTINGS.PATH.TESTING, testingRouter)
     app.use(SETTINGS.PATH.USERS, usersRouter)
+    app.use(SETTINGS.PATH.AUTH, authRouter)
 
     if (!await connectToDB()) {
         console.log('stop')
