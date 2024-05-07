@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import {findAllUsers} from "../repositories/users/usersQueryRepository";
-import {createUser, deleteUser} from "../services/users/userServices";
+import {usersServices} from "../services/users/usersServices";
 
 type UsersOutType = {
     "pagesCount": number,
@@ -20,7 +20,7 @@ export const usersController = {
     },
 
     async postUser(req: Request, res: Response) {
-        const result = await createUser(req.body)
+        const result = await usersServices.createUser(req.body)
         res
             .status(201)
             .json(result)
@@ -28,7 +28,7 @@ export const usersController = {
     },
 
     async deleteUserById(req: Request, res: Response) {
-        const result = await deleteUser(req.params.id)
+        const result = await usersServices.deleteUser(req.params.id)
         if (!result) {
             res.sendStatus(404)
             return
