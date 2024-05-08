@@ -1,6 +1,5 @@
 import {BlogDbType} from "../db/dbTypes";
 import {blogsRepository} from "../repositories/blogs/blogsRepository";
-import {mapToOutputBlogs} from "../repositories/blogs/blogsQueryRepository";
 
 export const blogsServices = {
     async createBlog(body: any) {
@@ -13,6 +12,12 @@ export const blogsServices = {
         }
         return await blogsRepository.createBlog(newBlog)
     },
+
+    async editBlog(id: string, body: any) {
+        return await blogsRepository.editBlog(id, body)
+    },
+
+
 
 
 }

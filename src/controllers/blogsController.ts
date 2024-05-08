@@ -3,7 +3,6 @@ import {findAllBlogs, findPostsByBlogId} from "../repositories/blogs/blogsQueryR
 import {
     createPostForBlogId,
     deleteBlog,
-    editBlog,
     findBlogById
 } from "../repositories/blogs/blogsRepository";
 import {blogsServices} from "../services/blogsServices";
@@ -62,7 +61,7 @@ export const blogsController = {
     },
 
     async updateBlogById(req: Request, res: Response)  {
-        const result = await editBlog(req.params.id, req.body)
+        const result = await blogsServices.editBlog(req.params.id, req.body)
         if (!result) {
             res.sendStatus(404)
         } else {res.sendStatus(204)}
