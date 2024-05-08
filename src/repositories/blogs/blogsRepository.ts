@@ -26,7 +26,18 @@ export const blogsRepository = {
             console.log(err)
             return false
         }
-    }
+    },
+
+    async deleteBlog(id: string)  {
+        try {
+            const res = await blogCollection.deleteOne({_id: new ObjectId(id)})
+            return res.deletedCount !== 0
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    },
+
 }
 
 
@@ -46,15 +57,6 @@ export const findBlogById = async (id: string) => {
     }
 }
 
-export const deleteBlog = async (id: string) => {
-    try {
-        const res = await blogCollection.deleteOne({_id: new ObjectId(id)})
-        return res.deletedCount !== 0
-    } catch (err) {
-        console.log(err)
-        return false
-    }
-}
 
 export const createPostForBlogId = async (blogId: string, body: any) => {
     const findBlog = await findBlogById(blogId)

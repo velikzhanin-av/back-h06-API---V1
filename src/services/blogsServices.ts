@@ -1,6 +1,7 @@
 import {BlogDbType} from "../db/dbTypes";
 import {blogsRepository} from "../repositories/blogs/blogsRepository";
 
+
 export const blogsServices = {
     async createBlog(body: any) {
         const newBlog: BlogDbType = {
@@ -17,7 +18,9 @@ export const blogsServices = {
         return await blogsRepository.editBlog(id, body)
     },
 
-
+    async deleteBlog(id: string)  {
+        return await blogsRepository.deleteBlog(id)
+    },
 
 
 }

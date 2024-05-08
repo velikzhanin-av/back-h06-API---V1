@@ -2,7 +2,6 @@ import {Request, Response} from "express";
 import {findAllBlogs, findPostsByBlogId} from "../repositories/blogs/blogsQueryRepository";
 import {
     createPostForBlogId,
-    deleteBlog,
     findBlogById
 } from "../repositories/blogs/blogsRepository";
 import {blogsServices} from "../services/blogsServices";
@@ -68,9 +67,11 @@ export const blogsController = {
     },
 
     async deleteBlogById(req: Request, res: Response)  {
-        const result = await deleteBlog(req.params.id)
+        const result = await blogsServices.deleteBlog(req.params.id)
         if (!result) {
             res.sendStatus(404)
         } else {res.sendStatus(204)}
     },
+
+
 }
