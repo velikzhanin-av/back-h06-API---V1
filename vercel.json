@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "back-h05-API---V1",
+  "name": "back-h06-API---V1",
   "builds": [
     {
       "src": "src/index.ts",
