@@ -6,17 +6,21 @@ import {mapToOutputBlogs} from "./blogsQueryRepository";
 import {mapToOutputPosts} from "../posts/postsRepository";
 
 
-export const createBlog = async (req: Request) => {
-    const newBlog: BlogDbType = {
-        name: req.body.name,
-        description: req.body.description,
-        websiteUrl: req.body.websiteUrl,
-        createdAt: new Date().toISOString(),
-        isMembership: false
-    }
-    let result = await blogCollection.insertOne(newBlog)
-    return mapToOutputBlogs(newBlog)
+export const blogsRepository = {
+    async createBlog(newBlog: any){
+        let result = await blogCollection.insertOne(newBlog)
+        return mapToOutputBlogs(newBlog)
+    },
+
 }
+
+
+
+
+
+
+
+
 
 export const findBlogById = async (id: string) => {
     try {

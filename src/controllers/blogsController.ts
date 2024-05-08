@@ -1,12 +1,12 @@
 import {Request, Response} from "express";
 import {findAllBlogs, findPostsByBlogId} from "../repositories/blogs/blogsQueryRepository";
 import {
-    createBlog,
     createPostForBlogId,
     deleteBlog,
     editBlog,
     findBlogById
 } from "../repositories/blogs/blogsRepository";
+import {blogsServices} from "../services/blogsServices";
 
 export const blogsController = {
     async getAllBlogs(req: Request, res: Response)  {
@@ -42,7 +42,7 @@ export const blogsController = {
     },
 
     async postBlog(req: Request, res: Response)  {
-        let result = await createBlog(req)
+        let result = await blogsServices.createBlog(req.body)
         res
             .status(201)
             .json(result)
