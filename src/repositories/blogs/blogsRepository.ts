@@ -2,8 +2,8 @@ import {blogCollection, postCollection} from "../../db/mongoDb";
 import {Request} from "express";
 import {ObjectId} from "mongodb";
 import {BlogDbType} from "../../db/dbTypes";
-import {mapToOutputBlogs} from "./blogsMongoQueryRepository";
-import {mapToOutputPosts} from "../posts/postsMongoRepository";
+import {mapToOutputBlogs} from "./blogsQueryRepository";
+import {mapToOutputPosts} from "../posts/postsRepository";
 
 
 export const createBlog = async (req: Request) => {

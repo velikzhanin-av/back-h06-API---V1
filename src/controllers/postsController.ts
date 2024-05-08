@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
-import {findAllPosts} from "../repositories/posts/postsMongoQueryRepository";
-import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsMongoRepository";
+import {findAllPosts} from "../repositories/posts/postsQueryRepository";
+import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {

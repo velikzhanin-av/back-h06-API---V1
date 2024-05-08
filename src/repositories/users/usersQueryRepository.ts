@@ -1,5 +1,5 @@
 import {BlogDbType, UserDbType} from "../../db/dbTypes";
-import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsMongoQueryRepository";
+import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsQueryRepository";
 import {getFromBD, getTotalCount, helper} from "../utils";
 import {mapToOutputUsers} from "./usersRepository";
 import {userCollection} from "../../db/mongoDb";

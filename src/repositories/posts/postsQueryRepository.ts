@@ -2,8 +2,8 @@ import {BlogDbType, PostDbType} from "../../db/dbTypes";
 import {
     mapToOutputBlogs,
     searchNameTerm
-} from "../blogs/blogsMongoQueryRepository";
-import {mapToOutputPosts} from "./postsMongoRepository";
+} from "../blogs/blogsQueryRepository";
+import {mapToOutputPosts} from "./postsRepository";
 import {blogCollection, postCollection} from "../../db/mongoDb";
 import {getTotalCount, helper} from "../utils";
 

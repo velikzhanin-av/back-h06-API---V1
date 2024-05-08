@@ -1,12 +1,12 @@
 import {Request, Response} from "express";
-import {findAllBlogs, findPostsByBlogId} from "../repositories/blogs/blogsMongoQueryRepository";
+import {findAllBlogs, findPostsByBlogId} from "../repositories/blogs/blogsQueryRepository";
 import {
     createBlog,
     createPostForBlogId,
     deleteBlog,
     editBlog,
     findBlogById
-} from "../repositories/blogs/blogsMongoRepository";
+} from "../repositories/blogs/blogsRepository";
 
 export const blogsController = {
     async getAllBlogs(req: Request, res: Response)  {

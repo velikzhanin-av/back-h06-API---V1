@@ -1,7 +1,7 @@
 import {blogCollection, postCollection} from "../../db/mongoDb";
 import {BlogDbType, PostDbType} from "../../db/dbTypes";
 import {SortDirection} from "mongodb";
-import {mapToOutputPosts} from "../posts/postsMongoRepository";
+import {mapToOutputPosts} from "../posts/postsRepository";
 import {getTotalCount, helper} from "../utils";
 
 export const mapToOutputBlogs = (blog: any) => {

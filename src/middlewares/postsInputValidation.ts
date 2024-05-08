@@ -1,6 +1,6 @@
 import {body, validationResult} from 'express-validator'
 import {Request, Response, NextFunction} from "express";
-import {findBlogById} from "../repositories/blogs/blogsMongoRepository";
+import {findBlogById} from "../repositories/blogs/blogsRepository";
 
 export const shortDescriptionValidation = body("shortDescription")
     .trim().not().isEmpty()
