@@ -11,7 +11,7 @@ export const mapToOutputUsers = (user: any) => { // TODO не работает �
     }
 }
 
-export const createUserInDB = async (body: any) => {
+export const createUser = async (body: any) => {
     const passwordHash = await bcryptService.generateHash(body.password)
     console.log(typeof passwordHash)
     const newUser =
@@ -26,7 +26,7 @@ export const createUserInDB = async (body: any) => {
     return mapToOutputUsers(newUser)
 }
 
-export const deleteUserInBD = async (id: string) => {
+export const deleteUser = async (id: string) => {
     try {
         const res = await userCollection.deleteOne({_id: new ObjectId(id)})
         return res.deletedCount !== 0
