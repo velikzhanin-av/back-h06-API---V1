@@ -1,6 +1,6 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {bcryptService} from "../../services/bcriptServices";
+import {bcryptService} from "../../../utils/bcriptServices";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
