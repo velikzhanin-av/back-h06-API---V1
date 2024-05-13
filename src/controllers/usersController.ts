@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import {findAllUsers} from "../repositories/users/usersQueryRepository";
-import {usersServices} from "../services/users/usersServices";
+import {usersServices} from "../services/usersServices";
 
 type UsersOutType = {
     "pagesCount": number,

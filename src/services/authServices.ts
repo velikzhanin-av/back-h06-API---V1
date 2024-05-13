@@ -1,9 +1,9 @@
 import {bcryptService} from "../../utils/bcriptServices";
-import {findByLoginOrEmail} from "../repositories/users/usersRepository";
+import {usersRepository} from "../repositories/users/usersRepository";
 
 export const authServices = {
      async login (body: any){
-        const user: any = await findByLoginOrEmail(body.loginOrEmail)
+        const user: any = await usersRepository.findByLoginOrEmail(body.loginOrEmail)
         if (!user) {
             return false
         } else {
