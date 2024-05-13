@@ -1,5 +1,6 @@
 import {bcryptService} from "../../utils/bcriptServices";
 import {usersRepository} from "../repositories/users/usersRepository";
+import {jwtServices} from "../../utils/jwtServices";
 
 export const authServices = {
      async login (body: any){
@@ -7,7 +8,12 @@ export const authServices = {
         if (!user) {
             return false
         } else {
-            return await bcryptService.checkPassword(body.password, user.password)
+            if (await bcryptService.checkPassword(body.password, user.password)) {
+                return jwtServices.createJwt(user._id.toString())
+            } else {
+                return false
+            }
+
         }
     }
 }

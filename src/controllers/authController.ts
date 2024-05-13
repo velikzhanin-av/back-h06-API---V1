@@ -1,5 +1,6 @@
 import {Request, Response} from "express"
 import {authServices} from "../services/authServices";
+import {jwtServices} from "../../utils/jwtServices";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
@@ -8,7 +9,9 @@ export const authController = {
             res.sendStatus(401)
             return
         }
-        res.sendStatus(204)
+        res
+            .status(200)
+            .json({accessToken: result})
         return
-    }
+    },
 }
