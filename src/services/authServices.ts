@@ -1,4 +1,4 @@
-import {bcryptService} from "../../utils/bcriptServices";
+import {bcryptService} from "../utils/bcriptServices";
 import {findByLoginOrEmail} from "../repositories/users/usersRepository";
 
 export const authServices = {
