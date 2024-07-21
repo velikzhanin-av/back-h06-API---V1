@@ -1,5 +1,6 @@
 import {Request, Response} from "express"
 import {authServices} from "../services/authServices";
+import {findUserInfo} from "../repositories/users/usersQueryRepository";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
@@ -7,12 +8,17 @@ export const authController = {
         if (!result) {
             res.sendStatus(401)
             return
-            console.log()
         }
-        console.log('result: ' + result)
         res
             .status(200)
             .json({accessToken: result})
         return
     },
+
+    async getUserInfo(req: Request, res: Response) {
+        console.log(req.headers['authorization'])
+        res.sendStatus(200)
+        return false
+        // const result = await findUserInfo()
+}
 }

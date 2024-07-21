@@ -30,6 +30,12 @@ export const usersRepository = {
 
     async findByLoginOrEmail(loginOrEmail: string)  {
         return await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+    },
+
+    async addJwtToken(id: ObjectId, token: string) {
+        const res = await userCollection.updateOne({_id: id}, {$set: {jwtToken: token}})
+        return res.acknowledged
+
     }
 
 }

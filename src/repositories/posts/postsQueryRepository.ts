@@ -33,3 +33,4 @@ const getPostsFromBD = async (params: any, filter: any) => {
         .limit(params.pageSize)
         .toArray() as any[] /*SomePostType[]*/
 }
+

@@ -42,5 +42,10 @@ export const postsController = {
             res.sendStatus(404)
             return
         } else {res.sendStatus(204)}
+    },
+
+    async getCommentsByPostId(req: Request, res: Response) {
+        console.log(req.headers['authorization'])
+        res.sendStatus(200)
     }
 }

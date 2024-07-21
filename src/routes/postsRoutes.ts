@@ -27,4 +27,8 @@ postsRouter.put('/:id', authMiddleware,
     contentValidation,
     postsInputValidation,
     postsController.putPostById)
-postsRouter.delete('/:id', authMiddleware, postsController.deletePostById)
+postsRouter.delete('/:id', authMiddleware,
+    postsController.deletePostById)
+postsRouter.get('/:id', postsController.getPostById)
+postsRouter.post('/:id/comments', authMiddleware,
+    postsController.getCommentsByPostId)

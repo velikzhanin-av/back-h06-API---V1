@@ -5,5 +5,4 @@ import {authMiddleware} from "../middlewares/authMiddleware";
 export const authRouter = Router()
 
 authRouter.post('/login', authController.postLogin)
-authRouter.get('/me', authMiddleware,
-    authController.postLogin)
+authRouter.get('/me', authController.getUserInfo)

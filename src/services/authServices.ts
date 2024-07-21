@@ -9,7 +9,12 @@ export const authServices = {
             return false
         } else {
             if (await bcryptService.checkPassword(body.password, user.password)) {
-                return jwtServices.createJwt(user._id.toString())
+                const token = await jwtServices.createJwt(user._id.toString())
+                const result = await usersRepository.addJwtToken(user._id, token)
+                if (!result) {
+                    return false
+                }
+                return token
             } else {
                 return false
             }
