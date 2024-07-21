@@ -7,7 +7,9 @@ export const authController = {
         if (!result) {
             res.sendStatus(401)
             return
+            console.log()
         }
+        console.log('result: ' + result)
         res
             .status(200)
             .json({accessToken: result})
