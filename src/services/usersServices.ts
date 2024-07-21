@@ -1,5 +1,5 @@
 import {usersRepository} from "../repositories/users/usersRepository";
-import {bcryptService} from "../../utils/bcriptServices";
+import {bcryptService} from "../utils/bcriptServices";
 
 
 export const usersServices = {

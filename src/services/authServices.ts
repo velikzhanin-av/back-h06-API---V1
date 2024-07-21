@@ -1,6 +1,6 @@
-import {bcryptService} from "../../utils/bcriptServices";
+import {bcryptService} from "../utils/bcriptServices";
 import {usersRepository} from "../repositories/users/usersRepository";
-import {jwtServices} from "../../utils/jwtServices";
+import {jwtServices} from "../utils/jwtServices";
 
 export const authServices = {
      async login (body: any){
