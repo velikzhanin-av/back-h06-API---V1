@@ -1,6 +1,8 @@
 import {Request, Response} from "express"
 import {authServices} from "../services/authServices";
 import {findUserInfo} from "../repositories/users/usersQueryRepository";
+import {usersRepository} from "../repositories/users/usersRepository";
+import {jwtServices} from "../utils/jwtServices";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
@@ -16,9 +18,13 @@ export const authController = {
     },
 
     async getUserInfo(req: Request, res: Response) {
-        console.log(req.headers['authorization'])
-        res.sendStatus(200)
-        return false
-        // const result = await findUserInfo()
-}
+        // @ts-ignore
+        const user = req.user
+        res.status(200).json({
+            email: user.email,
+            login: user.login,
+            userId: user._id
+        })
+        return
+    }
 }
