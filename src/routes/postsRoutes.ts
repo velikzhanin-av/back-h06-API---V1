@@ -8,6 +8,7 @@ import {
     titleValidation
 } from "../middlewares/postsInputValidation";
 import {postsController} from "../controllers/postsController";
+import {authTokenMiddleware} from "../middlewares/authTokenMiddleware";
 
 export const postsRouter = Router()
 
@@ -30,5 +31,5 @@ postsRouter.put('/:id', authMiddleware,
 postsRouter.delete('/:id', authMiddleware,
     postsController.deletePostById)
 postsRouter.get('/:id', postsController.getPostById)
-postsRouter.post('/:id/comments', authMiddleware,
-    postsController.getCommentsByPostId)
+postsRouter.post('/:id/comments', authTokenMiddleware,
+    postsController.postCommentsByPostId)

@@ -4,6 +4,15 @@ import {PostDbType} from "../../db/dbTypes";
 import {db} from "../../db/db";
 import {Request} from "express";
 
+export type UserInfoType = {
+    _id?: ObjectId
+    login: string
+    password: string
+    email: string
+    createdAt: string
+    jwtToken: string
+}
+
 export const mapToOutputPosts = (post: any) => { // TODO не работает с типизацией!!!
     return {
         id: post._id?.toString(),
@@ -50,7 +59,7 @@ export const editPost = async (id: string, body: any) => {
                 blogId: body.blogId
             }
         })
-        return res.matchedCount !==0
+        return res.matchedCount !== 0
     } catch (err) {
         console.log(err)
         return false
@@ -66,3 +75,26 @@ export const deletePost = async (id: string) => {
         return false
     }
 }
+
+export const createCommentByPostId = async (id: string, comment: string, user: UserInfoType) => {
+    // TODO остановился здесь, создать id коммента
+    const commentInfo = {
+        id: "stasdasdring1",
+        content: comment,
+        commentatorInfo: {
+            userId: user._id?.toString(),
+            userLogin: user.login
+        },
+        createdAt: new Date().toISOString()
+    }
+    try {
+        const res = await postCollection.updateOne({_id: new ObjectId(id)},
+            {$push: {comments: commentInfo}})
+
+        return commentInfo
+    } catch (err) {
+        console.log(err)
+        return false
+    }
+}
+

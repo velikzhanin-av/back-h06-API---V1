@@ -1,8 +1,5 @@
 import {Request, Response} from "express"
 import {authServices} from "../services/authServices";
-import {findUserInfo} from "../repositories/users/usersQueryRepository";
-import {usersRepository} from "../repositories/users/usersRepository";
-import {jwtServices} from "../utils/jwtServices";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {

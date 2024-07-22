@@ -1,17 +1,8 @@
-//
-//
-// export const postsServices = {
-//     async createNewComment (body: any){
-//         const user: any = await usersRepository.findByLoginOrEmail(body.loginOrEmail)
-//         if (!user) {
-//             return false
-//         } else {
-//             if (await bcryptService.checkPassword(body.password, user.password)) {
-//                 return jwtServices.createJwt(user._id.toString())
-//             } else {
-//                 return false
-//             }
-//
-//         }
-//     }
-// }
+import {createCommentByPostId, UserInfoType} from "../repositories/posts/postsRepository";
+
+
+export const postsServices = {
+    async createCommentByPostId (id: string, comment: string, user: UserInfoType) {
+        return createCommentByPostId(id, comment, user)
+    }
+}

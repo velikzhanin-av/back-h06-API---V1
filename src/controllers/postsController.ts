@@ -1,6 +1,7 @@
 import {Request, Response} from "express";
 import {findAllPosts} from "../repositories/posts/postsQueryRepository";
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
+import {postsServices} from "../services/postsServices";
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
@@ -44,7 +45,11 @@ export const postsController = {
         } else {res.sendStatus(204)}
     },
 
-    async getCommentsByPostId(req: Request, res: Response) {
-        res.sendStatus(200)
+    async postCommentsByPostId(req: Request, res: Response) {
+        // @ts-ignore
+        console.log(req.user)
+        // @ts-ignore
+        res.status(200).json(await postsServices.createCommentByPostId(req.params.id, req.body.content, req.user))
+        return
     }
 }
