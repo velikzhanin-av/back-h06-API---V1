@@ -1,5 +1,5 @@
 import {SortDirection} from "mongodb";
-import {blogCollection, postCollection, userCollection} from "../db/mongoDb";
+import {blogCollection, commentCollection, postCollection, userCollection} from "../db/mongoDb";
 
 export const helper = (query: any) => {
     return {
@@ -20,6 +20,8 @@ export const getTotalCount = async (filter: any, section: string) => {
         return await postCollection.countDocuments(filter)
     } else if (section === 'user') {
         return await userCollection.countDocuments(filter)
+    } else if (section === 'comment') {
+        return await commentCollection.countDocuments(filter)
     }
     return 0
 }

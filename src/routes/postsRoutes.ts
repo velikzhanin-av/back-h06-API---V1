@@ -33,3 +33,4 @@ postsRouter.delete('/:id', authMiddleware,
 postsRouter.get('/:id', postsController.getPostById)
 postsRouter.post('/:id/comments', authTokenMiddleware,
     postsController.postCommentsByPostId)
+postsRouter.get('/:id/comments', postsController.getCommentsByPostId)
