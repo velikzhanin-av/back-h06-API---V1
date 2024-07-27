@@ -1,4 +1,4 @@
-import {blogCollection, postCollection} from "../../db/mongoDb";
+import {commentCollection, postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
 import {PostDbType} from "../../db/dbTypes";
 import {db} from "../../db/db";
@@ -22,6 +22,18 @@ export const mapToOutputPosts = (post: any) => { // TODO не работает �
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt
+    }
+}
+
+export const mapToOutputComment = (comment: any) => { // TODO не работает с типизацией!!!
+    return {
+        id: comment._id?.toString(),
+        content: comment.content,
+        commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin
+        },
+        createdAt: comment.createdAt,
     }
 }
 
@@ -77,21 +89,18 @@ export const deletePost = async (id: string) => {
 }
 
 export const createCommentByPostId = async (id: string, comment: string, user: UserInfoType) => {
-    // TODO остановился здесь, создать id коммента
-    const commentInfo = {
-        id: "stasdasdring1",
+    const newComment: any = {
         content: comment,
         commentatorInfo: {
             userId: user._id?.toString(),
             userLogin: user.login
         },
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        postId: id
     }
     try {
-        const res = await postCollection.updateOne({_id: new ObjectId(id)},
-            {$push: {comments: commentInfo}})
-
-        return commentInfo
+        const res = await commentCollection.insertOne(newComment)
+        return mapToOutputComment(newComment)
     } catch (err) {
         console.log(err)
         return false

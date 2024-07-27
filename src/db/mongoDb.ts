@@ -10,6 +10,7 @@ export const db: Db = client.db(SETTINGS.DB_NAME);
 export const blogCollection: Collection<BlogDbType> = db.collection<any>(SETTINGS.BLOG_COLLECTION_NAME)
 export const postCollection: Collection<PostDbType> = db.collection<any>(SETTINGS.POST_COLLECTION_NAME)
 export const userCollection: Collection<UserDbType> = db.collection<any>(SETTINGS.USER_COLLECTION_NAME)
+export const commentCollection: Collection<UserDbType> = db.collection<any>(SETTINGS.COMMENTS_COLLECTION_NAME)
 
 
 // проверка подключения к бд

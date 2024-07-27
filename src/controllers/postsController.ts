@@ -47,9 +47,7 @@ export const postsController = {
 
     async postCommentsByPostId(req: Request, res: Response) {
         // @ts-ignore
-        console.log(req.user)
-        // @ts-ignore
-        res.status(200).json(await postsServices.createCommentByPostId(req.params.id, req.body.content, req.user))
+        res.status(201).json(await postsServices.createCommentByPostId(req.params.id, req.body.content, req.user))
         return
     }
 }
