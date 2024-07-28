@@ -1,8 +1,29 @@
 import {blogsRepository} from "../repositories/blogs/blogsRepository";
 import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {commentsRepository} from "../repositories/comments/commentsRepository";
+import {findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
+import {postCollection} from "../db/mongoDb";
+import {findPostById} from "../repositories/posts/postsRepository";
+import {postsServices} from "./postsServices";
 
 export const commentsServices = {
+
+    async findComments(query: any, id: string) {
+        const result = await findPostById(id)
+        if (!result) {
+            return false
+        }
+        return await findCommentsByPostId(query, id)
+    },
+
+    async createComment(postId: string, content: string, user: any) {
+        const result = await findPostById(postId)
+        console.log(result)
+        if (!result) {
+            return false
+        }
+        return await postsServices.createCommentByPostId(postId, content, user)
+    },
 
     async editComment(id: string, userId: string, content: string)  {
         const result = {

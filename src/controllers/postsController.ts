@@ -2,6 +2,8 @@ import {Request, Response} from "express";
 import {findAllPosts, findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
 import {postsServices} from "../services/postsServices";
+import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
+import {commentsServices} from "../services/commentsServices";
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
@@ -34,7 +36,9 @@ export const postsController = {
         const result = await editPost(req.params.id, req.body)
         if (!result) {
             res.sendStatus(404)
-        } else {res.sendStatus(204)}
+        } else {
+            res.sendStatus(204)
+        }
     },
 
     async deletePostById(req: Request, res: Response) {
@@ -42,18 +46,33 @@ export const postsController = {
         if (!result) {
             res.sendStatus(404)
             return
-        } else {res.sendStatus(204)}
+        } else {
+            res.sendStatus(204)
+        }
     },
 
     async postCommentsByPostId(req: Request, res: Response) {
         // @ts-ignore
-        res.status(201).json(await postsServices.createCommentByPostId(req.params.id, req.body.content, req.user))
+        const result = await commentsServices.createComment(req.params.postId, req.body.content, req.user)
+        if (!result) {
+            res.sendStatus(404)
+            return
+        }
+        res
+            .status(201)
+            .json(result)
         return
     },
 
     async getCommentsByPostId(req: Request, res: Response) {
-        // @ts-ignore
-        res.status(200).json(await findCommentsByPostId(req.params))
+        const comments: any = await commentsServices.findComments(req.query, req.params.postId)
+        if (!comments) {
+            res.sendStatus(404)
+            return
+        }
+        res
+            .status(200)
+            .json(comments)
         return
     }
 }

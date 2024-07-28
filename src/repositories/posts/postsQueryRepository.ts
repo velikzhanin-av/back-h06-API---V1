@@ -6,6 +6,7 @@ import {
 import {mapToOutputComment, mapToOutputPosts} from "./postsRepository";
 import {blogCollection, commentCollection, postCollection} from "../../db/mongoDb";
 import {getTotalCount, helper} from "../utils";
+import {ObjectId} from "mongodb";
 
 export const findAllPosts = async (query: any) => {
     const params: any = helper(query)
@@ -34,9 +35,9 @@ const getPostsFromBD = async (params: any, filter: any) => {
         .toArray() as any[] /*SomePostType[]*/
 }
 
-export const findCommentsByPostId = async (query: any) => {
+export const findCommentsByPostId = async (query: any, id: string) => {
     const params: any = helper(query)
-    const filter = searchNameTerm(params.searchNameTerm)
+    const filter = {_id: new ObjectId(id)}
     let comments: PostDbType[] = await getCommentsFromBD(params, filter)
     const totalCount: number = await getTotalCount(filter, 'comment')
     return {
@@ -50,9 +51,7 @@ export const findCommentsByPostId = async (query: any) => {
     }
 }
 
-
 const getCommentsFromBD = async (params: any, filter: any) => {
-    // TODO насколько правильно сделано??? в документации этого нет
     const sort = {[params.sortBy]: params.sortDirection, _id: params.sortDirection}
     return await commentCollection
         .find(filter)

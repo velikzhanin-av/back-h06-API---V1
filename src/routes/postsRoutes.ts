@@ -31,6 +31,6 @@ postsRouter.put('/:id', authMiddleware,
 postsRouter.delete('/:id', authMiddleware,
     postsController.deletePostById)
 postsRouter.get('/:id', postsController.getPostById)
-postsRouter.post('/:id/comments', authTokenMiddleware,
+postsRouter.post('/:postId/comments', authTokenMiddleware,
     postsController.postCommentsByPostId)
-postsRouter.get('/:id/comments', postsController.getCommentsByPostId)
+postsRouter.get('/:postId/comments', postsController.getCommentsByPostId)
