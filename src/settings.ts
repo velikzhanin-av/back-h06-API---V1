@@ -20,6 +20,7 @@ export const SETTINGS = {
         POSTS: '/posts',
         USERS: '/users',
         AUTH: '/auth',
+        COMMENTS: '/comments',
     },
 }
 
