@@ -1,8 +1,17 @@
-import {blogCollection, postCollection} from "../../db/mongoDb";
+import {commentCollection, postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
 import {PostDbType} from "../../db/dbTypes";
 import {db} from "../../db/db";
 import {Request} from "express";
+
+export type UserInfoType = {
+    _id?: ObjectId
+    login: string
+    password: string
+    email: string
+    createdAt: string
+    jwtToken: string
+}
 
 export const mapToOutputPosts = (post: any) => { // TODO не работает с типизацией!!!
     return {
@@ -13,6 +22,18 @@ export const mapToOutputPosts = (post: any) => { // TODO не работает �
         blogId: post.blogId,
         blogName: post.blogName,
         createdAt: post.createdAt
+    }
+}
+
+export const mapToOutputComment = (comment: any) => { // TODO не работает с типизацией!!!
+    return {
+        id: comment._id?.toString(),
+        content: comment.content,
+        commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin
+        },
+        createdAt: comment.createdAt,
     }
 }
 
@@ -50,7 +71,7 @@ export const editPost = async (id: string, body: any) => {
                 blogId: body.blogId
             }
         })
-        return res.matchedCount !==0
+        return res.matchedCount !== 0
     } catch (err) {
         console.log(err)
         return false
@@ -66,3 +87,23 @@ export const deletePost = async (id: string) => {
         return false
     }
 }
+
+export const createCommentByPostId = async (id: string, comment: string, user: UserInfoType) => {
+    const newComment: any = {
+        content: comment,
+        commentatorInfo: {
+            userId: user._id?.toString(),
+            userLogin: user.login
+        },
+        createdAt: new Date().toISOString(),
+        postId: id
+    }
+    try {
+        const res = await commentCollection.insertOne(newComment)
+        return mapToOutputComment(newComment)
+    } catch (err) {
+        console.log(err)
+        return false
+    }
+}
+

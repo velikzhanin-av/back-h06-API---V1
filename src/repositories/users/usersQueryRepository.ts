@@ -49,3 +49,7 @@ export const searchLoginOrEmailTerm = (loginTerm: string, emailTerm: string) => 
     }
     return search
 }
+
+export const findUserInfo = (token: string) => {
+    return
+}

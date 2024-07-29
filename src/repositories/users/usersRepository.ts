@@ -1,6 +1,5 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {bcryptService} from "../../utils/bcriptServices";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -30,6 +29,16 @@ export const usersRepository = {
 
     async findByLoginOrEmail(loginOrEmail: string)  {
         return await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+    },
+
+    async addJwtToken(id: ObjectId, token: string) {
+        const res = await userCollection.updateOne({_id: id}, {$set: {jwtToken: token}})
+        return res.acknowledged
+
+    },
+
+    async verifyJwtToken(token: string) {
+        return await userCollection.findOne({jwtToken: token})
     }
 
 }

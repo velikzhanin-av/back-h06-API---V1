@@ -3,9 +3,10 @@ import {
     mapToOutputBlogs,
     searchNameTerm
 } from "../blogs/blogsQueryRepository";
-import {mapToOutputPosts} from "./postsRepository";
-import {blogCollection, postCollection} from "../../db/mongoDb";
+import {mapToOutputComment, mapToOutputPosts} from "./postsRepository";
+import {blogCollection, commentCollection, postCollection} from "../../db/mongoDb";
 import {getTotalCount, helper} from "../utils";
+import {ObjectId} from "mongodb";
 
 export const findAllPosts = async (query: any) => {
     const params: any = helper(query)
@@ -27,6 +28,32 @@ const getPostsFromBD = async (params: any, filter: any) => {
     // TODO насколько правильно сделано??? в документации этого нет
     const sort = {[params.sortBy]: params.sortDirection, _id: params.sortDirection}
     return await postCollection
+        .find(filter)
+        .sort(sort)
+        .skip((params.pageNumber - 1) * params.pageSize)
+        .limit(params.pageSize)
+        .toArray() as any[] /*SomePostType[]*/
+}
+
+export const findCommentsByPostId = async (query: any, id: string) => {
+    const params: any = helper(query)
+    const filter = {postId: id}
+    let comments: any = await getCommentsFromBD(params, filter)
+    const totalCount: number = await getTotalCount(filter, 'comment')
+    return {
+        pagesCount: Math.ceil(totalCount / params.pageSize),
+        page: params.pageNumber,
+        pageSize: params.pageSize,
+        totalCount: totalCount,
+        items: comments.map((comment: any) => {
+            return mapToOutputComment(comment)
+        })
+    }
+}
+
+const getCommentsFromBD = async (params: any, filter: any) => {
+    const sort = {[params.sortBy]: params.sortDirection, _id: params.sortDirection}
+    return await commentCollection
         .find(filter)
         .sort(sort)
         .skip((params.pageNumber - 1) * params.pageSize)

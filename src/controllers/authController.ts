@@ -13,4 +13,15 @@ export const authController = {
             .json({accessToken: result})
         return
     },
+
+    async getUserInfo(req: Request, res: Response) {
+        // @ts-ignore
+        const user = req.user
+        res.status(200).json({
+            email: user.email,
+            login: user.login,
+            userId: user._id
+        })
+        return
+    }
 }

@@ -1,5 +1,5 @@
 import {SortDirection} from "mongodb";
-import {blogCollection, postCollection, userCollection} from "../db/mongoDb";
+import {blogCollection, commentCollection, postCollection, userCollection} from "../db/mongoDb";
 
 export const helper = (query: any) => {
     return {
@@ -20,6 +20,8 @@ export const getTotalCount = async (filter: any, section: string) => {
         return await postCollection.countDocuments(filter)
     } else if (section === 'user') {
         return await userCollection.countDocuments(filter)
+    } else if (section === 'comment') {
+        return await commentCollection.countDocuments(filter)
     }
     return 0
 }
@@ -33,6 +35,13 @@ export const getFromBD = async (params: any, filter: any, sector: string) => {
             .limit(params.pageSize)
             .toArray() as any[] /*SomePostType[]*/
     } else if (sector === 'user') {
+        return await userCollection
+            .find(filter)
+            .sort(params.sortBy, params.sortDirection)
+            .skip((params.pageNumber - 1) * params.pageSize)
+            .limit(params.pageSize)
+            .toArray() as any[] /*SomePostType[]*/
+    } else if (sector === 'comment') {
         return await userCollection
             .find(filter)
             .sort(params.sortBy, params.sortDirection)
