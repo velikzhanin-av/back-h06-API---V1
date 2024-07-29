@@ -39,8 +39,16 @@ export const usersRepository = {
 
     async verifyJwtToken(token: string) {
         return await userCollection.findOne({jwtToken: token})
-    }
+    },
+
+    async doesExistByLoginOrEmail(login: string, email: string) {
+        if (await userCollection.findOne({login})) {
+            return 'login'
+        } else if (await userCollection.findOne({email})) {
+            return 'email'
+        }
+        return false
+    },
+
 
 }
-
-

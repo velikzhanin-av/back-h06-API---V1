@@ -23,5 +23,24 @@ export const authController = {
             userId: user._id
         })
         return
-    }
+    },
+
+    async registration(req: Request, res: Response) {
+        const result = await authServices.registerUser(req.body.login, req.body.password, req.body.email)
+        if (result.isExist) {
+            res
+                .status(400)
+                .json({
+                    "errorsMessages": [
+                        {
+                            "message": `${result.isExist} already exists`,
+                            "field": result.isExist
+                        }
+                    ]
+                })
+            return
+        }
+        res.sendStatus(204)
+    },
+
 }
