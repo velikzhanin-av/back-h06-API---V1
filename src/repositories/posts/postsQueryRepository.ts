@@ -37,8 +37,9 @@ const getPostsFromBD = async (params: any, filter: any) => {
 
 export const findCommentsByPostId = async (query: any, id: string) => {
     const params: any = helper(query)
-    const filter = {_id: new ObjectId(id)}
-    let comments: PostDbType[] = await getCommentsFromBD(params, filter)
+    const filter = {postId: id}
+    let comments: any = await getCommentsFromBD(params, filter)
+    console.log(comments)
     const totalCount: number = await getTotalCount(filter, 'comment')
     return {
         pagesCount: Math.ceil(totalCount / params.pageSize),
@@ -53,6 +54,7 @@ export const findCommentsByPostId = async (query: any, id: string) => {
 
 const getCommentsFromBD = async (params: any, filter: any) => {
     const sort = {[params.sortBy]: params.sortDirection, _id: params.sortDirection}
+    console.log(filter)
     return await commentCollection
         .find(filter)
         .sort(sort)

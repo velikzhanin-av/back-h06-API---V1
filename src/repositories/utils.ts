@@ -41,6 +41,13 @@ export const getFromBD = async (params: any, filter: any, sector: string) => {
             .skip((params.pageNumber - 1) * params.pageSize)
             .limit(params.pageSize)
             .toArray() as any[] /*SomePostType[]*/
+    } else if (sector === 'comment') {
+        return await userCollection
+            .find(filter)
+            .sort(params.sortBy, params.sortDirection)
+            .skip((params.pageNumber - 1) * params.pageSize)
+            .limit(params.pageSize)
+            .toArray() as any[] /*SomePostType[]*/
     }
     return []
 }
