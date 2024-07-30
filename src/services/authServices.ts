@@ -4,6 +4,7 @@ import {randomUUID} from "crypto"
 import {bcryptService} from "../utils/bcriptServices";
 import {usersRepository} from "../repositories/users/usersRepository";
 import {jwtServices} from "../utils/jwtServices";
+import {nodemailerService} from "./nodemailerService";
 
 export const authServices = {
 
@@ -30,6 +31,8 @@ export const authServices = {
         const result: any = {
             isExist: ''
         }
+        const sendEmail = await nodemailerService.sendEmail(login, password, email)
+        return result
         result.isExist = await usersRepository.doesExistByLoginOrEmail(login, email)
         if (result.isExist) {
             return result
@@ -50,7 +53,9 @@ export const authServices = {
                     isConfirmed: false
                 }
             }
-        return await usersRepository.createUser(newUser)
+        const createUser = await usersRepository.createUser(newUser)
+
+        // const sendEmail = await nodemailerService.sendEmail(login, password, email)
     },
 
 }
