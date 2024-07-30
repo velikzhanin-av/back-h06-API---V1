@@ -40,6 +40,19 @@ export const authController = {
                 })
             return
         }
+        if (!result.sendEmail) {
+            res
+                .status(400)
+                .json({
+                    "errorsMessages": [
+                        {
+                            "message": `Email not send`,
+                            "field": 'email'
+                        }
+                    ]
+                })
+            return
+        }
         res.sendStatus(204)
     },
 

@@ -20,8 +20,8 @@ authRouter.post('/registration',
     emailValidation,
     authInputValidation,
     authController.registration)
-authRouter.post('/registration-confirmation', authController.registration)
-authRouter.post('/registration-email-resending',
-    emailValidation,
-    authInputValidation,
-    authController.postLogin)
+// authRouter.post('/registration-confirmation', authController.registration)
+// authRouter.post('/registration-email-resending',
+//     emailValidation,
+//     authInputValidation,
+//     authController.postLogin)

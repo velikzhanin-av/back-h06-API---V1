@@ -1,5 +1,5 @@
 import {randomUUID} from "crypto"
-// import add from "date-fns/add"
+import {add} from "date-fns"
 
 import {bcryptService} from "../utils/bcriptServices";
 import {usersRepository} from "../repositories/users/usersRepository";
@@ -29,10 +29,9 @@ export const authServices = {
 
     async registerUser(login: string, password: string, email: string) {
         const result: any = {
-            isExist: ''
+            isExist: '',
+            sendEmail: ''
         }
-        const sendEmail = await nodemailerService.sendEmail(login, password, email)
-        return result
         result.isExist = await usersRepository.doesExistByLoginOrEmail(login, email)
         if (result.isExist) {
             return result
@@ -44,18 +43,23 @@ export const authServices = {
                 password: passwordHash,
                 email,
                 createdAt: new Date().toISOString(),
-                emailConfirmation: {    // доп поля необходимые для подтверждения
+                emailConfirmation: {
                     confirmationCode: randomUUID(),
-                    // expirationDate: add(new Date(), {
-                    //     hours: 1,
-                    //     minutes: 30,
-                    // }),
+                    expirationDate: add(new Date(), {
+                        hours: 1,
+                        minutes: 30,
+                    }),
                     isConfirmed: false
                 }
             }
         const createUser = await usersRepository.createUser(newUser)
 
-        // const sendEmail = await nodemailerService.sendEmail(login, password, email)
+        const sendEmail = await nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
+        if (!sendEmail) {
+            return result
+        }
+        result.sendEmail = true
+        return result
     },
 
 }
