@@ -8,7 +8,7 @@ import {nodemailerService} from "./nodemailerService";
 
 export const authServices = {
 
-     async login (body: any){
+    async login(body: any) {
         const user: any = await usersRepository.findByLoginOrEmail(body.loginOrEmail)
         if (!user) {
             return false
@@ -60,6 +60,15 @@ export const authServices = {
         }
         result.sendEmail = true
         return result
+    },
+
+    async registrationEmailResending(email: string) {
+        const userInfo = await usersRepository.findByLoginOrEmail(email)
+        if (!userInfo) {
+            return false
+        }
+        return await nodemailerService.sendEmail(userInfo.login, userInfo.email, userInfo.emailConfirmation.confirmationCode)
+
     },
 
 }

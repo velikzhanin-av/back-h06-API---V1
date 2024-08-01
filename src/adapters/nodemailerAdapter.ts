@@ -10,7 +10,6 @@ export const nodemailerAdapter = {
                 pass: "",
             },
         })
-
         try {
             const result = await transporter.sendMail({
                 from: '"backend incubator" <backendincubator@gmail.com>', // sender address
@@ -22,12 +21,13 @@ export const nodemailerAdapter = {
                     `     <a href='https://somesite.com/confirm-email?code=${confirmationCode}'>complete registration</a>\n` +
                     " </p>",
             })
-            return(result)
-        } catch (err) {
-            console.error('Send email error', err)
+            return (result)
+        } catch (e) {
+            console.error('Send email error', e)
             return
         }
 
-    },
-
+    }
 }
+
+

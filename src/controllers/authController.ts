@@ -56,4 +56,16 @@ export const authController = {
         res.sendStatus(204)
     },
 
+    async registrationEmailResending(req: Request, res: Response) {
+        const result = await authServices.registrationEmailResending(req.body.email)
+        if (!result)
+        {
+            res.sendStatus(400)
+            return
+        }
+        res
+            .status(204)
+        return
+    },
+
 }
