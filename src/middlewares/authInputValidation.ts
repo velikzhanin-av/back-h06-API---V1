@@ -16,6 +16,10 @@ export const emailValidation = body("email")
     .trim().not().isEmpty()
     .matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
 
+export const codeValidation = body("code")
+    .trim().not().isEmpty()
+    .isString()
+
 export const authInputValidation = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {

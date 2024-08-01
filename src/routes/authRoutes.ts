@@ -3,7 +3,7 @@ import {authController} from "../controllers/authController";
 import {authMiddleware} from "../middlewares/authMiddleware";
 import {authTokenMiddleware} from "../middlewares/authTokenMiddleware";
 import {
-    authInputValidation,
+    authInputValidation, codeValidation,
     emailValidation,
     loginValidation,
     passwordValidation
@@ -20,7 +20,10 @@ authRouter.post('/registration',
     emailValidation,
     authInputValidation,
     authController.registration)
-// authRouter.post('/registration-confirmation', authController.registration)
+authRouter.post('/registration-confirmation',
+    codeValidation,
+    authInputValidation,
+    authController.registrationConfirmation)
 authRouter.post('/registration-email-resending',
     emailValidation,
     authInputValidation,

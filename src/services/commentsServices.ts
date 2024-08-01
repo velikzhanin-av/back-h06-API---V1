@@ -18,7 +18,6 @@ export const commentsServices = {
 
     async createComment(postId: string, content: string, user: any) {
         const result = await findPostById(postId)
-        console.log(result)
         if (!result) {
             return false
         }

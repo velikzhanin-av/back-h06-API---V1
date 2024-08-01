@@ -58,14 +58,64 @@ export const authController = {
 
     async registrationEmailResending(req: Request, res: Response) {
         const result = await authServices.registrationEmailResending(req.body.email)
-        if (!result)
-        {
-            res.sendStatus(400)
+        if (!result.emailIsExist) {
+            res
+                .status(400)
+                .json({
+                    "errorsMessages": [
+                        {
+                            "message": `invalid email`,
+                            "field": 'email'
+                        }
+                    ]
+                })
+            return
+        } else if (result.emailIsConfirmed) {
+            res
+                .status(400)
+                .json({
+                    "errorsMessages": [
+                        {
+                            "message": `email already confirmed`,
+                            "field": 'email'
+                        }
+                    ]
+                })
             return
         }
-        res
-            .status(204)
+        res.sendStatus(204)
         return
     },
+
+    async registrationConfirmation(req: Request, res: Response) {
+        const result = await authServices.registrationConfirmation(req.body.code)
+        if (!result.codeIsExist) {
+            res
+                .status(400)
+                .json({
+                    "errorsMessages": [
+                        {
+                            "message": `invalid code`,
+                            "field": 'code'
+                        }
+                    ]
+                })
+            return
+        } else if (result.emailIsConfirmed) {
+            res
+                .status(400)
+                .json({
+                    "errorsMessages": [
+                        {
+                            "message": `email already confirmed`,
+                            "field": 'email'
+                        }
+                    ]
+                })
+            return
+        }
+        res.sendStatus(204)
+        return
+    }
 
 }

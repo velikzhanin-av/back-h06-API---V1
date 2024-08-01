@@ -28,6 +28,6 @@ export type UserDbType = {
     emailConfirmation: {
         confirmationCode: string
         expirationDate: string
-        isConfirmed: string
+        isConfirmed: boolean
     }
 }

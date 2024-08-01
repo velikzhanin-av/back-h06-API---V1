@@ -63,12 +63,42 @@ export const authServices = {
     },
 
     async registrationEmailResending(email: string) {
+        const result: any = {
+            emailIsExist: false,
+            emailIsConfirmed: true
+        }
         const userInfo = await usersRepository.findByLoginOrEmail(email)
         if (!userInfo) {
+            return result
+        }
+        if (userInfo.emailConfirmation.isConfirmed) {
+            return result
+        }
+        const newConfirmationCode = randomUUID()
+        const createConfirmationCode = await usersRepository.updateConfirmationCode(userInfo.email, newConfirmationCode)
+        if (!createConfirmationCode) {
             return false
         }
-        return await nodemailerService.sendEmail(userInfo.login, userInfo.email, userInfo.emailConfirmation.confirmationCode)
+        return await nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)
 
     },
+
+    async registrationConfirmation(code: string) {
+        const result: any = {
+            codeIsExist: false,
+            emailIsConfirmed: true
+        }
+        const userInfo = await usersRepository.findConfirmationCode(code)
+        if (!userInfo) {
+            return result
+        }
+        if (userInfo.emailConfirmation.isConfirmed) {
+            return result
+        }
+        return await usersRepository.updateIsConfirmed(userInfo.email)
+
+
+    },
+
 
 }
