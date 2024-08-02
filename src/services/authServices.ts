@@ -64,38 +64,47 @@ export const authServices = {
 
     async registrationEmailResending(email: string) {
         const result: any = {
-            emailIsExist: false,
-            emailIsConfirmed: true
+            emailIsExist: true,
+            emailIsConfirmed: false
         }
         const userInfo = await usersRepository.findByLoginOrEmail(email)
+        console.log(userInfo);
         if (!userInfo) {
+            console.log('юзера нет!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+            result.emailIsExist = false
             return result
         }
         if (userInfo.emailConfirmation.isConfirmed) {
+            result.emailIsConfirmed = true
             return result
         }
         const newConfirmationCode = randomUUID()
         const createConfirmationCode = await usersRepository.updateConfirmationCode(userInfo.email, newConfirmationCode)
-        if (!createConfirmationCode) {
+
+        if (!await nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)) {
             return false
         }
-        return await nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)
-
+        return result
     },
 
     async registrationConfirmation(code: string) {
         const result: any = {
-            codeIsExist: false,
-            emailIsConfirmed: true
+            codeIsExist: true,
+            emailIsConfirmed: false
         }
         const userInfo = await usersRepository.findConfirmationCode(code)
         if (!userInfo) {
+            result.codeIsExist = false
             return result
         }
         if (userInfo.emailConfirmation.isConfirmed) {
+            result.emailIsConfirmed = true
             return result
         }
-        return await usersRepository.updateIsConfirmed(userInfo.email)
+        if (!await usersRepository.updateIsConfirmed(userInfo.email)) {
+            return false
+        }
+        return result
 
 
     },

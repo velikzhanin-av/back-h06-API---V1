@@ -54,19 +54,20 @@ export const usersRepository = {
     },
 
     async findConfirmationCode(code: string) {
-        return await userCollection.findOne({'emailConfirmation.confirmationCode': code})
+        const res = await userCollection.findOne({'emailConfirmation.confirmationCode': code})
+        return res
     },
 
     async updateIsConfirmed(email: string) {
         const res = await userCollection.updateOne({email: email},
             {$set: {'emailConfirmation.isConfirmed': true}})
-        return res.acknowledged
+        return res.modifiedCount > 0
     },
 
     async updateConfirmationCode(confirmationCode: string, email: string) {
         const res = await userCollection.updateOne({email: email},
             {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
-        return res.acknowledged
+        return res.modifiedCount > 0
     }
 
 }
