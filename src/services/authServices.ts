@@ -68,9 +68,7 @@ export const authServices = {
             emailIsConfirmed: false
         }
         const userInfo = await usersRepository.findByLoginOrEmail(email)
-        console.log(userInfo);
         if (!userInfo) {
-            console.log('юзера нет!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
             result.emailIsExist = false
             return result
         }

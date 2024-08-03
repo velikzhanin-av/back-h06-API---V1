@@ -64,7 +64,7 @@ export const usersRepository = {
         return res.modifiedCount > 0
     },
 
-    async updateConfirmationCode(confirmationCode: string, email: string) {
+    async updateConfirmationCode(email: string, confirmationCode: string,) {
         const res = await userCollection.updateOne({email: email},
             {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
         return res.modifiedCount > 0

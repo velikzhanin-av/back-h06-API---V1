@@ -89,7 +89,6 @@ export const authController = {
 
     async registrationConfirmation(req: Request, res: Response) {
         const result = await authServices.registrationConfirmation(req.body.code)
-        console.log(req.body.code + '   code!!!!!!!!!')
         if (!result.codeIsExist) {
             res
                 .status(400)
@@ -109,7 +108,7 @@ export const authController = {
                     "errorsMessages": [
                         {
                             "message": `email already confirmed`,
-                            "field": 'email'
+                            "field": 'code'
                         }
                     ]
                 })
