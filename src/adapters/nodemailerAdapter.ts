@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import {SETTINGS} from "../settings";
 
 export const nodemailerAdapter = {
 
@@ -7,7 +8,7 @@ export const nodemailerAdapter = {
             service: 'gmail',
             auth: {
                 user: "backendincubator@gmail.com",
-                pass: "",
+                pass: SETTINGS.GMAIL_PASS,
             },
         })
         try {
