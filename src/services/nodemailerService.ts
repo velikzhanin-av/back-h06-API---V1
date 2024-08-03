@@ -1,0 +1,17 @@
+import nodemailer from 'nodemailer';
+import {nodemailerAdapter} from "../adapters/nodemailerAdapter";
+
+export const nodemailerService = {
+
+    async sendEmail (login: string, email: string, confirmationCode: string){
+        const result = await nodemailerAdapter.sendEmail(login, email, confirmationCode)
+        if (!result) {
+            return
+        } else {
+            return result.accepted
+        }
+
+
+        },
+
+    }

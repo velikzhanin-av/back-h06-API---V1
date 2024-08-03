@@ -21,7 +21,13 @@ export type PostDbType = {
 
 export type UserDbType = {
     _id?: ObjectId
-    login: string
+    login: string,
+    password: string
     email: string
     createdAt: string
+    emailConfirmation: {
+        confirmationCode: string
+        expirationDate: string
+        isConfirmed: boolean
+    }
 }

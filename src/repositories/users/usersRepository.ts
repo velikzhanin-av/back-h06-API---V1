@@ -1,5 +1,6 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
+import nodemailer from "nodemailer";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -28,7 +29,9 @@ export const usersRepository = {
     },
 
     async findByLoginOrEmail(loginOrEmail: string)  {
-        return await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+        const res = await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+        console.log(res)
+        return res
     },
 
     async addJwtToken(id: ObjectId, token: string) {
@@ -39,8 +42,32 @@ export const usersRepository = {
 
     async verifyJwtToken(token: string) {
         return await userCollection.findOne({jwtToken: token})
+    },
+
+    async doesExistByLoginOrEmail(login: string, email: string) {
+        if (await userCollection.findOne({login})) {
+            return 'login'
+        } else if (await userCollection.findOne({email})) {
+            return 'email'
+        }
+        return false
+    },
+
+    async findConfirmationCode(code: string) {
+        const res = await userCollection.findOne({'emailConfirmation.confirmationCode': code})
+        return res
+    },
+
+    async updateIsConfirmed(email: string) {
+        const res = await userCollection.updateOne({email: email},
+            {$set: {'emailConfirmation.isConfirmed': true}})
+        return res.modifiedCount > 0
+    },
+
+    async updateConfirmationCode(email: string, confirmationCode: string,) {
+        const res = await userCollection.updateOne({email: email},
+            {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
+        return res.modifiedCount > 0
     }
 
 }
-
-
