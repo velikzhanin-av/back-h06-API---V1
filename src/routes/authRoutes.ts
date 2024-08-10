@@ -31,8 +31,7 @@ authRouter.post('/registration-email-resending',
     authController.registrationEmailResending)
 authRouter.post('/refresh-token',
     authRefreshTokenMiddleware,
-    authController.refreshToken
-    )
+    authController.refreshToken)
 authRouter.post('/logout',
     authRefreshTokenMiddleware,
     authController.logout)

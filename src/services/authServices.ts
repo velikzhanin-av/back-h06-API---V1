@@ -110,16 +110,18 @@ export const authServices = {
         return result
     },
 
-    async refreshToken(token: string, userId: string) {
+    async refreshToken(token: string, user: any) {
         const isValidToken = await this.checkRefreshTokenInBlackList(token)
         if (isValidToken) return
 
-        const addTokenToBlackList = await authRepository.addTokenToBlackList(token, userId)
+        const addTokenToBlackList = await authRepository.addTokenToBlackList(token, user)
         if (!addTokenToBlackList) return
 
-        const accessToken  = await jwtServices.createJwt(userId)
-        const refreshToken  = await jwtServices.createRefreshToken(userId)
-        if (!accessToken || ! refreshToken) return
+        const accessToken  = await jwtServices.createJwt(user)
+        const refreshToken  = await jwtServices.createRefreshToken(user)
+        const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
+        const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
+        if (!accessToken || !refreshToken) return
 
         return {accessToken, refreshToken}
     },
@@ -128,8 +130,11 @@ export const authServices = {
         return await authRepository.checkRefreshTokenInBlackList(refreshToken)
     },
 
-    async logout(refreshToken: string, userId: string) {
-        const addTokenToBlackList = await authRepository.addTokenToBlackList(refreshToken, userId)
+    async logout(refreshToken: string, user: any) {
+        const isValidToken = await this.checkRefreshTokenInBlackList(refreshToken)
+        if (isValidToken) return
+
+        const addTokenToBlackList = await authRepository.addTokenToBlackList(refreshToken, user._id)
         if (!addTokenToBlackList) return
         return true
     }
