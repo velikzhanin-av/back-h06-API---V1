@@ -14,7 +14,9 @@ export const SETTINGS = {
     USER_COLLECTION_NAME: process.env.USER_COLLECTION_NAME || 'users',
     AUTH_COLLECTION_NAME: process.env.AUTH_COLLECTION_NAME || 'auth',
     COMMENTS_COLLECTION_NAME: process.env.COMMENTS_COLLECTION_NAME || 'comments',
+    TOKEN_BLACK_LIST: process.env.TOKEN_BLACK_LIST || 'comments',
     GMAIL_PASS: process.env.GMAIL_PASS,
+    TOKEN_SECRET_KEY: process.env.TOKEN_SECRET_KEY || '111',
     PATH: {
         BLOGS: '/blogs',
         TESTING: '/testing',

@@ -40,8 +40,17 @@ export const usersRepository = {
 
     },
 
+    async addRefreshToken(id: ObjectId, token: string) {
+        const res = await userCollection.updateOne({_id: id}, {$set: {refreshToken: token}})
+        return res.acknowledged
+    },
+
     async verifyJwtToken(token: string) {
         return await userCollection.findOne({jwtToken: token})
+    },
+
+    async verifyRefreshToken(token: string) {
+        return await userCollection.findOne({refreshToken: token})
     },
 
     async doesExistByLoginOrEmail(login: string, email: string) {

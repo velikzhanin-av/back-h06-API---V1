@@ -9,8 +9,11 @@ export const authController = {
             return
         }
         res
+            .cookie('refreshToken',
+                result.refreshToken,
+                {httpOnly: true, secure: true})
             .status(200)
-            .json({accessToken: result})
+            .json({accessToken: result.accessToken})
         return
     },
 
@@ -116,6 +119,33 @@ export const authController = {
         }
         res.sendStatus(204)
         return
-    }
+    },
 
+    async refreshToken(req: Request, res: Response) {
+        // @ts-ignore
+        const result = await authServices.refreshToken(req.cookies.refreshToken, req.user)
+        if (!result) {
+            res.sendStatus(401)
+            return
+        }
+
+        res
+            .cookie('refreshToken',
+                result.refreshToken,
+                {httpOnly: true, secure: true})
+            .status(200)
+            .json({accessToken: result.accessToken})
+        return
+    },
+
+    async logout(req: Request, res: Response) {
+        // @ts-ignore
+        const result = await authServices.logout(req.cookies.refreshToken, req.user)
+        if (!result) {
+            res.sendStatus(401)
+            return
+        }
+
+        res.sendStatus(204)
+    }
 }
