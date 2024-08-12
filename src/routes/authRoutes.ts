@@ -8,6 +8,7 @@ import {
     loginValidation,
     passwordValidation
 } from "../middlewares/authInputValidation";
+import {authRefreshTokenMiddleware} from "../middlewares/authRefreshTokenMiddleware";
 
 export const authRouter = Router()
 
@@ -28,3 +29,9 @@ authRouter.post('/registration-email-resending',
     emailValidation,
     authInputValidation,
     authController.registrationEmailResending)
+authRouter.post('/refresh-token',
+    authRefreshTokenMiddleware,
+    authController.refreshToken)
+authRouter.post('/logout',
+    authRefreshTokenMiddleware,
+    authController.logout)

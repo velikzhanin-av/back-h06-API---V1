@@ -31,3 +31,9 @@ export type UserDbType = {
         isConfirmed: boolean
     }
 }
+
+export type TokenBlackListDbType = {
+    _id?: ObjectId
+    userId: string
+    refreshToken: string
+    }

@@ -9,7 +9,9 @@ export const authTokenMiddleware = async (req: Request, res: Response, next: Nex
     }
     const token = auth.split(' ')[1]
     const user = await jwtServices.verify(token)
-    if (!user) return res.sendStatus(401)
+    if (!user) {
+        return res.sendStatus(401)
+    }
     // @ts-ignore
     req.user = user
     return  next()

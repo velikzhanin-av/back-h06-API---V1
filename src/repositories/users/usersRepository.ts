@@ -1,6 +1,5 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import nodemailer from "nodemailer";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -29,9 +28,7 @@ export const usersRepository = {
     },
 
     async findByLoginOrEmail(loginOrEmail: string)  {
-        const res = await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
-        console.log(res)
-        return res
+        return await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
     },
 
     async addJwtToken(id: ObjectId, token: string) {
@@ -40,8 +37,17 @@ export const usersRepository = {
 
     },
 
+    async addRefreshToken(id: ObjectId, token: string) {
+        const res = await userCollection.updateOne({_id: id}, {$set: {refreshToken: token}})
+        return res.acknowledged
+    },
+
     async verifyJwtToken(token: string) {
         return await userCollection.findOne({jwtToken: token})
+    },
+
+    async verifyRefreshToken(token: string) {
+        return await userCollection.findOne({refreshToken: token})
     },
 
     async doesExistByLoginOrEmail(login: string, email: string) {
