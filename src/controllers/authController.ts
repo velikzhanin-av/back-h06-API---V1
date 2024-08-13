@@ -1,5 +1,6 @@
 import {Request, Response} from "express"
 import {authServices} from "../services/authServices";
+import {RequestWithUser} from "../middlewares/authTokenMiddleware";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
@@ -17,8 +18,7 @@ export const authController = {
         return
     },
 
-    async getUserInfo(req: Request, res: Response) {
-        // @ts-ignore
+    async getUserInfo(req: RequestWithUser, res: Response) {
         const user = req.user
         res.status(200).json({
             email: user.email,

@@ -1,7 +1,13 @@
 import {Request, Response, NextFunction} from "express"
 import {jwtServices} from "../utils/jwtServices";
+import {WithId} from "mongodb";
+import {UserDbType} from "../db/dbTypes";
 
-export const authTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export interface RequestWithUser extends Request {
+    user: WithId<UserDbType>;
+}
+
+export const authTokenMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const auth = req.headers['authorization'] as string
     if (!auth) {
         res.sendStatus(401)
@@ -12,7 +18,6 @@ export const authTokenMiddleware = async (req: Request, res: Response, next: Nex
     if (!user) {
         return res.sendStatus(401)
     }
-    // @ts-ignore
     req.user = user
     return  next()
 }
