@@ -37,3 +37,10 @@ export type TokenBlackListDbType = {
     userId: string
     refreshToken: string
     }
+
+export type SessionsDbType = {
+    _id?: ObjectId
+    userId: string
+    deviceId: string
+    iat: string
+}

@@ -4,7 +4,7 @@ import {SETTINGS} from "../settings";
 
 export const jwtServices = {
     async createJwt(userId: string) {
-        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '10s'})
+        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '10m'})
     },
 
     async verify(token: string) {
@@ -26,6 +26,16 @@ export const jwtServices = {
     },
 
     async createRefreshToken(userId: string) {
-        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '20s'})
+        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '20m'})
     },
+
+    async getIatFromJwtToken(token: string) {
+        const decode = jwt.decode(token) as jwt.JwtPayload
+        if (!decode || !decode.iat) {
+            return
+        }
+        const issueAt = new Date(decode.iat * 1000) // Преобразуем в дату
+        console.log(issueAt);
+
+    }
 }

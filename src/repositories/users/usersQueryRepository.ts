@@ -1,4 +1,4 @@
-import {BlogDbType, UserDbType} from "../../db/dbTypes";
+import {BlogDbType, UserDbType} from "../../types/dbTypes";
 import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsQueryRepository";
 import {getFromBD, getTotalCount, helper} from "../utils";
 import {mapToOutputUsers} from "./usersRepository";

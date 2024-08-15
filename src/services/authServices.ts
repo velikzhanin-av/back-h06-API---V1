@@ -19,6 +19,7 @@ export const authServices = {
             if (await bcryptService.checkPassword(body.password, user.password)) {
                 const accessToken: string  = await jwtServices.createJwt(user._id.toString())
                 const refreshToken: string = await jwtServices.createRefreshToken(user._id.toString())
+
                 const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
                 const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
                 if (!resultAccessToken || !resultRefreshToken) {

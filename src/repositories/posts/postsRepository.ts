@@ -1,6 +1,6 @@
 import {commentCollection, postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {PostDbType} from "../../db/dbTypes";
+import {PostDbType} from "../../types/dbTypes";
 import {db} from "../../db/db";
 import {Request} from "express";
 

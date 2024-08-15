@@ -1,5 +1,5 @@
 import {blogCollection, postCollection} from "../../db/mongoDb";
-import {BlogDbType, PostDbType} from "../../db/dbTypes";
+import {BlogDbType, PostDbType} from "../../types/dbTypes";
 import {SortDirection} from "mongodb";
 import {mapToOutputPosts} from "../posts/postsRepository";
 import {getTotalCount, helper} from "../utils";
