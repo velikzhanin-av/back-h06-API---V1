@@ -9,5 +9,8 @@ app.use(cors())  // allow any front make requests endpoints
 app.use(cookieParser())  // allow middleware parse cookie
 
 app.get('/', async (req: Request, res: Response) => {
+    console.log(req.headers['user-agent'])
+    console.log(req.ip)
+    console.log(req.originalUrl)
     res.send({ version: '8.1' });
 });

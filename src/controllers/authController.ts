@@ -4,7 +4,13 @@ import { RequestWithUser } from "../types/usersTypes";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
-        const result = await authServices.login(req.body)
+        // TODO передавать весь объект или только pass, user и т.п.
+        const result = await authServices.login({
+            loginOrEmail: req.body.loginOrEmail,
+            password: req.body.password,
+            userAgent: req.headers['user-agent'] || '',
+            ip: req.ip || '',
+        })
         if (!result) {
             res.sendStatus(401)
             return

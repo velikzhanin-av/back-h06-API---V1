@@ -31,11 +31,12 @@ export const jwtServices = {
 
     async getIatFromJwtToken(token: string) {
         const decode = jwt.decode(token) as jwt.JwtPayload
-        if (!decode || !decode.iat) {
+        if (!decode || !decode.iat || !decode.exp) {
             return
         }
-        const issueAt = new Date(decode.iat * 1000) // Преобразуем в дату
-        console.log(issueAt);
+        const iat: Date = new Date(decode.iat * 1000) // Преобразуем в дату
+        const exp: Date = new Date(decode.exp * 1000) // Преобразуем в дату
+        return {iat, exp}
 
     }
 }
