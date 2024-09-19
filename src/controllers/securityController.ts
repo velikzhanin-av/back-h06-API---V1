@@ -1,6 +1,8 @@
 import {Request, Response} from "express";
 import {securityQueryRepository} from "../repositories/security/securityQueryRepository";
 import {RequestWithUser} from "../types/usersTypes";
+import {securityServices} from "../services/securityServices";
+import {ResultStatusHttp} from "../types/resultCode";
 
 export const securityController = {
 
@@ -10,4 +12,10 @@ export const securityController = {
             .status(200)
             .json(activeSession)
     },
+
+    async deleteSessionById(req: RequestWithUser, res: Response) {
+        const result = await securityServices.deleteSessionById(req.params.deviceId, req.user!._id.toString())
+        res.sendStatus(ResultStatusHttp[result])
+    },
+
 }

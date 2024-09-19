@@ -41,7 +41,6 @@ export type TokenBlackListDbType = {
 export type SessionsDbType = {
     _id?: ObjectId
     userId: string
-    sessionId: string
     iat: Date
     exp: Date
     ip: string

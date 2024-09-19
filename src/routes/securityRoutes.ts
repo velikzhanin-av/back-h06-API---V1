@@ -8,3 +8,7 @@ export const securityRouter = Router()
 securityRouter.get('/devices',
     authTokenMiddleware,
     securityController.getActiveSessions)
+securityRouter.delete('/devices/:deviceId',
+    authTokenMiddleware,
+    securityController.deleteSessionById
+    )

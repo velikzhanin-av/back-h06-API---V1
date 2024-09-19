@@ -32,7 +32,6 @@ export const authServices = {
                     return false
                 }
                 const resultCreateSession = await authRepository.createSession({userId,
-                sessionId: '',
                     iat,
                     exp,
                     ip: data.ip,

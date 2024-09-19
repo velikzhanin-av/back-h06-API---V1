@@ -22,7 +22,6 @@ export const authRepository = {
 
     async createSession(dataSession: {
         userId: string,
-        sessionId: string,
         iat: Date,
         exp: Date,
         ip: string,
