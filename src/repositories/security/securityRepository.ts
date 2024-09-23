@@ -15,8 +15,23 @@ export const securityRepository = {
         }
     },
 
+    async deleteSessionFromArray(sessions: Array<string>, userId: string) {
+        try {
+            return await sessionsCollection.deleteMany({
+                deviceName: {$in: sessions},
+                userId
+            })
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    },
+
     async findSessionById(id: string) {
         return await sessionsCollection.findOne({_id: new ObjectId(id)})
     },
 
+    async findSessionByUserId(userId: string) {
+        return await sessionsCollection.find({userId: userId}).toArray()
+    },
 }

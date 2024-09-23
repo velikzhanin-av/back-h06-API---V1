@@ -12,3 +12,7 @@ securityRouter.delete('/devices/:deviceId',
     authTokenMiddleware,
     securityController.deleteSessionById
     )
+securityRouter.delete('/devices',
+    authTokenMiddleware,
+    securityController.deleteAllOtherSession
+)
