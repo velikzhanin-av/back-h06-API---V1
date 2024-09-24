@@ -4,7 +4,6 @@ import { RequestWithUser } from "../types/usersTypes";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
-        // TODO передавать весь объект или только pass, user и т.п.
         const result = await authServices.login({
             loginOrEmail: req.body.loginOrEmail,
             password: req.body.password,
@@ -18,6 +17,9 @@ export const authController = {
         res
             .cookie('refreshToken',
                 result.refreshToken,
+                {httpOnly: true, secure: true})
+            .cookie('sessionId',
+                result.sessionId,
                 {httpOnly: true, secure: true})
             .status(200)
             .json({accessToken: result.accessToken})

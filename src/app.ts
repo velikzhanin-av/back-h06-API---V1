@@ -5,6 +5,13 @@ import {Request, Response} from "express";
 import session from "express-session";
 import {SETTINGS} from "./settings";
 
+// Расширяем интерфейс SessionData для хранения sessionId
+declare module 'express-session' {
+    interface SessionData {
+        sessionId?: string;
+    }
+}
+
 export const app = express()
 app.use(express.json())  // create body any requests
 app.use(cors())  // allow any front make requests endpoints
@@ -22,11 +29,7 @@ app.use(
 )
 
 app.get('/', async (req: Request, res: Response) => {
-    console.log(req.sessionID)
-    if (req.cookies.sid) {
-        console.log(req.cookies.sid)
-        res.sendStatus(200)
-        return
-    }
-    res.cookie('sid', req.sessionID).sendStatus(200)
+    req.session.sessionId  = '123'
+    console.log(req.session)
+    res.sendStatus(200)
 })

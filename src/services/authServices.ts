@@ -28,19 +28,17 @@ export const authServices = {
                 const exp = tokenData!.exp
                 const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
                 const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
-                if (!resultAccessToken || !resultRefreshToken) {
-                    return false
-                }
+                if (!resultAccessToken || !resultRefreshToken) return false
                 const resultCreateSession = await authRepository.createSession({userId,
                     iat,
                     exp,
                     ip: data.ip,
                     deviceName: data.userAgent
                 })
-                return {accessToken, refreshToken}
-            } else {
-                return false
-            }
+                if (resultCreateSession) {
+                    return {accessToken, refreshToken, sessionId: resultCreateSession.insertedId.toString()}
+                } else return false
+            } else return false
 
         }
     },
