@@ -1,7 +1,9 @@
 import {Request, Response, NextFunction} from "express"
 import {jwtServices} from "../utils/jwtServices";
+import {RequestWithUser} from "../types/usersTypes";
+import session from 'express-session'
 
-export const authRefreshTokenMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const authRefreshTokenMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken
     if (!token) {
         res.sendStatus(401)
@@ -9,7 +11,6 @@ export const authRefreshTokenMiddleware = async (req: Request, res: Response, ne
     }
     const user = await jwtServices.verifyRefreshToken(token)
     if (!user) return res.sendStatus(401)
-    // @ts-ignore
     req.user = user
     return  next()
 }

@@ -7,6 +7,7 @@ import {usersRouter} from "./routes/usersRoutes";
 import {authRouter} from "./routes/authRoutes";
 import {testingRouter} from "./routes/testingRoutes";
 import {commentsRouter} from "./routes/commentsRoutes";
+import {securityRouter} from "./routes/securityRoutes";
 
 const start = async () => {
     app.use(SETTINGS.PATH.BLOGS, blogsRouter)
@@ -15,6 +16,7 @@ const start = async () => {
     app.use(SETTINGS.PATH.USERS, usersRouter)
     app.use(SETTINGS.PATH.AUTH, authRouter)
     app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
+    app.use(SETTINGS.PATH.SECURITY, securityRouter)
 
     if (!await connectToDB()) {
         console.log('stop')

@@ -1,4 +1,4 @@
-import {BlogDbType, PostDbType} from "../../db/dbTypes";
+import {BlogDbType, PostDbType} from "../../types/dbTypes";
 import {
     mapToOutputBlogs,
     searchNameTerm

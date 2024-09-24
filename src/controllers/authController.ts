@@ -1,9 +1,15 @@
 import {Request, Response} from "express"
 import {authServices} from "../services/authServices";
+import { RequestWithUser } from "../types/usersTypes";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
-        const result = await authServices.login(req.body)
+        const result = await authServices.login({
+            loginOrEmail: req.body.loginOrEmail,
+            password: req.body.password,
+            userAgent: req.headers['user-agent'] || '',
+            ip: req.ip || '',
+        })
         if (!result) {
             res.sendStatus(401)
             return
@@ -12,18 +18,20 @@ export const authController = {
             .cookie('refreshToken',
                 result.refreshToken,
                 {httpOnly: true, secure: true})
+            .cookie('sessionId',
+                result.sessionId,
+                {httpOnly: true, secure: true})
             .status(200)
             .json({accessToken: result.accessToken})
         return
     },
 
-    async getUserInfo(req: Request, res: Response) {
-        // @ts-ignore
+    async getUserInfo(req: RequestWithUser, res: Response) {
         const user = req.user
         res.status(200).json({
-            email: user.email,
-            login: user.login,
-            userId: user._id
+            email: user!.email,
+            login: user!.login,
+            userId: user!._id
         })
         return
     },

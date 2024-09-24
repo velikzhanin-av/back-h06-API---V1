@@ -1,6 +1,6 @@
 import {Collection, Db, MongoClient} from "mongodb";
 import {SETTINGS} from "../settings";
-import {BlogDbType, PostDbType, TokenBlackListDbType, UserDbType} from "./dbTypes";
+import {BlogDbType, PostDbType, SessionsDbType, TokenBlackListDbType, UserDbType} from "../types/dbTypes";
 
 // получение доступа к бд
 const client: MongoClient = new MongoClient(SETTINGS.MONGO_URL)
@@ -12,6 +12,7 @@ export const postCollection: Collection<PostDbType> = db.collection<any>(SETTING
 export const userCollection: Collection<UserDbType> = db.collection<any>(SETTINGS.USER_COLLECTION_NAME)
 export const commentCollection: Collection<UserDbType> = db.collection<any>(SETTINGS.COMMENTS_COLLECTION_NAME)
 export const tokenBlackListCollection: Collection<TokenBlackListDbType> = db.collection<any>(SETTINGS.TOKEN_BLACK_LIST)
+export const sessionsCollection: Collection<SessionsDbType> = db.collection<any>(SETTINGS.SESSIONS_COLLECTION_NAME)
 
 
 // проверка подключения к бд

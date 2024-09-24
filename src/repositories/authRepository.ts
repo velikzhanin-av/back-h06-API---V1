@@ -1,4 +1,4 @@
-import {tokenBlackListCollection} from "../db/mongoDb";
+import {sessionsCollection, tokenBlackListCollection} from "../db/mongoDb";
 
 export const authRepository = {
     async addTokenToBlackList(refreshToken: string, userId: string) {
@@ -14,6 +14,21 @@ export const authRepository = {
     async checkRefreshTokenInBlackList(refreshToken: string) {
         try {
             return await tokenBlackListCollection.findOne({refreshToken})
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    },
+
+    async createSession(dataSession: {
+        userId: string,
+        iat: Date,
+        exp: Date,
+        ip: string,
+        deviceName: string,
+    }) {
+        try {
+            return await sessionsCollection.insertOne(dataSession)
         } catch (err) {
             console.log(err)
             return false
