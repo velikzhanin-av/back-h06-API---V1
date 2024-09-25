@@ -21,6 +21,9 @@ export const authController = {
             .cookie('sessionId',
                 result.sessionId,
                 {httpOnly: true, secure: true})
+            .cookie('deviceId',
+                result.deviceId,
+                {httpOnly: true, secure: true})
             .status(200)
             .json({accessToken: result.accessToken})
         return
@@ -129,9 +132,8 @@ export const authController = {
         return
     },
 
-    async refreshToken(req: Request, res: Response) {
-        // @ts-ignore
-        const result = await authServices.refreshToken(req.cookies.refreshToken, req.user)
+    async refreshToken(req: RequestWithUser, res: Response) {
+        const result = await authServices.refreshToken(req.cookies.refreshToken, req.cookies.deviceId, req.user)
         if (!result) {
             res.sendStatus(401)
             return

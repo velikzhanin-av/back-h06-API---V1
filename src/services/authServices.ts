@@ -21,8 +21,9 @@ export const authServices = {
         } else {
             if (await bcryptService.checkPassword(data.password, user.password)) {
                 const userId = user._id.toString()
-                const accessToken: string  = await jwtServices.createJwt(userId)
-                const refreshToken: string = await jwtServices.createRefreshToken(userId)
+                const deviceId = randomUUID()
+                const accessToken: string  = await jwtServices.createJwt(userId, deviceId)
+                const refreshToken: string = await jwtServices.createRefreshToken(userId, deviceId)
                 const tokenData = await jwtServices.getIatFromJwtToken(refreshToken)
                 const iat = tokenData!.iat
                 const exp = tokenData!.exp
@@ -30,13 +31,14 @@ export const authServices = {
                 const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
                 if (!resultAccessToken || !resultRefreshToken) return false
                 const resultCreateSession = await authRepository.createSession({userId,
+                    deviceId,
                     iat,
                     exp,
                     ip: data.ip,
                     deviceName: data.userAgent
                 })
                 if (resultCreateSession) {
-                    return {accessToken, refreshToken, sessionId: resultCreateSession.insertedId.toString()}
+                    return {accessToken, refreshToken, sessionId: resultCreateSession.insertedId.toString(), deviceId}
                 } else return false
             } else return false
 
@@ -121,15 +123,15 @@ export const authServices = {
         return result
     },
 
-    async refreshToken(token: string, user: any) {
+    async refreshToken(token: string, deviceId: string, user: any) {
         const isValidToken = await this.checkRefreshTokenInBlackList(token)
         if (isValidToken) return
 
         const addTokenToBlackList = await authRepository.addTokenToBlackList(token, user)
         if (!addTokenToBlackList) return
 
-        const accessToken  = await jwtServices.createJwt(user)
-        const refreshToken  = await jwtServices.createRefreshToken(user)
+        const accessToken  = await jwtServices.createJwt(user, deviceId)
+        const refreshToken  = await jwtServices.createRefreshToken(user, deviceId)
         const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
         const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
         if (!accessToken || !refreshToken) return

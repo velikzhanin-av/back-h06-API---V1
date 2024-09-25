@@ -3,8 +3,8 @@ import {usersRepository} from "../repositories/users/usersRepository";
 import {SETTINGS} from "../settings";
 
 export const jwtServices = {
-    async createJwt(userId: string) {
-        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '10m'})
+    async createJwt(userId: string, deviceId: string) {
+        return jwt.sign({userId, deviceId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '20s'})
     },
 
     async verify(token: string) {
@@ -19,14 +19,15 @@ export const jwtServices = {
     async verifyRefreshToken(token: string) {
         try {
             jwt.verify(token, SETTINGS.TOKEN_SECRET_KEY)
+            console.log('valid');
         } catch (err) {
             return
         }
         return await usersRepository.verifyRefreshToken(token)
     },
 
-    async createRefreshToken(userId: string) {
-        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '20m'})
+    async createRefreshToken(userId: string, deviceId: string) {
+        return jwt.sign({userId, deviceId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '40s'})
     },
 
     async getIatFromJwtToken(token: string) {
