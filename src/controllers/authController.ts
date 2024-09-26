@@ -15,7 +15,7 @@ export const authController = {
             return
         }
         res
-            .cookie('refreshToken',
+            .cookie('refreshToken!!!!!',
                 result.refreshToken,
                 {httpOnly: true, secure: true})
             .cookie('sessionId',
@@ -26,6 +26,7 @@ export const authController = {
                 {httpOnly: true, secure: true})
             .status(200)
             .json({accessToken: result.accessToken})
+        console.log(res.cookie);
         return
     },
 

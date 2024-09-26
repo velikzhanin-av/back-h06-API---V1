@@ -34,4 +34,5 @@ export const securityRepository = {
     async findSessionByUserId(userId: string) {
         return await sessionsCollection.find({userId: userId}).toArray()
     },
+
 }

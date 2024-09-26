@@ -7,7 +7,6 @@ import {authRefreshTokenMiddleware} from "../middlewares/authRefreshTokenMiddlew
 export const securityRouter = Router()
 
 securityRouter.get('/devices',
-    authRefreshTokenMiddleware,
     securityController.getActiveSessions)
 securityRouter.delete('/devices/:deviceId',
     authTokenMiddleware,

@@ -22,5 +22,15 @@ export const securityServices = {
         }
         await securityRepository.deleteSessionFromArray(sessionsForDelete, userId)
         return 'NoContent'
+    },
+
+    async findUserIdBySessionId(sessionId: string) {
+        const user: WithId<SessionsDbType> | null = await securityRepository.findSessionById(sessionId)
+        if (!user) return
+        return user.userId.toString()
+
+        // // TODO узнать как правильно. запрашивать здест или отдавать в контроллер и оттуда уже запрос в квери репозиторий
+        // return await securityRepository.findSessionByUserId(user._id.toString())
+
     }
 }
