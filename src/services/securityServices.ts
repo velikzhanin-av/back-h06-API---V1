@@ -1,6 +1,7 @@
 import {securityRepository} from "../repositories/security/securityRepository";
 import {WithId} from "mongodb";
 import {SessionsDbType} from "../types/dbTypes";
+import {jwtServices} from "../utils/jwtServices";
 
 export const securityServices = {
 
@@ -24,13 +25,18 @@ export const securityServices = {
         return 'NoContent'
     },
 
-    async findUserIdBySessionId(sessionId: string) {
-        const user: WithId<SessionsDbType> | null = await securityRepository.findSessionById(sessionId)
-        if (!user) return
-        return user.userId.toString()
+    async findActiveSessions(refreshToken: string) {
+        const tokenData: {iat: Date, exp: Date} | undefined = await jwtServices.getIatFromJwtToken(refreshToken)
+        if (!tokenData) {
+            return
+        }
 
-        // // TODO узнать как правильно. запрашивать здест или отдавать в контроллер и оттуда уже запрос в квери репозиторий
-        // return await securityRepository.findSessionByUserId(user._id.toString())
+        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIat(tokenData.iat)
+        if (!session) {
+            return
+        }
+
+        return session.userId
 
     }
 }

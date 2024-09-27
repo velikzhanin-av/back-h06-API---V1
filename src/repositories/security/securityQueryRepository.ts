@@ -6,7 +6,7 @@ export const mapToOutputSessions = (sessions: SessionsDbType) => {
         ip: sessions.ip,
         title: sessions.deviceName,
         lastActiveDate: sessions.iat,
-        deviceId: sessions._id!.toString()
+        deviceId: sessions.deviceId
     }
 }
 

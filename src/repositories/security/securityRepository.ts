@@ -35,4 +35,8 @@ export const securityRepository = {
         return await sessionsCollection.find({userId: userId}).toArray()
     },
 
+    async findSessionByIat(iat: Date) {
+        return await sessionsCollection.findOne({iat})
+    },
+
 }

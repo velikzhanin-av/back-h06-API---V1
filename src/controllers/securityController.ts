@@ -5,26 +5,24 @@ import {securityServices} from "../services/securityServices";
 import {ResultStatusHttp} from "../types/resultCode";
 import {WithId} from "mongodb";
 import {SessionsDbType} from "../types/dbTypes";
+import {jwtServices} from "../utils/jwtServices";
+import {securityRepository} from "../repositories/security/securityRepository";
 
 export const securityController = {
 
     async getActiveSessions(req: RequestWithUser, res: Response) {
-        console.log(req.cookies);
-        const userId: string | undefined = await securityServices.findUserIdBySessionId(req.cookies.sessionId)
+        const userId: string | undefined = await securityServices.findActiveSessions(req.cookies.refreshToken)
         if (!userId) {
-            res.sendStatus(401)
+            res
+                .sendStatus(401)
             return
         }
+
         const activeSession: activeSession[] | undefined = await securityQueryRepository.findActiveSessionByUserId(userId)
         res
             .status(200)
             .json(activeSession)
 
-
-        // const activeSession = await securityQueryRepository.()
-        // res
-        //     .status(200)
-        //     .json(activeSession)
     },
 
     async deleteSessionById(req: RequestWithUser, res: Response) {
