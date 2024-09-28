@@ -1,5 +1,6 @@
 import {userCollection} from "../../db/mongoDb";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
+import {UserDbType} from "../../types/dbTypes";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -15,6 +16,11 @@ export const usersRepository = {
         const result = await userCollection.insertOne(newUser)
         // TODO проверить позже изменение переменной
         return mapToOutputUsers(newUser)
+    },
+
+    async findUserById (id: any)  {
+        const user: WithId<UserDbType> | null = await userCollection.findOne({_id: new ObjectId(id)})
+        return user
     },
 
     async deleteUser(id: string)  {

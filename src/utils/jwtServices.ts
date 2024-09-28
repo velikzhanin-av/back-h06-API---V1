@@ -19,10 +19,10 @@ export const jwtServices = {
     async verifyRefreshToken(token: string) {
         try {
             jwt.verify(token, SETTINGS.TOKEN_SECRET_KEY)
-            console.log('valid');
         } catch (err) {
             return
         }
+
         return await usersRepository.verifyRefreshToken(token)
     },
 

@@ -5,9 +5,9 @@ import {mapToOutputSessions} from "./securityQueryRepository";
 
 export const securityRepository = {
 
-    async deleteSession(id: string) {
+    async deleteSessionByDeviceId(deviceId:string) {
         try {
-            const result = await sessionsCollection.deleteOne({_id: new ObjectId(id)})
+            const result = await sessionsCollection.deleteOne({deviceId})
             return result.deletedCount
         } catch (err) {
             console.log(err)
@@ -27,8 +27,8 @@ export const securityRepository = {
         }
     },
 
-    async findSessionById(id: string) {
-        return await sessionsCollection.findOne({_id: new ObjectId(id)})
+    async findSessionById(deviceId: string) {
+        return await sessionsCollection.findOne({deviceId})
     },
 
     async findSessionByUserId(userId: string) {
@@ -37,6 +37,12 @@ export const securityRepository = {
 
     async findSessionByIat(iat: Date) {
         return await sessionsCollection.findOne({iat})
+    },
+
+    async findUserIdByIat(iat: Date) {
+        const session: WithId<SessionsDbType> | null = await this.findSessionByIat(iat)
+        if (!session) return
+        return session
     },
 
 }

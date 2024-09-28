@@ -5,11 +5,13 @@ import {jwtServices} from "../utils/jwtServices";
 
 export const securityServices = {
 
-    async deleteSessionById(id: string, userId: string)  {
-        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionById(id)
+    async deleteSessionById(deviceId: string, userId: string)  {
+
+        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionById(deviceId)
         if (!session) return 'NotFound'
         if (session.userId !== userId) return 'Forbidden'
-        const resultDelete = await securityRepository.deleteSession(id)
+        const resultDelete = await securityRepository.deleteSessionByDeviceId(deviceId)
+        if (!resultDelete) return 'NotFound'
         return 'NoContent'
     },
 

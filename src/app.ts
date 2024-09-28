@@ -29,7 +29,5 @@ app.use(cookieParser())  // allow middleware parse cookie
 // )
 
 app.get('/', async (req: Request, res: Response) => {
-    req.session.sessionId  = '123'
-    console.log(req.session)
     res.sendStatus(200)
 })
