@@ -45,8 +45,8 @@ export const securityRepository = {
     //     return session
     // },
 
-    async updateIat(id: ObjectId, iat: Date) {
-        const result = await sessionsCollection.updateOne({_id: id}, {$set: {iat}})
+    async updateIat(id: ObjectId, iat: Date, exp: Date) {
+        const result = await sessionsCollection.updateOne({_id: id}, {$set: {iat, exp}})
         return result.modifiedCount
     },
 

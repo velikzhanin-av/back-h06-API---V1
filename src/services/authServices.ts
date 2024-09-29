@@ -155,7 +155,7 @@ export const authServices = {
         if (!tokenDataNew) {
             return
         }
-        const updateIat: number = await securityRepository.updateIat(session._id, tokenDataNew.iat)
+        const updateIat: number = await securityRepository.updateIat(session._id, tokenDataNew.iat, tokenDataNew.exp)
         if (!updateIat) return
 
         const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
