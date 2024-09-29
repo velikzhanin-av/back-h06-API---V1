@@ -5,6 +5,7 @@ import {usersRepository} from "../repositories/users/usersRepository";
 import {jwtServices} from "../utils/jwtServices";
 import {nodemailerService} from "./nodemailerService";
 import {authRepository} from "../repositories/authRepository";
+import {securityRepository} from "../repositories/security/securityRepository";
 
 export const authServices = {
 
@@ -23,7 +24,8 @@ export const authServices = {
                 const deviceId = randomUUID()
                 const accessToken: string  = await jwtServices.createJwt(userId, deviceId)
                 const refreshToken: string = await jwtServices.createRefreshToken(userId, deviceId)
-                const tokenData = await jwtServices.getIatFromJwtToken(refreshToken)
+                const tokenData = await jwtServices.getDataFromJwtToken(refreshToken)
+
                 const iat = tokenData!.iat
                 const exp = tokenData!.exp
                 const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
@@ -123,14 +125,39 @@ export const authServices = {
     },
 
     async refreshToken(token: string, deviceId: string, user: any) {
-        const isValidToken = await this.checkRefreshTokenInBlackList(token)
-        if (isValidToken) return
+        // const isValidToken = await this.checkRefreshTokenInBlackList(token)
+        // if (isValidToken) return
+        //
+        // const addTokenToBlackList = await authRepository.addTokenToBlackList(token, user)
+        // if (!addTokenToBlackList) return
 
-        const addTokenToBlackList = await authRepository.addTokenToBlackList(token, user)
-        if (!addTokenToBlackList) return
+        const tokenData: {
+            iat: Date,
+            exp: Date,
+            deviceId: string
+        } | undefined = await jwtServices.getDataFromJwtToken(token)
+        if (!tokenData) {
+            return
+        }
 
-        const accessToken  = await jwtServices.createJwt(user, deviceId)
-        const refreshToken  = await jwtServices.createRefreshToken(user, deviceId)
+        const session = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
+        if (!session) return
+
+
+        const accessToken  = await jwtServices.createJwt(user._id.toString(), deviceId)
+        const refreshToken  = await jwtServices.createRefreshToken(user._id.toString(), deviceId)
+
+        const tokenDataNew: {
+            iat: Date,
+            exp: Date,
+            deviceId: string
+        } | undefined = await jwtServices.getDataFromJwtToken(refreshToken)
+        if (!tokenDataNew) {
+            return
+        }
+        const updateIat: number = await securityRepository.updateIat(session._id, tokenDataNew.iat)
+        if (!updateIat) return
+
         const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
         const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
         if (!accessToken || !refreshToken) return
@@ -141,6 +168,10 @@ export const authServices = {
     async checkRefreshTokenInBlackList(refreshToken: string) {
         return await authRepository.checkRefreshTokenInBlackList(refreshToken)
     },
+
+    // async verifyRefreshToken(refreshToken: string, deviceId: string) {
+    //
+    // }
 
     async logout(refreshToken: string, user: any) {
         const isValidToken = await this.checkRefreshTokenInBlackList(refreshToken)

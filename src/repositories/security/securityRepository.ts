@@ -35,14 +35,19 @@ export const securityRepository = {
         return await sessionsCollection.find({userId: userId}).toArray()
     },
 
-    async findSessionByIat(iat: Date) {
-        return await sessionsCollection.findOne({iat})
+    async findSessionByIatAndDeviceId(iat: Date, deviceId: string) {
+        return await sessionsCollection.findOne({iat, deviceId})
     },
 
-    async findUserIdByIat(iat: Date) {
-        const session: WithId<SessionsDbType> | null = await this.findSessionByIat(iat)
-        if (!session) return
-        return session
+    // async findUserIdByIat(iat: Date) {
+    //     const session: WithId<SessionsDbType> | null = await this.findSessionByIat(iat)
+    //     if (!session) return
+    //     return session
+    // },
+
+    async updateIat(id: ObjectId, iat: Date) {
+        const result = await sessionsCollection.updateOne({_id: id}, {$set: {iat}})
+        return result.modifiedCount
     },
 
 }

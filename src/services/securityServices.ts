@@ -28,12 +28,16 @@ export const securityServices = {
     },
 
     async findActiveSessions(refreshToken: string) {
-        const tokenData: {iat: Date, exp: Date} | undefined = await jwtServices.getIatFromJwtToken(refreshToken)
+        const tokenData: {
+            iat: Date,
+            exp: Date,
+            deviceId: string
+        } | undefined = await jwtServices.getDataFromJwtToken(refreshToken)
         if (!tokenData) {
             return
         }
 
-        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIat(tokenData.iat)
+        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
         if (!session) {
             return
         }
