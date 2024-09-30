@@ -47,3 +47,10 @@ export type SessionsDbType = {
     ip: string
     deviceName: string
 }
+
+export type RateLimitDbType = {
+    _id?: ObjectId
+    ip: string
+    url: string
+    data: string
+}

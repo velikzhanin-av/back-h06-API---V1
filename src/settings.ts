@@ -16,6 +16,7 @@ export const SETTINGS = {
     COMMENTS_COLLECTION_NAME: process.env.COMMENTS_COLLECTION_NAME || 'comments',
     SESSIONS_COLLECTION_NAME: process.env.SESSIONS_COLLECTION_NAME || 'sessions',
     TOKEN_BLACK_LIST: process.env.TOKEN_BLACK_LIST || 'token_black_list',
+    RATE_LIMIT_COLLECTION_NAME: process.env.RATE_LIMIT_COLLECTION || 'rateLimitCollection',
     GMAIL_PASS: process.env.GMAIL_PASS,
     TOKEN_SECRET_KEY: process.env.TOKEN_SECRET_KEY || '111',
     PATH: {

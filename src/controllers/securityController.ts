@@ -11,6 +11,7 @@ import {securityRepository} from "../repositories/security/securityRepository";
 export const securityController = {
 
     async getActiveSessions(req: RequestWithUser, res: Response) {
+        console.log(req.ip)
         const userId: string | undefined = await securityServices.findActiveSessions(req.cookies.refreshToken)
         if (!userId) {
             res
