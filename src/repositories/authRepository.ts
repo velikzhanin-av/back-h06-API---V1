@@ -1,4 +1,4 @@
-import {sessionsCollection, tokenBlackListCollection} from "../db/mongoDb";
+import {rateLimitCollection, sessionsCollection, tokenBlackListCollection} from "../db/mongoDb";
 
 export const authRepository = {
     async addTokenToBlackList(refreshToken: string, userId: string) {
@@ -30,6 +30,27 @@ export const authRepository = {
     }) {
         try {
             return await sessionsCollection.insertOne(dataSession)
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    },
+
+    async checkIpInRateLimit(ip: string, url: string) {
+        try {
+            return await rateLimitCollection.find({ip, url}).toArray()
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    },
+
+    async addIpInRateLimit(ip: string,
+                           url: string,
+                           requestCount: number,
+                           firstRequestTime: Date) {
+        try {
+            return await rateLimitCollection.insertOne({ip, url, requestCount, firstRequestTime})
         } catch (err) {
             console.log(err)
             return false

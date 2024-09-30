@@ -52,5 +52,6 @@ export type RateLimitDbType = {
     _id?: ObjectId
     ip: string
     url: string
-    data: string
+    requestCount: number
+    firstRequestTime: Date
 }
