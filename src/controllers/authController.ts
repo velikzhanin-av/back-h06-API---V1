@@ -14,6 +14,10 @@ export const authController = {
             res.sendStatus(401)
             return
         }
+        if (!result.refreshToken) {
+            console.log(result)
+            console.log(req)
+        }
         res
             .cookie('refreshToken',
                 result.refreshToken,
@@ -148,14 +152,12 @@ export const authController = {
         return
     },
 
-    async logout(req: Request, res: Response) {
-        // @ts-ignore
-        const result = await authServices.logout(req.cookies.refreshToken, req.user)
+    async logout(req: RequestWithUser, res: Response) {
+        const result = await authServices.logout(req.cookies.deviceId)
         if (!result) {
             res.sendStatus(401)
             return
         }
-
         res.sendStatus(204)
-    }
+    },
 }

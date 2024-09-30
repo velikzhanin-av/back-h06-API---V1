@@ -173,13 +173,13 @@ export const authServices = {
     //
     // }
 
-    async logout(refreshToken: string, user: any) {
-        const isValidToken = await this.checkRefreshTokenInBlackList(refreshToken)
-        if (isValidToken) return
+    async logout(deviceId: string) {
+        // const isValidToken = await this.checkRefreshTokenInBlackList(refreshToken)
+        // if (isValidToken) return
 
-        const addTokenToBlackList = await authRepository.addTokenToBlackList(refreshToken, user._id)
-        if (!addTokenToBlackList) return
-        return true
+        return await securityRepository.deleteSessionByDeviceId(deviceId)
+
+
     }
 
 }

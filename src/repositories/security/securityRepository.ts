@@ -31,6 +31,7 @@ export const securityRepository = {
         return await sessionsCollection.findOne({deviceId})
     },
 
+
     async findSessionByUserId(userId: string) {
         return await sessionsCollection.find({userId: userId}).toArray()
     },

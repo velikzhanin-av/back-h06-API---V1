@@ -10,7 +10,6 @@ export const authRefreshTokenMiddleware = async (req: RequestWithUser, res: Resp
     const refreshToken = req.cookies.refreshToken
 
     if (!refreshToken) {
-        console.log(`refreshToken -  ${refreshToken}`)
         res.sendStatus(401)
         return
     }

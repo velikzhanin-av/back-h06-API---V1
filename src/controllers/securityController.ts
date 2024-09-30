@@ -31,8 +31,8 @@ export const securityController = {
     },
 
     async deleteAllOtherSession(req: RequestWithUser, res: Response) {
-        const result = await securityServices.deleteAllOtherSession('123', req.user!._id.toString())
-
+        const result: string = await securityServices.deleteAllOtherSession(req.cookies.sessionId, req.user!._id.toString())
+        res.sendStatus(204)
     },
 
 }
