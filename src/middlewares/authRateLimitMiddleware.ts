@@ -3,27 +3,20 @@ import {NextFunction, Response} from "express";
 import {authRepository} from "../repositories/authRepository";
 
 export const authRateLimitMiddleware = async (req: RequestWithUser, res: Response, next: NextFunction) => {
-    const ip = req.ip
+    const ip = req.ip || '0.0.0.0'
     const url = req.originalUrl
-    const currentTime = new Date()
-    const timeWindow = 10 * 1000
-    const maxRequests = 5
+    const checkDate = Date.now() - 10 * 1000
 
-    if (!ip) return next()
-    const checkIp = await authRepository.checkIpInRateLimit(ip, url)
-    if (!checkIp) {
-        const addLog = await authRepository.addIpInRateLimit(ip, url, 1, currentTime)
-        return next()
+    const addLog = await authRepository.addIpInRateLimit(ip, url, Date.now())
+
+    let count  = await authRepository.checkRateLimit(ip, url, checkDate)
+    if (!count) return next()
+
+    if (count > 5) {
+        res.sendStatus(429)
+        return
     }
 
-    if (!checkIp.length) {
-        const addLog = await authRepository.addIpInRateLimit(ip, url, 1, currentTime)
-        return next()
-    }
-
-    const addLog = await authRepository.addIpInRateLimit(ip, url, 1, currentTime)
-
-    if (currentTime.getTime() - checkIp[checkIp.length - 1].firstRequestTime.getTime() > timeWindow) return next()
-    if (checkIp.length > maxRequests) return res.sendStatus(429)
     return next()
+
     }

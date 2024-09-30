@@ -36,9 +36,11 @@ export const authRepository = {
         }
     },
 
-    async checkIpInRateLimit(ip: string, url: string) {
+    async checkRateLimit(ip: string,
+                         url: string,
+                         checkDate: number) {
         try {
-            return await rateLimitCollection.find({ip, url}).toArray()
+            return await rateLimitCollection.countDocuments({ip, url, date: {$gte: checkDate}})
         } catch (err) {
             console.log(err)
             return false
@@ -47,10 +49,9 @@ export const authRepository = {
 
     async addIpInRateLimit(ip: string,
                            url: string,
-                           requestCount: number,
-                           firstRequestTime: Date) {
+                           date: number) {
         try {
-            return await rateLimitCollection.insertOne({ip, url, requestCount, firstRequestTime})
+            return await rateLimitCollection.insertOne({ip, url, date})
         } catch (err) {
             console.log(err)
             return false
