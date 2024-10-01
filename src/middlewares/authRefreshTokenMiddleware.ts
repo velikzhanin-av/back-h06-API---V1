@@ -20,7 +20,7 @@ export const authRefreshTokenMiddleware = async (req: RequestWithUser, res: Resp
         return
     }
 
-    const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
+    const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat)
     if (!session) {
         res.sendStatus(401)
         return

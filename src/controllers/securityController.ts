@@ -3,15 +3,11 @@ import {securityQueryRepository} from "../repositories/security/securityQueryRep
 import {RequestWithUser} from "../types/usersTypes";
 import {securityServices} from "../services/securityServices";
 import {ResultStatusHttp} from "../types/resultCode";
-import {WithId} from "mongodb";
-import {SessionsDbType} from "../types/dbTypes";
-import {jwtServices} from "../utils/jwtServices";
-import {securityRepository} from "../repositories/security/securityRepository";
+
 
 export const securityController = {
 
     async getActiveSessions(req: RequestWithUser, res: Response) {
-        console.log(req.ip)
         const userId: string | undefined = await securityServices.findActiveSessions(req.cookies.refreshToken)
         if (!userId) {
             res

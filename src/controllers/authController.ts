@@ -15,8 +15,6 @@ export const authController = {
             return
         }
         if (!result.refreshToken) {
-            console.log(result)
-            console.log(req)
         }
         res
             .cookie('refreshToken',

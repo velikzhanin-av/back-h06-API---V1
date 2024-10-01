@@ -140,7 +140,7 @@ export const authServices = {
             return
         }
 
-        const session = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
+        const session = await securityRepository.findSessionByIatAndDeviceId(tokenData.deviceId)
         if (!session) return
 
 
