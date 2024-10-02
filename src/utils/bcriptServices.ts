@@ -8,6 +8,7 @@ export const bcryptService = {
     },
 
     async checkPassword(password: string, hash: string) {
-        return bcrypt.compare(password, hash)
+        const res = await bcrypt.compare(password, hash)
+        return res
     }
 }

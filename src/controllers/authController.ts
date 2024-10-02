@@ -4,6 +4,7 @@ import { RequestWithUser } from "../types/usersTypes";
 
 export const authController = {
     async postLogin(req: Request, res: Response) {
+        console.log(req.body);
         const result = await authServices.login({
             loginOrEmail: req.body.loginOrEmail,
             password: req.body.password,
@@ -45,6 +46,7 @@ export const authController = {
 
     async registration(req: Request, res: Response) {
         const result = await authServices.registerUser(req.body.login, req.body.password, req.body.email)
+        console.log(result);
         if (result.isExist) {
             res
                 .status(400)

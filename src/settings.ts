@@ -19,6 +19,8 @@ export const SETTINGS = {
     RATE_LIMIT_COLLECTION_NAME: process.env.RATE_LIMIT_COLLECTION || 'rateLimitCollection',
     GMAIL_PASS: process.env.GMAIL_PASS,
     TOKEN_SECRET_KEY: process.env.TOKEN_SECRET_KEY || '111',
+    ACCESS_TOKEN_TTL: process.env.ACCESS_TOKEN_TTL || '10s',
+    REFRESH_TOKEN_TTL: process.env.REFRESH_TOKEN_TTL || '20s',
     PATH: {
         BLOGS: '/blogs',
         TESTING: '/testing',

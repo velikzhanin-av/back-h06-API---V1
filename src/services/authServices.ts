@@ -15,10 +15,15 @@ export const authServices = {
         userAgent: string,
         ip: string,
     }) {
+        console.log(data);
         const user: any = await usersRepository.findByLoginOrEmail(data.loginOrEmail)
+        console.log(user);
         if (!user) {
             return false
         } else {
+            // console.log(data.password);
+            // console.log(user.password);
+            console.log(user);
             if (await bcryptService.checkPassword(data.password, user.password)) {
                 const userId = user._id.toString()
                 const deviceId = randomUUID()
@@ -71,6 +76,7 @@ export const authServices = {
                     isConfirmed: false
                 }
             }
+        console.log('new user' + '!' + newUser);
         const createUser = await usersRepository.createUser(newUser)
 
         const sendEmail = await nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
