@@ -1,7 +1,7 @@
 import {
     blogCollection,
     commentCollection,
-    postCollection, sessionsCollection,
+    postCollection, rateLimitCollection, sessionsCollection,
     tokenBlackListCollection,
     userCollection
 } from "../../db/mongoDb";
@@ -13,5 +13,6 @@ export const deleteAll = async () => {
     await commentCollection.deleteMany()
     await tokenBlackListCollection.deleteMany()
     await sessionsCollection.deleteMany()
+    await rateLimitCollection.deleteMany()
     return
 }

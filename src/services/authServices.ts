@@ -79,7 +79,7 @@ export const authServices = {
         console.log('new user' + '!' + newUser);
         const createUser = await usersRepository.createUser(newUser)
 
-        const sendEmail = await nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
+        const sendEmail = nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
         if (!sendEmail) {
             return result
         }
@@ -104,7 +104,7 @@ export const authServices = {
         const newConfirmationCode = randomUUID()
         const createConfirmationCode = await usersRepository.updateConfirmationCode(userInfo.email, newConfirmationCode)
 
-        if (!await nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)) {
+        if (!nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)) {
             return false
         }
         return result

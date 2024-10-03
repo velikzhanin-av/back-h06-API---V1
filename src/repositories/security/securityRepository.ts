@@ -15,12 +15,9 @@ export const securityRepository = {
         }
     },
 
-    async deleteSessionFromArray(sessions: Array<string>, userId: string) {
+    async deleteSessionFromArray(deviceId: string, userId: string) {
         try {
-            return await sessionsCollection.deleteMany({
-                deviceName: {$in: sessions},
-                userId
-            })
+            return await sessionsCollection.deleteMany({userId, deviceId: {$ne: deviceId}});
         } catch (err) {
             console.log(err)
             return false
@@ -37,7 +34,9 @@ export const securityRepository = {
     },
 
     async findSessionByIatAndDeviceId(iat: Date, deviceId: string) {
-        return await sessionsCollection.findOne({iat, deviceId})
+        const result = await sessionsCollection.findOne({iat, deviceId})
+        console.log(result);
+        return result
     },
 
     // async findUserIdByIat(iat: Date) {

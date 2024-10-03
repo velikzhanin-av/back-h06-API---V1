@@ -15,15 +15,21 @@ export const securityServices = {
         return 'NoContent'
     },
 
-    async deleteAllOtherSession(sessionId: string, userId: string) {
-        const sessions: WithId<SessionsDbType>[] = await securityRepository.findSessionByUserId(userId)
-        let sessionsForDelete = []
-        for (let s of sessions) {
-            if (s.deviceName !== sessionId) {
-                sessionsForDelete.push(s.deviceName)
-            }
+    async deleteAllOtherSession(refreshToken: string, userId: string) {
+        if (!refreshToken) {
+            return
         }
-        await securityRepository.deleteSessionFromArray(sessionsForDelete, userId)
+
+        const tokenData: {iat: Date, exp: Date, deviceId: string} | undefined = await jwtServices.getDataFromJwtToken(refreshToken)
+        if (!tokenData) {
+            return
+        }
+
+        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
+        if (!session) {
+            return
+        }
+        await securityRepository.deleteSessionFromArray(tokenData.deviceId, userId)
         return 'NoContent'
     },
 

@@ -31,7 +31,7 @@ export const jwtServices = {
     },
 
 
-    async getDataFromJwtToken(token: string) {
+    async  getDataFromJwtToken(token: string) {
         console.log(token);
         const decode = jwt.decode(token) as jwt.JwtPayload
         console.log(decode);

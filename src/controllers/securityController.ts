@@ -32,7 +32,7 @@ export const securityController = {
     },
 
     async deleteAllOtherSession(req: RequestWithUser, res: Response) {
-        const result: string = await securityServices.deleteAllOtherSession(req.cookies.sessionId, req.user!._id.toString())
+        const result: string | undefined = await securityServices.deleteAllOtherSession(req.cookies.refreshToken, req.user!._id.toString())
         res.sendStatus(204)
     },
 
