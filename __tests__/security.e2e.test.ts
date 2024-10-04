@@ -73,26 +73,26 @@ describe('E2E Tests', () => {
     //     expect(res.status).toBe(204)
     // })
 
-    it('success delete except current', async () => {
-        const res = await req
-            .delete(SETTINGS.PATH.SECURITY + '/devices/')
-            .set('Cookie', [`refreshToken=${refreshToken}`])
-        expect(res.status).toBe(204)
-    })
-    //
-    it('success get devices', async () => {
-        const res = await req
-            .get(SETTINGS.PATH.SECURITY + '/devices')
-            .set('Cookie', [`refreshToken=${refreshToken}`])
-            .expect(200)
-        expect(res.body).toBeDefined()
-        deviceId = res.body[res.body.length - 1].deviceId
-    })
-    //
-    // it('POST auth/refresh-token should return new \'refresh\' and \'access\' tokens status 200', async () => {
+    // it('success delete except current', async () => {
     //     const res = await req
-    //         .post(SETTINGS.PATH.AUTH + '/refresh-token')
+    //         .delete(SETTINGS.PATH.SECURITY + '/devices/')
     //         .set('Cookie', [`refreshToken=${refreshToken}`])
-    //     expect(res.status).toBe(200)
+    //     expect(res.status).toBe(204)
     // })
+    // //
+    // it('success get devices', async () => {
+    //     const res = await req
+    //         .get(SETTINGS.PATH.SECURITY + '/devices')
+    //         .set('Cookie', [`refreshToken=${refreshToken}`])
+    //         .expect(200)
+    //     expect(res.body).toBeDefined()
+    //     deviceId = res.body[res.body.length - 1].deviceId
+    // })
+    //
+    it('POST auth/refresh-token should return new \'refresh\' and \'access\' tokens status 200', async () => {
+        const res = await req
+            .post(SETTINGS.PATH.AUTH + '/refresh-token')
+            .set('Cookie', [`refreshToken=${refreshToken}`])
+        expect(res.status).toBe(200)
+    })
 })

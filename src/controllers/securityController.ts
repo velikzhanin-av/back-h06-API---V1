@@ -11,15 +11,7 @@ import {securityRepository} from "../repositories/security/securityRepository";
 export const securityController = {
 
     async getActiveSessions(req: RequestWithUser, res: Response) {
-        console.log(req.ip)
-        const userId: string | undefined = await securityServices.findActiveSessions(req.cookies.refreshToken)
-        if (!userId) {
-            res
-                .sendStatus(401)
-            return
-        }
-
-        const activeSession: activeSession[] | undefined = await securityQueryRepository.findActiveSessionByUserId(userId)
+        const activeSession: activeSession[] | undefined = await securityQueryRepository.findActiveSessionByUserId(req.user!._id.toString())
         res
             .status(200)
             .json(activeSession)
@@ -32,7 +24,7 @@ export const securityController = {
     },
 
     async deleteAllOtherSession(req: RequestWithUser, res: Response) {
-        const result: string | undefined = await securityServices.deleteAllOtherSession(req.cookies.refreshToken, req.user!._id.toString())
+        const result: string | undefined = await securityServices.deleteAllOtherSession(req.tokenData!.deviceId, req.user!._id.toString())
         res.sendStatus(204)
     },
 

@@ -8,21 +8,16 @@ import {securityRepository} from "../repositories/security/securityRepository";
 import {usersRepository} from "../repositories/users/usersRepository";
 
 export const authController = {
-    async postLogin(req: Request, res: Response) {
-        console.log(req.body);
+    async postLogin(req: RequestWithUser, res: Response) {
         const result = await authServices.login({
             loginOrEmail: req.body.loginOrEmail,
             password: req.body.password,
             userAgent: req.headers['user-agent'] || '',
-            ip: req.ip || '',
+            ip: req.ip || ''
         })
         if (!result) {
             res.sendStatus(401)
             return
-        }
-        if (!result.refreshToken) {
-            console.log(result)
-            console.log(req)
         }
         res
             .cookie('refreshToken',
@@ -144,18 +139,7 @@ export const authController = {
     },
 
     async refreshToken(req: RequestWithUser, res: Response) {
-        const tokenData: {iat: Date, exp: Date, deviceId: string} | undefined = await jwtServices.getDataFromJwtToken(req.cookies.refreshToken)
-        if (!tokenData) {
-            res.sendStatus(401)
-            return
-        }
-
-        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
-        if (!session) {
-            res.sendStatus(401)
-            return
-        }
-        const result = await authServices.refreshToken(req.cookies.refreshToken, tokenData.deviceId, req.user)
+        const result = await authServices.refreshToken(req.tokenData!, req.user)
         if (!result) {
             res.sendStatus(401)
             return
@@ -171,19 +155,7 @@ export const authController = {
     },
 
     async logout(req: RequestWithUser, res: Response) {
-        const tokenData: {iat: Date, exp: Date, deviceId: string} | undefined = await jwtServices.getDataFromJwtToken(req.cookies.refreshToken)
-        if (!tokenData) {
-            res.sendStatus(401)
-            return
-        }
-
-        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
-        if (!session) {
-            res.sendStatus(401)
-            return
-        }
-
-        const result = await authServices.logout(tokenData.deviceId)
+        const result = await authServices.logout(req.tokenData!.deviceId)
         if (!result) {
             res.sendStatus(401)
             return

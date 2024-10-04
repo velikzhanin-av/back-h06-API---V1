@@ -32,5 +32,6 @@ export const authRefreshTokenMiddleware = async (req: RequestWithUser, res: Resp
         return
     }
     req.user = user
+    req.tokenData = tokenData
     next()
 }

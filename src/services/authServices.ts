@@ -13,28 +13,23 @@ export const authServices = {
         loginOrEmail: string,
         password: string,
         userAgent: string,
-        ip: string,
+        ip: string
     }) {
-        console.log(data);
         const user: any = await usersRepository.findByLoginOrEmail(data.loginOrEmail)
-        console.log(user);
         if (!user) {
             return false
         } else {
-            // console.log(data.password);
-            // console.log(user.password);
-            console.log(user);
             if (await bcryptService.checkPassword(data.password, user.password)) {
                 const userId = user._id.toString()
                 const deviceId = randomUUID()
-                const accessToken: string  = await jwtServices.createJwt(userId, deviceId)
-                const refreshToken: string = await jwtServices.createRefreshToken(userId, deviceId)
-                const tokenData = await jwtServices.getDataFromJwtToken(refreshToken)
 
-                const iat = tokenData!.iat
-                const exp = tokenData!.exp
-                const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
-                const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
+                const tokens:  {accessToken: string, refreshToken: string, tokenData: {iat: Date, exp: Date, deviceId: string}} | undefined = await this.createAccessAndRefreshTokens(user._id.toString(), deviceId)
+                if (!tokens) return
+
+                const iat: Date = tokens.tokenData.iat
+                const exp: Date = tokens.tokenData.exp
+                const resultAccessToken = await usersRepository.addJwtToken(user._id, tokens.accessToken )
+                const resultRefreshToken = await usersRepository.addRefreshToken(user._id, tokens.refreshToken )
                 if (!resultAccessToken || !resultRefreshToken) return false
                 const resultCreateSession = await authRepository.createSession({userId,
                     deviceId,
@@ -44,7 +39,7 @@ export const authServices = {
                     deviceName: data.userAgent
                 })
                 if (resultCreateSession) {
-                    return {accessToken, refreshToken, sessionId: resultCreateSession.insertedId.toString(), deviceId}
+                    return {accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, sessionId: resultCreateSession.insertedId.toString(), deviceId}
                 } else return false
             } else return false
 
@@ -130,62 +125,39 @@ export const authServices = {
         return result
     },
 
-    async refreshToken(token: string, deviceId: string, user: any) {
-        // const isValidToken = await this.checkRefreshTokenInBlackList(token)
-        // if (isValidToken) return
-        //
-        // const addTokenToBlackList = await authRepository.addTokenToBlackList(token, user)
-        // if (!addTokenToBlackList) return
+    async refreshToken(tokenData: {iat: Date, exp: Date, deviceId: string}, user: any) {
+
+        const session = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
+        if (!session) return
+
+        const tokens:  {accessToken: string, refreshToken: string, tokenData: {iat: Date, exp: Date, deviceId: string}} | undefined = await this.createAccessAndRefreshTokens(user._id.toString(), tokenData.deviceId)
+        if (!tokens) return
+
+        const updateIat: number = await securityRepository.updateIat(session._id, tokens.tokenData.iat, tokens.tokenData.exp)
+        if (!updateIat) return
+
+        const resultAccessToken = await usersRepository.addJwtToken(user._id, tokens.accessToken )
+        const resultRefreshToken = await usersRepository.addRefreshToken(user._id, tokens.refreshToken )
+        if (!tokens.accessToken || !tokens.refreshToken) return
+
+        return {accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
+    },
+
+    async logout(deviceId: string) {
+        return await securityRepository.deleteSessionByDeviceId(deviceId)
+    },
+
+    async createAccessAndRefreshTokens(userId: string, deviceId: string) {
+        const accessToken: string  = await jwtServices.createJwt(userId, deviceId)
+        const refreshToken: string  = await jwtServices.createRefreshToken(userId, deviceId)
 
         const tokenData: {
             iat: Date,
             exp: Date,
             deviceId: string
-        } | undefined = await jwtServices.getDataFromJwtToken(token)
-        if (!tokenData) {
-            return
-        }
-
-        const session = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
-        if (!session) return
-
-
-        const accessToken  = await jwtServices.createJwt(user._id.toString(), deviceId)
-        const refreshToken  = await jwtServices.createRefreshToken(user._id.toString(), deviceId)
-
-        const tokenDataNew: {
-            iat: Date,
-            exp: Date,
-            deviceId: string
         } | undefined = await jwtServices.getDataFromJwtToken(refreshToken)
-        if (!tokenDataNew) {
-            return
-        }
-        const updateIat: number = await securityRepository.updateIat(session._id, tokenDataNew.iat, tokenDataNew.exp)
-        if (!updateIat) return
-
-        const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
-        const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
-        if (!accessToken || !refreshToken) return
-
-        return {accessToken, refreshToken}
+        if (!tokenData) return
+        return {accessToken, refreshToken, tokenData}
     },
-
-    async checkRefreshTokenInBlackList(refreshToken: string) {
-        return await authRepository.checkRefreshTokenInBlackList(refreshToken)
-    },
-
-    // async verifyRefreshToken(refreshToken: string, deviceId: string) {
-    //
-    // }
-
-    async logout(deviceId: string) {
-        // const isValidToken = await this.checkRefreshTokenInBlackList(refreshToken)
-        // if (isValidToken) return
-
-        return await securityRepository.deleteSessionByDeviceId(deviceId)
-
-
-    }
 
 }

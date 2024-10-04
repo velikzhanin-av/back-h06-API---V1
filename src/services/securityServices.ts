@@ -6,7 +6,6 @@ import {jwtServices} from "../utils/jwtServices";
 export const securityServices = {
 
     async deleteSessionById(deviceId: string, userId: string)  {
-
         const session: WithId<SessionsDbType> | null = await securityRepository.findSessionById(deviceId)
         if (!session) return 'NotFound'
         if (session.userId !== userId) return 'Forbidden'
@@ -15,21 +14,8 @@ export const securityServices = {
         return 'NoContent'
     },
 
-    async deleteAllOtherSession(refreshToken: string, userId: string) {
-        if (!refreshToken) {
-            return
-        }
-
-        const tokenData: {iat: Date, exp: Date, deviceId: string} | undefined = await jwtServices.getDataFromJwtToken(refreshToken)
-        if (!tokenData) {
-            return
-        }
-
-        const session: WithId<SessionsDbType> | null = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
-        if (!session) {
-            return
-        }
-        await securityRepository.deleteSessionFromArray(tokenData.deviceId, userId)
+    async deleteAllOtherSession(deviceId: string, userId: string) {
+        await securityRepository.deleteSessionFromArray(deviceId, userId)
         return 'NoContent'
     },
 
