@@ -3,8 +3,8 @@ import {usersRepository} from "../repositories/users/usersRepository";
 import {SETTINGS} from "../settings";
 
 export const jwtServices = {
-    async createJwt(userId: string) {
-        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '10m'})
+    async createJwt(userId: string, deviceId: string) {
+        return jwt.sign({userId, deviceId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: SETTINGS.ACCESS_TOKEN_TTL})
     },
 
     async verify(token: string) {
@@ -22,21 +22,27 @@ export const jwtServices = {
         } catch (err) {
             return
         }
+
         return await usersRepository.verifyRefreshToken(token)
     },
 
-    async createRefreshToken(userId: string) {
-        return jwt.sign({userId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: '20m'})
+    async createRefreshToken(userId: string, deviceId: string) {
+        return jwt.sign({userId, deviceId}, SETTINGS.TOKEN_SECRET_KEY, {expiresIn: SETTINGS.REFRESH_TOKEN_TTL})
     },
 
-    async getIatFromJwtToken(token: string) {
+
+    async  getDataFromJwtToken(token: string) {
+        console.log(token);
         const decode = jwt.decode(token) as jwt.JwtPayload
-        if (!decode || !decode.iat || !decode.exp) {
+        console.log(decode);
+        if (!decode || !decode.iat || !decode.exp || !decode.deviceId) {
             return
         }
         const iat: Date = new Date(decode.iat * 1000) // Преобразуем в дату
         const exp: Date = new Date(decode.exp * 1000) // Преобразуем в дату
-        return {iat, exp}
+        const test =  {iat, exp, deviceId: decode.deviceId}
+        console.log(test)
+        return {iat, exp, deviceId: decode.deviceId}
 
     }
 }

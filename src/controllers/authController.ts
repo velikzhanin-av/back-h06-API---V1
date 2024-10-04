@@ -1,14 +1,19 @@
-import {Request, Response} from "express"
+import {NextFunction, Request, Response} from "express"
 import {authServices} from "../services/authServices";
 import { RequestWithUser } from "../types/usersTypes";
+import {jwtServices} from "../utils/jwtServices";
+import {WithId} from "mongodb";
+import {SessionsDbType, UserDbType} from "../types/dbTypes";
+import {securityRepository} from "../repositories/security/securityRepository";
+import {usersRepository} from "../repositories/users/usersRepository";
 
 export const authController = {
-    async postLogin(req: Request, res: Response) {
+    async postLogin(req: RequestWithUser, res: Response) {
         const result = await authServices.login({
             loginOrEmail: req.body.loginOrEmail,
             password: req.body.password,
             userAgent: req.headers['user-agent'] || '',
-            ip: req.ip || '',
+            ip: req.ip || ''
         })
         if (!result) {
             res.sendStatus(401)
@@ -20,6 +25,9 @@ export const authController = {
                 {httpOnly: true, secure: true})
             .cookie('sessionId',
                 result.sessionId,
+                {httpOnly: true, secure: true})
+            .cookie('deviceId',
+                result.deviceId,
                 {httpOnly: true, secure: true})
             .status(200)
             .json({accessToken: result.accessToken})
@@ -38,6 +46,7 @@ export const authController = {
 
     async registration(req: Request, res: Response) {
         const result = await authServices.registerUser(req.body.login, req.body.password, req.body.email)
+        console.log(result);
         if (result.isExist) {
             res
                 .status(400)
@@ -129,9 +138,8 @@ export const authController = {
         return
     },
 
-    async refreshToken(req: Request, res: Response) {
-        // @ts-ignore
-        const result = await authServices.refreshToken(req.cookies.refreshToken, req.user)
+    async refreshToken(req: RequestWithUser, res: Response) {
+        const result = await authServices.refreshToken(req.tokenData!, req.user)
         if (!result) {
             res.sendStatus(401)
             return
@@ -146,14 +154,12 @@ export const authController = {
         return
     },
 
-    async logout(req: Request, res: Response) {
-        // @ts-ignore
-        const result = await authServices.logout(req.cookies.refreshToken, req.user)
+    async logout(req: RequestWithUser, res: Response) {
+        const result = await authServices.logout(req.tokenData!.deviceId)
         if (!result) {
             res.sendStatus(401)
             return
         }
-
         res.sendStatus(204)
-    }
+    },
 }

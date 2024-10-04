@@ -21,6 +21,7 @@ export const usersController = {
 
     async postUser(req: Request, res: Response) {
         const result = await usersServices.createUser(req.body)
+
         res
             .status(201)
             .json(result)

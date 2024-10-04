@@ -5,9 +5,9 @@ import {mapToOutputSessions} from "./securityQueryRepository";
 
 export const securityRepository = {
 
-    async deleteSession(id: string) {
+    async deleteSessionByDeviceId(deviceId:string) {
         try {
-            const result = await sessionsCollection.deleteOne({_id: new ObjectId(id)})
+            const result = await sessionsCollection.deleteOne({deviceId})
             return result.deletedCount
         } catch (err) {
             console.log(err)
@@ -15,23 +15,39 @@ export const securityRepository = {
         }
     },
 
-    async deleteSessionFromArray(sessions: Array<string>, userId: string) {
+    async deleteSessionFromArray(deviceId: string, userId: string) {
         try {
-            return await sessionsCollection.deleteMany({
-                deviceName: {$in: sessions},
-                userId
-            })
+            return await sessionsCollection.deleteMany({userId, deviceId: {$ne: deviceId}});
         } catch (err) {
             console.log(err)
             return false
         }
     },
 
-    async findSessionById(id: string) {
-        return await sessionsCollection.findOne({_id: new ObjectId(id)})
+    async findSessionById(deviceId: string) {
+        return await sessionsCollection.findOne({deviceId})
     },
+
 
     async findSessionByUserId(userId: string) {
         return await sessionsCollection.find({userId: userId}).toArray()
     },
+
+    async findSessionByIatAndDeviceId(iat: Date, deviceId: string) {
+        const result = await sessionsCollection.findOne({iat, deviceId})
+        console.log(result);
+        return result
+    },
+
+    // async findUserIdByIat(iat: Date) {
+    //     const session: WithId<SessionsDbType> | null = await this.findSessionByIat(iat)
+    //     if (!session) return
+    //     return session
+    // },
+
+    async updateIat(id: ObjectId, iat: Date, exp: Date) {
+        const result = await sessionsCollection.updateOne({_id: id}, {$set: {iat, exp}})
+        return result.modifiedCount
+    },
+
 }

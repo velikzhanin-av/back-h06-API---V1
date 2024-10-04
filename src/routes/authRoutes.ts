@@ -9,23 +9,29 @@ import {
     passwordValidation
 } from "../middlewares/authInputValidation";
 import {authRefreshTokenMiddleware} from "../middlewares/authRefreshTokenMiddleware";
+import {authRateLimitMiddleware} from "../middlewares/authRateLimitMiddleware";
 
 export const authRouter = Router()
 
-authRouter.post('/login', authController.postLogin)
+authRouter.post('/login',
+    authRateLimitMiddleware,
+    authController.postLogin)
 authRouter.get('/me', authTokenMiddleware,
     authController.getUserInfo)
 authRouter.post('/registration',
+    authRateLimitMiddleware,
     loginValidation,
     passwordValidation,
     emailValidation,
     authInputValidation,
     authController.registration)
 authRouter.post('/registration-confirmation',
+    authRateLimitMiddleware,
     codeValidation,
     authInputValidation,
     authController.registrationConfirmation)
 authRouter.post('/registration-email-resending',
+    authRateLimitMiddleware,
     emailValidation,
     authInputValidation,
     authController.registrationEmailResending)

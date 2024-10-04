@@ -6,14 +6,14 @@ export const mapToOutputSessions = (sessions: SessionsDbType) => {
         ip: sessions.ip,
         title: sessions.deviceName,
         lastActiveDate: sessions.iat,
-        deviceId: sessions._id!.toString()
+        deviceId: sessions.deviceId
     }
 }
 
 export const securityQueryRepository = {
 
-    async findActiveSessionById(id: string) {
-        const sessions = await sessionsCollection.find({userId: id}).toArray()
+    async findActiveSessionByUserId(userId: string) {
+        const sessions = await sessionsCollection.find({userId}).toArray()
         if (!sessions) return
         return sessions.map((session: SessionsDbType) => {
             return mapToOutputSessions(session)

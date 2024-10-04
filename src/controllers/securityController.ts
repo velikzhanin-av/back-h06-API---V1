@@ -3,14 +3,19 @@ import {securityQueryRepository} from "../repositories/security/securityQueryRep
 import {RequestWithUser} from "../types/usersTypes";
 import {securityServices} from "../services/securityServices";
 import {ResultStatusHttp} from "../types/resultCode";
+import {WithId} from "mongodb";
+import {SessionsDbType} from "../types/dbTypes";
+import {jwtServices} from "../utils/jwtServices";
+import {securityRepository} from "../repositories/security/securityRepository";
 
 export const securityController = {
 
     async getActiveSessions(req: RequestWithUser, res: Response) {
-        const activeSession = await securityQueryRepository.findActiveSessionById(req.user!._id.toString())
+        const activeSession: activeSession[] | undefined = await securityQueryRepository.findActiveSessionByUserId(req.user!._id.toString())
         res
             .status(200)
             .json(activeSession)
+
     },
 
     async deleteSessionById(req: RequestWithUser, res: Response) {
@@ -19,8 +24,15 @@ export const securityController = {
     },
 
     async deleteAllOtherSession(req: RequestWithUser, res: Response) {
-        const result = await securityServices.deleteAllOtherSession('123', req.user!._id.toString())
-
+        const result: string | undefined = await securityServices.deleteAllOtherSession(req.tokenData!.deviceId, req.user!._id.toString())
+        res.sendStatus(204)
     },
 
+}
+
+type activeSession = {
+    ip: string
+    title: string
+    lastActiveDate: Date
+    deviceId: string
 }

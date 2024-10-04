@@ -1,11 +1,11 @@
 import {randomUUID} from "crypto"
 import {add} from "date-fns"
-
 import {bcryptService} from "../utils/bcriptServices";
 import {usersRepository} from "../repositories/users/usersRepository";
 import {jwtServices} from "../utils/jwtServices";
 import {nodemailerService} from "./nodemailerService";
 import {authRepository} from "../repositories/authRepository";
+import {securityRepository} from "../repositories/security/securityRepository";
 
 export const authServices = {
 
@@ -13,7 +13,7 @@ export const authServices = {
         loginOrEmail: string,
         password: string,
         userAgent: string,
-        ip: string,
+        ip: string
     }) {
         const user: any = await usersRepository.findByLoginOrEmail(data.loginOrEmail)
         if (!user) {
@@ -21,22 +21,25 @@ export const authServices = {
         } else {
             if (await bcryptService.checkPassword(data.password, user.password)) {
                 const userId = user._id.toString()
-                const accessToken: string  = await jwtServices.createJwt(userId)
-                const refreshToken: string = await jwtServices.createRefreshToken(userId)
-                const tokenData = await jwtServices.getIatFromJwtToken(refreshToken)
-                const iat = tokenData!.iat
-                const exp = tokenData!.exp
-                const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
-                const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
+                const deviceId = randomUUID()
+
+                const tokens:  {accessToken: string, refreshToken: string, tokenData: {iat: Date, exp: Date, deviceId: string}} | undefined = await this.createAccessAndRefreshTokens(user._id.toString(), deviceId)
+                if (!tokens) return
+
+                const iat: Date = tokens.tokenData.iat
+                const exp: Date = tokens.tokenData.exp
+                const resultAccessToken = await usersRepository.addJwtToken(user._id, tokens.accessToken )
+                const resultRefreshToken = await usersRepository.addRefreshToken(user._id, tokens.refreshToken )
                 if (!resultAccessToken || !resultRefreshToken) return false
                 const resultCreateSession = await authRepository.createSession({userId,
+                    deviceId,
                     iat,
                     exp,
                     ip: data.ip,
                     deviceName: data.userAgent
                 })
                 if (resultCreateSession) {
-                    return {accessToken, refreshToken, sessionId: resultCreateSession.insertedId.toString()}
+                    return {accessToken: tokens.accessToken, refreshToken: tokens.refreshToken, sessionId: resultCreateSession.insertedId.toString(), deviceId}
                 } else return false
             } else return false
 
@@ -68,9 +71,10 @@ export const authServices = {
                     isConfirmed: false
                 }
             }
+        console.log('new user' + '!' + newUser);
         const createUser = await usersRepository.createUser(newUser)
 
-        const sendEmail = await nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
+        const sendEmail = nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
         if (!sendEmail) {
             return result
         }
@@ -95,7 +99,7 @@ export const authServices = {
         const newConfirmationCode = randomUUID()
         const createConfirmationCode = await usersRepository.updateConfirmationCode(userInfo.email, newConfirmationCode)
 
-        if (!await nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)) {
+        if (!nodemailerService.sendEmail(userInfo.login, userInfo.email, newConfirmationCode)) {
             return false
         }
         return result
@@ -121,33 +125,39 @@ export const authServices = {
         return result
     },
 
-    async refreshToken(token: string, user: any) {
-        const isValidToken = await this.checkRefreshTokenInBlackList(token)
-        if (isValidToken) return
+    async refreshToken(tokenData: {iat: Date, exp: Date, deviceId: string}, user: any) {
 
-        const addTokenToBlackList = await authRepository.addTokenToBlackList(token, user)
-        if (!addTokenToBlackList) return
+        const session = await securityRepository.findSessionByIatAndDeviceId(tokenData.iat, tokenData.deviceId)
+        if (!session) return
 
-        const accessToken  = await jwtServices.createJwt(user)
-        const refreshToken  = await jwtServices.createRefreshToken(user)
-        const resultAccessToken = await usersRepository.addJwtToken(user._id, accessToken )
-        const resultRefreshToken = await usersRepository.addRefreshToken(user._id, refreshToken )
-        if (!accessToken || !refreshToken) return
+        const tokens:  {accessToken: string, refreshToken: string, tokenData: {iat: Date, exp: Date, deviceId: string}} | undefined = await this.createAccessAndRefreshTokens(user._id.toString(), tokenData.deviceId)
+        if (!tokens) return
 
-        return {accessToken, refreshToken}
+        const updateIat: number = await securityRepository.updateIat(session._id, tokens.tokenData.iat, tokens.tokenData.exp)
+        if (!updateIat) return
+
+        const resultAccessToken = await usersRepository.addJwtToken(user._id, tokens.accessToken )
+        const resultRefreshToken = await usersRepository.addRefreshToken(user._id, tokens.refreshToken )
+        if (!tokens.accessToken || !tokens.refreshToken) return
+
+        return {accessToken: tokens.accessToken, refreshToken: tokens.refreshToken}
     },
 
-    async checkRefreshTokenInBlackList(refreshToken: string) {
-        return await authRepository.checkRefreshTokenInBlackList(refreshToken)
+    async logout(deviceId: string) {
+        return await securityRepository.deleteSessionByDeviceId(deviceId)
     },
 
-    async logout(refreshToken: string, user: any) {
-        const isValidToken = await this.checkRefreshTokenInBlackList(refreshToken)
-        if (isValidToken) return
+    async createAccessAndRefreshTokens(userId: string, deviceId: string) {
+        const accessToken: string  = await jwtServices.createJwt(userId, deviceId)
+        const refreshToken: string  = await jwtServices.createRefreshToken(userId, deviceId)
 
-        const addTokenToBlackList = await authRepository.addTokenToBlackList(refreshToken, user._id)
-        if (!addTokenToBlackList) return
-        return true
-    }
+        const tokenData: {
+            iat: Date,
+            exp: Date,
+            deviceId: string
+        } | undefined = await jwtServices.getDataFromJwtToken(refreshToken)
+        if (!tokenData) return
+        return {accessToken, refreshToken, tokenData}
+    },
 
 }

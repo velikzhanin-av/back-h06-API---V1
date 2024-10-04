@@ -6,4 +6,3 @@ export enum ResultStatusHttp {
     Unauthorized = 401,
     BadRequest = 500
 }
-
