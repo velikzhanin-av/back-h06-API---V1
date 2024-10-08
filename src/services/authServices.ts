@@ -67,7 +67,7 @@ export const authServices = {
                     expirationDate: add(new Date(), {
                         hours: 1,
                         minutes: 30,
-                    }),
+                    }).toString(),
                     isConfirmed: false
                 }
             }

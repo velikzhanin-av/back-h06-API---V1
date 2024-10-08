@@ -1,6 +1,7 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId, WithId} from "mongodb";
 import {UserDbType} from "../../types/dbTypes";
+import {usersModel} from "../../models/usersModel";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -12,8 +13,8 @@ export const mapToOutputUsers = (user: any) => { // TODO не работает �
 }
 
 export const usersRepository = {
-    async createUser (newUser: any)  {
-        const result = await userCollection.insertOne(newUser)
+    async createUser (newUser: UserDbType)  {
+        const result = await usersModel.create(newUser)
         // TODO проверить позже изменение переменной
         return mapToOutputUsers(newUser)
     },
@@ -25,7 +26,8 @@ export const usersRepository = {
 
     async deleteUser(id: string)  {
         try {
-            const res = await userCollection.deleteOne({_id: new ObjectId(id)})
+            const user = await usersModel.findOne({_id: new ObjectId('6704dd125f62c20b5bad33bf')})
+            const res = await usersModel.deleteOne({_id: new ObjectId(id)})
             return res.deletedCount !== 0
         } catch (err) {
             console.log(err)
