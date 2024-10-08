@@ -1,8 +1,9 @@
 import {blogCollection, postCollection} from "../../db/mongoDb";
 import {BlogDbType, PostDbType} from "../../types/dbTypes";
-import {SortDirection} from "mongodb";
+import {ObjectId, SortDirection} from "mongodb";
 import {mapToOutputPosts} from "../posts/postsRepository";
 import {getTotalCount, helper} from "../utils";
+import {BlogModel} from "../../models/blogsModel";
 
 export const mapToOutputBlogs = (blog: any) => {
     return {
@@ -33,13 +34,25 @@ export const findAllBlogs = async (query: any) => {
     }
 }
 
+export const findBlogByIdQuery = async (blogId: string) => {
+    try {
+        const blog = await BlogModel.findOne({_id: new ObjectId(blogId)})
+        if (!blog) return
+
+        return mapToOutputBlogs(blog)
+    } catch (err) {
+        return
+    }
+}
+
 const getBlogsFromBD = async (params: any, filter: any) => {
-    return await blogCollection
+    return await BlogModel
         .find(filter)
-        .sort(params.sortBy, params.sortDirection)
-        .skip((params.pageNumber - 1) * params.pageSize)
-        .limit(params.pageSize)
-        .toArray() as any[] /*SomePostType[]*/
+        .sort({[params.sortBy]: params.sortDirection}) // Сортировка
+        .skip((params.pageNumber - 1) * params.pageSize) // Пропуск документов для пагинации
+        .limit(params.pageSize) // Лимит на количество возвращаемых документов
+        .lean() // Преобразование документов Mongoose в простые объекты JavaScript (аналог `toArray`)
+        .exec(); // Выполнение запроса
 }
 
 export const searchNameTerm = (searchNameTerm: any) => {

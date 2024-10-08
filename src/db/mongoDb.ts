@@ -1,3 +1,4 @@
+import mongoose from 'mongoose'
 import {Collection, Db, MongoClient} from "mongodb";
 import {SETTINGS} from "../settings";
 import {
@@ -27,11 +28,13 @@ export const rateLimitCollection: Collection<RateLimitDbType> = db.collection<an
 export const connectToDB = async () => {
     try {
         await client.connect()
-        console.log('connected to db')
+        await mongoose.connect(SETTINGS.MONGO_URL)
+        console.log(`connected to db ${SETTINGS.DB_NAME}`)
         return true
     } catch (e) {
         console.log(e)
         await client.close()
+        await mongoose.disconnect()
         return false
     }
 }
