@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {findAllBlogs, findPostsByBlogId} from "../repositories/blogs/blogsQueryRepository";
+import {findAllBlogs, findBlogByIdQuery, findPostsByBlogId} from "../repositories/blogs/blogsQueryRepository";
 import {
     createPostForBlogId,
     findBlogById
@@ -40,7 +40,17 @@ export const blogsController = {
     },
 
     async postBlog(req: Request, res: Response)  {
-        let result = await blogsServices.createBlog(req.body)
+        const blogId = await blogsServices.createBlog(req.body)
+        if (!blogId) {
+            res.sendStatus(400)
+            return
+        }
+        const result = await findBlogByIdQuery(blogId)
+        if (!result) {
+            res.sendStatus(400)
+            return
+        }
+
         res
             .status(201)
             .json(result)

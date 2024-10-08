@@ -2,12 +2,14 @@ import {blogCollection, postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
 import {mapToOutputBlogs} from "./blogsQueryRepository";
 import {mapToOutputPosts} from "../posts/postsRepository";
+import {BlogModel} from "../../models/blogsModel";
 
 
 export const blogsRepository = {
     async createBlog(newBlog: any) {
-        const result = await blogCollection.insertOne(newBlog)
-        return mapToOutputBlogs(newBlog)
+        const result = await BlogModel.create(newBlog)
+        console.log(result);
+        return result._id.toString()
     },
 
     async editBlog(id: string, body: any) {
