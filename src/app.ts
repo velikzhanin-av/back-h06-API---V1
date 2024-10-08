@@ -11,6 +11,8 @@ import {usersRouter} from "./routes/usersRoutes";
 import {authRouter} from "./routes/authRoutes";
 import {commentsRouter} from "./routes/commentsRoutes";
 import {securityRouter} from "./routes/securityRoutes";
+import {usersModel} from "./models/usersModel";
+import {UserDbType} from "./types/dbTypes";
 
 
 export const app = express()
@@ -29,6 +31,20 @@ app.use(SETTINGS.PATH.COMMENTS, commentsRouter)
 app.use(SETTINGS.PATH.SECURITY, securityRouter)
 
 app.get('/', async (req: Request, res: Response) => {
-    res.sendStatus(200)
+    const newUser: UserDbType =
+        {
+            login: 'body.login',
+            password: 'passwordHash',
+            email: 'body.email',
+            createdAt: 'new Date().toISOString()',
+            emailConfirmation: {
+                confirmationCode: "123",
+                expirationDate: "123",
+                isConfirmed: false
+            }
+        }
+    const result = await usersModel.create(newUser)
+    return
+
 })
 

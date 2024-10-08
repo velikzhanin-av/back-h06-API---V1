@@ -2,6 +2,7 @@ import {connectToDB, sessionsCollection, userCollection} from "../src/db/mongoDb
 import {req} from "./testHelpers"
 import {SETTINGS} from "../src/settings"
 import mongoose from "mongoose";
+import {usersModel} from "../src/models/usersModel";
 
 describe('E2E Tests', () => {
 
@@ -20,12 +21,19 @@ describe('E2E Tests', () => {
         await mongoose.connection.close()
     })
 
+    // it('123', async () => {
+    //     const res = await req
+    //         .get('/')
+    //         .expect(204)
+    // })
+
 
     it('success registration', async () => {
+        await usersModel.deleteMany({})
         const dataBody = {
-            "login": "velik1",
+            "login": "qveasfd",
             "password": "string",
-            "email": "example@gmail.com"
+            "email": "qedmfple@gmail.com"
         }
 
         const res = await req
@@ -42,7 +50,7 @@ describe('E2E Tests', () => {
             .expect(200)
 
         userId = res.body.items[0].id
-        console.log(userId);
+        console.log(res.body);
     })
 
     it('delete user by id', async () => {
@@ -50,7 +58,7 @@ describe('E2E Tests', () => {
             .delete(SETTINGS.PATH.USERS + '/' + userId)
             .set('Authorization', 'Basic YWRtaW46cXdlcnR5')
 
-        expect(res.status).toBe(200)
+        expect(res.status).toBe(204)
         console.log(res.body);
     })
 

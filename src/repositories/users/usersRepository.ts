@@ -27,7 +27,7 @@ export const usersRepository = {
     async deleteUser(id: string)  {
         try {
             const user = await usersModel.findOne({_id: new ObjectId('6704dd125f62c20b5bad33bf')})
-            const res = await usersModel.deleteOne({_id: new ObjectId(id)})
+            const res = await usersModel.deleteOne({login: 'velik1'})
             return res.deletedCount !== 0
         } catch (err) {
             console.log(err)
