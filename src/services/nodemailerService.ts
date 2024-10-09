@@ -14,4 +14,15 @@ export const nodemailerService = {
 
         },
 
+        async sendEmailRecoveryPassword (login: string, email: string, recoveryCode: string){
+            const result = await nodemailerAdapter.sendEmailRecoveryPassword(login, email, recoveryCode)
+            if (!result) {
+                return
+            } else {
+                return result.accepted
+            }
+
+
+        },
+
     }

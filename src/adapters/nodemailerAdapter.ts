@@ -28,6 +28,33 @@ export const nodemailerAdapter = {
             return
         }
 
+    },
+
+    async sendEmailRecoveryPassword(login: string, email: string, recoveryCode: string) {
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: "backendincubator@gmail.com",
+                pass: SETTINGS.GMAIL_PASS,
+            },
+        })
+        try {
+            const result = await transporter.sendMail({
+                from: '"backend incubator" <backendincubator@gmail.com>', // sender address
+                to: email,
+                subject: `Hi ${login}!`,
+                text: `Hi ${login}!`,
+                html: " <h1>Password recovery</h1>\n" +
+                    " <p>To finish password recovery please follow the link below:\n" +
+                    `     <a href='https://somesite.com/password-recovery?recoveryCode=your_${recoveryCode}'>recovery password</a>\n` +
+                    " </p>",
+            })
+            return (result)
+        } catch (e) {
+            console.error('Send email error', e)
+            return
+        }
+
     }
 }
 

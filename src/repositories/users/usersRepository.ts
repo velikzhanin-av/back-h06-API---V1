@@ -1,6 +1,7 @@
 import {userCollection} from "../../db/mongoDb";
 import {ObjectId, WithId} from "mongodb";
 import {UserDbType} from "../../types/dbTypes";
+import {UserModel} from "../../models/usersModel";
 
 export const mapToOutputUsers = (user: any) => { // TODO не работает с типизацией!!!
     return {
@@ -35,6 +36,14 @@ export const usersRepository = {
 
     async findByLoginOrEmail(loginOrEmail: string)  {
         return await userCollection.findOne({$or: [{email: loginOrEmail}, {login: loginOrEmail}]})
+    },
+
+    async findByEmail(email: string)  {
+        return await UserModel.findOne({email})
+    },
+
+    async findByRecoveryCode(recoveryCode: string)  {
+        return await UserModel.findOne({recoveryCode})
     },
 
     async addJwtToken(id: ObjectId, token: string) {
@@ -80,6 +89,20 @@ export const usersRepository = {
         const res = await userCollection.updateOne({email: email},
             {$set: {'emailConfirmation.confirmationCode': confirmationCode}})
         return res.modifiedCount > 0
+    },
+
+    async updateRecoveryCode(email: string, recoveryCode: string,) {
+        const user = await UserModel.findOne({email})
+        if (!user) return
+        user.recoveryCode = recoveryCode
+        return await user.save()
+    },
+
+    async updatePasswordHash(_id: ObjectId, passwordHash: string) {
+        const user = await UserModel.findOne({_id})
+        if (!user) return
+        user.password = passwordHash
+        return await user.save()
     }
 
 }

@@ -2,7 +2,7 @@ import {config} from "dotenv"
 
 config()
 
-const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
+const mongoURI = process.env.MONGO_URL || `mongodb://0.0.0.0:27017/homeworkExpress`
 
 export const SETTINGS = {
     PORT: process.env.port || 3000,

@@ -12,6 +12,10 @@ export const passwordValidation = body("password")
     .trim().not().isEmpty()
     .isLength({min: 6, max: 20})
 
+export const newPasswordValidation = body("newPassword")
+    .trim().not().isEmpty()
+    .isLength({min: 6, max: 20})
+
 export const emailValidation = body("email")
     .trim().not().isEmpty()
     .matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')

@@ -71,7 +71,6 @@ export const authServices = {
                     isConfirmed: false
                 }
             }
-        console.log('new user' + '!' + newUser);
         const createUser = await usersRepository.createUser(newUser)
 
         const sendEmail = nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
@@ -160,4 +159,25 @@ export const authServices = {
         return {accessToken, refreshToken, tokenData}
     },
 
+    async passwordRecovery(email: string) {
+        const userInfo = await usersRepository.findByEmail(email)
+        if (!userInfo) return
+
+        const recoveryCode = randomUUID()
+        const updateRecoveryCode = await usersRepository.updateRecoveryCode(userInfo.email, recoveryCode)
+
+        if (!nodemailerService.sendEmailRecoveryPassword(userInfo.login, userInfo.email, recoveryCode)) {
+            return false
+        }
+        return
+
+    },
+
+    async newPassword(recoveryCode: string, newPassword: string) {
+        const userInfo = await usersRepository.findByRecoveryCode(recoveryCode)
+        if (!userInfo) return
+
+        const passwordHash: string = await bcryptService.generateHash(newPassword)
+        return await usersRepository.updatePasswordHash(userInfo._id, passwordHash)
+    },
 }

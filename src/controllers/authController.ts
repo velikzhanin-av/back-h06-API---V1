@@ -162,4 +162,22 @@ export const authController = {
         }
         res.sendStatus(204)
     },
+
+    async passwordRecovery(req: RequestWithUser, res: Response) {
+        const result = await authServices.passwordRecovery(req.body.email)
+        if (!result) {
+            res.sendStatus(204)
+            return
+        }
+        res.sendStatus(204)
+    },
+
+    async newPassword(req: RequestWithUser, res: Response) {
+        const result = await authServices.newPassword(req.body.recoveryCode, req.body.newPassword)
+        if (!result) {
+            res.sendStatus(204)
+            return
+        }
+        res.sendStatus(204)
+    },
 }
