@@ -24,6 +24,10 @@ export const codeValidation = body("code")
     .trim().not().isEmpty()
     .isString()
 
+export const recoveryCodeValidation = body("recoveryCode")
+    .trim().not().isEmpty()
+    .isString()
+
 export const authInputValidation = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {

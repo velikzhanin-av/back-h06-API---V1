@@ -6,7 +6,7 @@ import {
     authInputValidation, codeValidation,
     emailValidation,
     loginValidation, newPasswordValidation,
-    passwordValidation
+    passwordValidation, recoveryCodeValidation
 } from "../middlewares/authInputValidation";
 import {authRefreshTokenMiddleware} from "../middlewares/authRefreshTokenMiddleware";
 import {authRateLimitMiddleware} from "../middlewares/authRateLimitMiddleware";
@@ -48,6 +48,7 @@ authRouter.post('/password-recovery',
     authController.passwordRecovery)
 authRouter.post('/new-password',
     authRateLimitMiddleware,
+    recoveryCodeValidation,
     newPasswordValidation,
     authInputValidation,
     authController.newPassword)

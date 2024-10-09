@@ -91,10 +91,11 @@ export const usersRepository = {
         return res.modifiedCount > 0
     },
 
-    async updateRecoveryCode(email: string, recoveryCode: string,) {
+    async updateRecoveryCode(email: string, recoveryCode: string, expirationDate: string) {
         const user = await UserModel.findOne({email})
         if (!user) return
-        user.recoveryCode = recoveryCode
+        // остановился здесь, добавил recoveryCode.expirationDate
+        user.recoveryCode = {recoveryCode, expirationDate}
         return await user.save()
     },
 

@@ -163,8 +163,12 @@ export const authServices = {
         const userInfo = await usersRepository.findByEmail(email)
         if (!userInfo) return
 
-        const recoveryCode = randomUUID()
-        const updateRecoveryCode = await usersRepository.updateRecoveryCode(userInfo.email, recoveryCode)
+        let recoveryCode = randomUUID()
+        // recoveryCode = '0d412e31-5a80-486f-ba57-746e36c63a2f'
+        const expirationDate = add(new Date(), {
+            minutes: 10,
+        }).toString()
+        const updateRecoveryCode = await usersRepository.updateRecoveryCode(userInfo.email, recoveryCode, expirationDate)
 
         if (!nodemailerService.sendEmailRecoveryPassword(userInfo.login, userInfo.email, recoveryCode)) {
             return false

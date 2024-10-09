@@ -1,5 +1,10 @@
 import mongoose from "mongoose";
-import {EmailConfirmationType, UserDbType} from "../types/dbTypes";
+import {EmailConfirmationType, RecoveryCodeType, UserDbType} from "../types/dbTypes";
+
+const recoveryCodeSchema = new mongoose.Schema<RecoveryCodeType>({
+    recoveryCode: {type: String, required: false},
+    expirationDate: {type: String, required: false},
+}, {_id: false});
 
 const emailConfirmationSchema = new mongoose.Schema<EmailConfirmationType>({
     confirmationCode: {type: String, required: false},
@@ -12,6 +17,6 @@ export const UserSchema = new mongoose.Schema<UserDbType>({
     email: {type: String, require: true},
     createdAt: {type: String, require: true},
     emailConfirmation: {type: emailConfirmationSchema, require: true},
-    recoveryCode: {type: String, required: false}
+    recoveryCode: {type: recoveryCodeSchema, required: true}
 })
 export const UserModel = mongoose.model<UserDbType>('users', UserSchema)

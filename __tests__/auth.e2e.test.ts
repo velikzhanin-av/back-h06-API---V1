@@ -72,7 +72,8 @@ describe('Auth E2E Tests', () => {
 
     it('should send email with recovery code; status 204', async () => {
         const body = {
-            "email": "a.velikzhanin90@gmail.com"
+            "newPassword": "string123",
+            "recoveryCode": "0d412e31-5a80-486f-ba57-746e36c63a2f"
         }
 
         const res = await req
