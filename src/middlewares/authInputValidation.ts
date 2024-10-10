@@ -12,11 +12,19 @@ export const passwordValidation = body("password")
     .trim().not().isEmpty()
     .isLength({min: 6, max: 20})
 
+export const newPasswordValidation = body("newPassword")
+    .trim().not().isEmpty()
+    .isLength({min: 6, max: 20})
+
 export const emailValidation = body("email")
     .trim().not().isEmpty()
     .matches('^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
 
 export const codeValidation = body("code")
+    .trim().not().isEmpty()
+    .isString()
+
+export const recoveryCodeValidation = body("recoveryCode")
     .trim().not().isEmpty()
     .isString()
 

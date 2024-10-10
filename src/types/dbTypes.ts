@@ -25,11 +25,19 @@ export type UserDbType = {
     password: string
     email: string
     createdAt: string
-    emailConfirmation: {
-        confirmationCode: string
-        expirationDate: string
-        isConfirmed: boolean
-    }
+    emailConfirmation: EmailConfirmationType
+    recoveryCode?: RecoveryCodeType
+}
+
+export type EmailConfirmationType = {
+    confirmationCode: string
+    expirationDate: string
+    isConfirmed: boolean
+}
+
+export type RecoveryCodeType = {
+    recoveryCode: string
+    expirationDate: string
 }
 
 export type TokenBlackListDbType = {
