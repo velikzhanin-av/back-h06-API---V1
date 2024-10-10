@@ -163,8 +163,7 @@ export const authServices = {
         const userInfo = await usersRepository.findByEmail(email)
         if (!userInfo) return
 
-        let recoveryCode = randomUUID()
-        // recoveryCode = '0d412e31-5a80-486f-ba57-746e36c63a2f'
+        const recoveryCode = randomUUID()
         const expirationDate = add(new Date(), {
             minutes: 10,
         }).toString()

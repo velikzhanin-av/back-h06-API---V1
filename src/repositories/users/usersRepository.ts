@@ -43,13 +43,12 @@ export const usersRepository = {
     },
 
     async findByRecoveryCode(recoveryCode: string)  {
-        return await UserModel.findOne({recoveryCode})
+        return await UserModel.findOne({'recoveryCode.recoveryCode': recoveryCode}).lean()
     },
 
     async addJwtToken(id: ObjectId, token: string) {
         const res = await userCollection.updateOne({_id: id}, {$set: {jwtToken: token}})
         return res.acknowledged
-
     },
 
     async addRefreshToken(id: ObjectId, token: string) {
