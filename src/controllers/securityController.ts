@@ -2,7 +2,6 @@ import {Request, Response} from "express";
 import {securityQueryRepository} from "../repositories/security/securityQueryRepository";
 import {RequestWithUser} from "../types/usersTypes";
 import {securityServices} from "../services/securityServices";
-import {ResultStatusHttp} from "../types/resultCode";
 import {WithId} from "mongodb";
 import {SessionsDbType} from "../types/dbTypes";
 import {jwtServices} from "../utils/jwtServices";
@@ -19,8 +18,8 @@ export const securityController = {
     },
 
     async deleteSessionById(req: RequestWithUser, res: Response) {
-        const result = await securityServices.deleteSessionById(req.params.deviceId, req.user!._id.toString())
-        res.sendStatus(ResultStatusHttp[result])
+        const result: ResultCode<null> = await securityServices.deleteSessionById(req.params.deviceId, req.user!._id.toString())
+        res.sendStatus(result.statusCode)
     },
 
     async deleteAllOtherSession(req: RequestWithUser, res: Response) {
