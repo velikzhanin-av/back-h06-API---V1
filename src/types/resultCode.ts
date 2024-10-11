@@ -1,4 +1,4 @@
-enum StatusCodeHttp {
+export enum StatusCodeHttp {
     Ok = 200,
     Created = 201,
     Accepted = 202,
@@ -12,7 +12,7 @@ enum StatusCodeHttp {
     ServiceUnavailable = 503
 }
 
-type ResultCode<T> = {
-    StatusCodeHttp: StatusCodeHttp,
+export type ResultCode<T> = {
+    statusCode: StatusCodeHttp,
     data: T
 }

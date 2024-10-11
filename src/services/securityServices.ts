@@ -2,6 +2,7 @@ import {securityRepository} from "../repositories/security/securityRepository";
 import {WithId} from "mongodb";
 import {SessionsDbType} from "../types/dbTypes";
 import {jwtServices} from "../utils/jwtServices";
+import { StatusCodeHttp } from "../types/resultCode"
 
 export const securityServices = {
 

@@ -17,6 +17,6 @@ export const UserSchema = new mongoose.Schema<UserDbType>({
     email: {type: String, require: true},
     createdAt: {type: String, require: true},
     emailConfirmation: {type: emailConfirmationSchema, require: true},
-    recoveryCode: {type: recoveryCodeSchema, required: true}
+    recoveryCode: {type: recoveryCodeSchema, required: false}
 })
 export const UserModel = mongoose.model<UserDbType>('users', UserSchema)
