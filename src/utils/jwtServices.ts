@@ -32,16 +32,12 @@ export const jwtServices = {
 
 
     async  getDataFromJwtToken(token: string) {
-        console.log(token);
         const decode = jwt.decode(token) as jwt.JwtPayload
-        console.log(decode);
         if (!decode || !decode.iat || !decode.exp || !decode.deviceId) {
             return
         }
         const iat: Date = new Date(decode.iat * 1000) // Преобразуем в дату
         const exp: Date = new Date(decode.exp * 1000) // Преобразуем в дату
-        const test =  {iat, exp, deviceId: decode.deviceId}
-        console.log(test)
         return {iat, exp, deviceId: decode.deviceId}
 
     }

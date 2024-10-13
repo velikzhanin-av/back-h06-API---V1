@@ -5,6 +5,10 @@ import {findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
 import {postCollection} from "../db/mongoDb";
 import {findPostById} from "../repositories/posts/postsRepository";
 import {postsServices} from "./postsServices";
+import {WithId} from "mongodb";
+import {CommentDbType} from "../types/dbTypes";
+import {STATUS_CODES} from "http";
+import {StatusCodeHttp} from "../types/resultCode";
 
 export const commentsServices = {
 
@@ -61,7 +65,20 @@ export const commentsServices = {
     async checkAction(userId: string, commentUserId: string) {
         return commentUserId === userId;
 
-    }
+    },
+
+    async editCommentLikeStatus(commentId: string, status: string)  {
+        const comment: WithId<CommentDbType> | undefined = await commentsRepository.getCommentById(commentId)
+        if (!comment) return {
+            statusCode: StatusCodeHttp.NotFound,
+            data: null
+        }
+
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
+    },
 
 
 }

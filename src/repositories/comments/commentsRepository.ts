@@ -1,6 +1,7 @@
 import {blogCollection, commentCollection, postCollection} from "../../db/mongoDb";
 import {mapToOutputBlogs} from "../blogs/blogsQueryRepository";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
+import {CommentDbType} from "../../types/dbTypes";
 
 export const commentsRepository = {
 
@@ -11,6 +12,18 @@ export const commentsRepository = {
         } catch (err) {
             console.log(err)
             return false
+        }
+    },
+
+    async getCommentById(commentId: string) {
+        try {
+            const comment: WithId<CommentDbType> | null = await commentCollection.findOne({_id: new ObjectId(commentId)})
+            if (!comment) return
+
+            return comment
+        } catch (err) {
+            console.log(err)
+            return
         }
     },
 

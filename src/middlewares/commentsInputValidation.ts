@@ -7,6 +7,10 @@ export const commentContentValidation = body("content")
     .isString()
     .isLength({min: 20, max: 300})
 
+export const commentLikeStatusValidation = body("likeStatus")
+    .trim().not().isEmpty()
+    .isString()
+
 export const commentsInputValidation = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)
     if (!errors.isEmpty()) {

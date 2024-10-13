@@ -4,6 +4,7 @@ import {createPost, deletePost, editPost, findPostById} from "../repositories/po
 import {postsServices} from "../services/postsServices";
 import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {commentsServices} from "../services/commentsServices";
+import {RequestWithUser} from "../types/usersTypes";
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
@@ -51,8 +52,7 @@ export const postsController = {
         }
     },
 
-    async postCommentsByPostId(req: Request, res: Response) {
-        // @ts-ignore
+    async postCommentsByPostId(req: RequestWithUser, res: Response) {
         const result = await commentsServices.createComment(req.params.postId, req.body.content, req.user)
         if (!result) {
             res.sendStatus(404)

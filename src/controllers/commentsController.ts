@@ -2,6 +2,7 @@ import {Request, Response} from "express";
 import {findAllUsers} from "../repositories/users/usersQueryRepository";
 import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {commentsServices} from "../services/commentsServices";
+import {RequestWithUser} from "../types/usersTypes";
 
 export const commentsController = {
     async getCommentById(req: Request, res: Response) {
@@ -44,5 +45,11 @@ export const commentsController = {
         }
         res.sendStatus(204)
         return
+    },
+
+    async putCommentLikeStatus(req: RequestWithUser, res: Response) {
+        const result = await commentsServices.editCommentLikeStatus(req.params.commentId, req.body.likeStatus)
+
+        res.sendStatus(result.statusCode)
     },
 }

@@ -2,7 +2,11 @@ import {Router} from "express";
 
 import {commentsController} from "../controllers/commentsController";
 import {authTokenMiddleware} from "../middlewares/authTokenMiddleware";
-import {commentContentValidation, commentsInputValidation} from "../middlewares/commentsInputValidation";
+import {
+    commentContentValidation,
+    commentLikeStatusValidation,
+    commentsInputValidation
+} from "../middlewares/commentsInputValidation";
 
 export const commentsRouter = Router()
 
@@ -11,3 +15,6 @@ commentsRouter.delete('/:commentId', authTokenMiddleware, commentsController.del
 commentsRouter.put('/:commentId', authTokenMiddleware,
     commentContentValidation,
     commentsInputValidation, commentsController.putCommentById)
+commentsRouter.put('/:commentId/like-status', authTokenMiddleware,
+    commentLikeStatusValidation,
+    commentsInputValidation, commentsController.putCommentLikeStatus)

@@ -3,6 +3,15 @@ import {createCommentByPostId, UserInfoType} from "../repositories/posts/postsRe
 
 export const postsServices = {
     async createCommentByPostId (id: string, comment: string, user: UserInfoType) {
-        return createCommentByPostId(id, comment, user)
+        const newComment: any = {
+            content: comment,
+            commentatorInfo: {
+                userId: user._id?.toString(),
+                userLogin: user.login
+            },
+            createdAt: new Date().toISOString(),
+            postId: id,
+        }
+        return createCommentByPostId(newComment)
     }
 }

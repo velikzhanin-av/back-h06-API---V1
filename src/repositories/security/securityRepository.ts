@@ -35,7 +35,6 @@ export const securityRepository = {
 
     async findSessionByIatAndDeviceId(iat: Date, deviceId: string) {
         const result = await sessionsCollection.findOne({iat, deviceId})
-        console.log(result);
         return result
     },
 

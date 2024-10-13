@@ -1,6 +1,6 @@
 import {commentCollection, postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {PostDbType} from "../../types/dbTypes";
+import {CommentDbType, PostDbType} from "../../types/dbTypes";
 import {db} from "../../db/db";
 import {Request} from "express";
 
@@ -88,16 +88,7 @@ export const deletePost = async (id: string) => {
     }
 }
 
-export const createCommentByPostId = async (id: string, comment: string, user: UserInfoType) => {
-    const newComment: any = {
-        content: comment,
-        commentatorInfo: {
-            userId: user._id?.toString(),
-            userLogin: user.login
-        },
-        createdAt: new Date().toISOString(),
-        postId: id
-    }
+export const createCommentByPostId = async (newComment: CommentDbType) => {
     try {
         const res = await commentCollection.insertOne(newComment)
         return mapToOutputComment(newComment)

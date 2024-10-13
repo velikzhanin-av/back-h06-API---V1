@@ -8,7 +8,6 @@ import {BlogModel} from "../../models/blogsModel";
 export const blogsRepository = {
     async createBlog(newBlog: any) {
         const result = await BlogModel.create(newBlog)
-        console.log(result);
         return result._id.toString()
     },
 
