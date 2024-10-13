@@ -1,11 +1,7 @@
 import {NextFunction, Request, Response} from "express"
 import {authServices} from "../services/authServices";
 import { RequestWithUser } from "../types/usersTypes";
-import {jwtServices} from "../utils/jwtServices";
-import {WithId} from "mongodb";
-import {SessionsDbType, UserDbType} from "../types/dbTypes";
-import {securityRepository} from "../repositories/security/securityRepository";
-import {usersRepository} from "../repositories/users/usersRepository";
+import {ResultCode} from "../types/resultCode";
 
 export const authController = {
     async postLogin(req: RequestWithUser, res: Response) {
@@ -46,34 +42,35 @@ export const authController = {
 
     async registration(req: Request, res: Response) {
         const result = await authServices.registerUser(req.body.login, req.body.password, req.body.email)
-        console.log(result);
-        if (result.isExist) {
+        if (result.data === 'login' || result.data === 'email') {
             res
-                .status(400)
+                .status(result.statusCode)
                 .json({
                     "errorsMessages": [
                         {
-                            "message": `${result.isExist} already exists`,
-                            "field": result.isExist
+                            "message": `${result.data} already exists`,
+                            "field": result.data
                         }
                     ]
                 })
             return
         }
-        if (!result.sendEmail) {
+
+        if (result.data === 'Email not send') {
             res
-                .status(400)
+                .status(result.statusCode)
                 .json({
                     "errorsMessages": [
                         {
-                            "message": `Email not send`,
+                            "message": result.data,
                             "field": 'email'
                         }
                     ]
                 })
             return
         }
-        res.sendStatus(204)
+
+        res.sendStatus(result.statusCode)
     },
 
     async registrationEmailResending(req: Request, res: Response) {
@@ -164,22 +161,18 @@ export const authController = {
     },
 
     async passwordRecovery(req: RequestWithUser, res: Response) {
-        const result = await authServices.passwordRecovery(req.body.email)
-        if (!result) {
-            res.sendStatus(204)
-            return
-        }
-        res.sendStatus(204)
+        const result: ResultCode<null> = await authServices.passwordRecovery(req.body.email)
+        res.sendStatus(result.statusCode)
     },
 
     async newPassword(req: RequestWithUser, res: Response) {
         const result = await authServices.newPassword(req.body.recoveryCode, req.body.newPassword)
-        if (!result) {
+        if (result.data) {
             res
-                .status(400)
-                .json({ errorsMessages: [{ message: "Code validation failure", field: "recoveryCode" }] })
+                .status(result.statusCode)
+                .json(result.data)
             return
         }
-        res.sendStatus(204)
+        res.sendStatus(result.statusCode)
     },
 }

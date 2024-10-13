@@ -6,6 +6,8 @@ import {jwtServices} from "../utils/jwtServices";
 import {nodemailerService} from "./nodemailerService";
 import {authRepository} from "../repositories/authRepository";
 import {securityRepository} from "../repositories/security/securityRepository";
+import {StatusCodeHttp} from "../types/resultCode";
+import {UserDbType} from "../types/dbTypes";
 
 export const authServices = {
 
@@ -47,16 +49,15 @@ export const authServices = {
     },
 
     async registerUser(login: string, password: string, email: string) {
-        const result: any = {
-            isExist: '',
-            sendEmail: ''
+
+        const loginOrEmail = await usersRepository.doesExistByLoginOrEmail(login, email)
+        if (loginOrEmail) return {
+            statusCode: StatusCodeHttp.BadRequest,
+            data: loginOrEmail
         }
-        result.isExist = await usersRepository.doesExistByLoginOrEmail(login, email)
-        if (result.isExist) {
-            return result
-        }
+
         const passwordHash = await bcryptService.generateHash(password)
-        const newUser =
+        const newUser: UserDbType =
             {
                 login,
                 password: passwordHash,
@@ -67,18 +68,22 @@ export const authServices = {
                     expirationDate: add(new Date(), {
                         hours: 1,
                         minutes: 30,
-                    }),
+                    }).toString(),
                     isConfirmed: false
                 }
             }
         const createUser = await usersRepository.createUser(newUser)
 
         const sendEmail = nodemailerService.sendEmail(login, email, newUser.emailConfirmation.confirmationCode)
-        if (!sendEmail) {
-            return result
+        if (!sendEmail) return {
+            statusCode: StatusCodeHttp.BadRequest,
+            data: 'Email not send'
         }
-        result.sendEmail = true
-        return result
+
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
     },
 
     async registrationEmailResending(email: string) {
@@ -143,7 +148,15 @@ export const authServices = {
     },
 
     async logout(deviceId: string) {
-        return await securityRepository.deleteSessionByDeviceId(deviceId)
+        const resultDelete = await securityRepository.deleteSessionByDeviceId(deviceId)
+        if (!resultDelete) return {
+            statusCode: StatusCodeHttp.Unauthorized,
+            data: null
+        }
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
     },
 
     async createAccessAndRefreshTokens(userId: string, deviceId: string) {
@@ -161,7 +174,12 @@ export const authServices = {
 
     async passwordRecovery(email: string) {
         const userInfo = await usersRepository.findByEmail(email)
-        if (!userInfo) return
+        if (!userInfo) {
+            return {
+                statusCode: StatusCodeHttp.NoContent,
+                data: null
+            }
+        }
 
         const recoveryCode = randomUUID()
         const expirationDate = add(new Date(), {
@@ -170,17 +188,34 @@ export const authServices = {
         const updateRecoveryCode = await usersRepository.updateRecoveryCode(userInfo.email, recoveryCode, expirationDate)
 
         if (!nodemailerService.sendEmailRecoveryPassword(userInfo.login, userInfo.email, recoveryCode)) {
-            return false
+            return {
+                statusCode: StatusCodeHttp.InternalServerError,
+                data: null
+            }
         }
-        return
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
 
     },
 
     async newPassword(recoveryCode: string, newPassword: string) {
         const userInfo = await usersRepository.findByRecoveryCode(recoveryCode)
-        if (!userInfo) return
+        if (!userInfo) return {
+            statusCode: StatusCodeHttp.BadRequest,
+            data: { errorsMessages: [{ message: "Code validation failure", field: "recoveryCode" }] }
+        }
 
         const passwordHash: string = await bcryptService.generateHash(newPassword)
-        return await usersRepository.updatePasswordHash(userInfo._id, passwordHash)
+        const resultUpdatePassword = await usersRepository.updatePasswordHash(userInfo._id, passwordHash)
+        if (!resultUpdatePassword) return {
+            statusCode: StatusCodeHttp.InternalServerError,
+            data: null
+        }
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
     },
 }

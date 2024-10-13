@@ -2,21 +2,37 @@ import {securityRepository} from "../repositories/security/securityRepository";
 import {WithId} from "mongodb";
 import {SessionsDbType} from "../types/dbTypes";
 import {jwtServices} from "../utils/jwtServices";
+import { StatusCodeHttp } from "../types/resultCode"
 
 export const securityServices = {
 
-    async deleteSessionById(deviceId: string, userId: string)  {
+    async deleteSessionById(deviceId: string, userId: string) {
         const session: WithId<SessionsDbType> | null = await securityRepository.findSessionById(deviceId)
-        if (!session) return 'NotFound'
-        if (session.userId !== userId) return 'Forbidden'
+        if (!session) return {
+            statusCode: StatusCodeHttp.NotFound,
+            data: null
+        }
+        if (session.userId !== userId) return {
+            statusCode: StatusCodeHttp.Forbidden,
+            data: null
+        }
         const resultDelete = await securityRepository.deleteSessionByDeviceId(deviceId)
-        if (!resultDelete) return 'NotFound'
-        return 'NoContent'
+        if (!resultDelete) return {
+            statusCode: StatusCodeHttp.NotFound,
+            data: null
+        }
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
     },
 
     async deleteAllOtherSession(deviceId: string, userId: string) {
         await securityRepository.deleteSessionFromArray(deviceId, userId)
-        return 'NoContent'
+        return {
+            statusCode: StatusCodeHttp.NoContent,
+            data: null
+        }
     },
 
     async findActiveSessions(refreshToken: string) {
