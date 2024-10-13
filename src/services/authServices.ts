@@ -176,7 +176,7 @@ export const authServices = {
         const userInfo = await usersRepository.findByEmail(email)
         if (!userInfo) {
             return {
-                statusCode: StatusCodeHttp.NotFound,
+                statusCode: StatusCodeHttp.NoContent,
                 data: null
             }
         }
@@ -203,8 +203,8 @@ export const authServices = {
     async newPassword(recoveryCode: string, newPassword: string) {
         const userInfo = await usersRepository.findByRecoveryCode(recoveryCode)
         if (!userInfo) return {
-            statusCode: StatusCodeHttp.NotFound,
-            data: null
+            statusCode: StatusCodeHttp.BadRequest,
+            data: { errorsMessages: [{ message: "Code validation failure", field: "recoveryCode" }] }
         }
 
         const passwordHash: string = await bcryptService.generateHash(newPassword)

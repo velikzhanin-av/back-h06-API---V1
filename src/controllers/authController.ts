@@ -167,12 +167,12 @@ export const authController = {
 
     async newPassword(req: RequestWithUser, res: Response) {
         const result = await authServices.newPassword(req.body.recoveryCode, req.body.newPassword)
-        if (!result) {
+        if (result.data) {
             res
-                .status(400)
-                .json({ errorsMessages: [{ message: "Code validation failure", field: "recoveryCode" }] })
+                .status(result.statusCode)
+                .json(result.data)
             return
         }
-        res.sendStatus(204)
+        res.sendStatus(result.statusCode)
     },
 }

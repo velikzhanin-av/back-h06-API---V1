@@ -15,7 +15,7 @@ export const mapToOutputUsers = (user: any) => { // TODO не работает �
 export const usersRepository = {
     async createUser (newUser: any)  {
         try {
-            const result = await UserModel.create(newUser)
+            const result = await userCollection.insertOne(newUser)
             // TODO проверить позже изменение переменной
             return mapToOutputUsers(newUser)
         } catch (e) {
