@@ -69,7 +69,17 @@ export type CommentDbType = {
     commentatorInfo: CommentatorInfo
     createdAt: string
     postId: string
-    likesInfo: likesInfo
+    likesCount: LikesCount
+}
+
+export type CommentUserView = {
+    _id?: ObjectId
+    content: string
+    commentatorInfo: CommentatorInfo
+    createdAt: string
+    postId: string
+    likesCount: LikesCount
+    likesInfo: LikesInfo
 }
 
 export type CommentatorInfo = {
@@ -77,8 +87,27 @@ export type CommentatorInfo = {
     userLogin: string
 }
 
-export type likesInfo = {
+export type LikesInfo = {
     likesCount: number
     dislikesCount: number
-    myStatus: boolean
+}
+
+export type LikesCount = {
+    likesCount: number,
+    dislikesCount: number,
+}
+
+export type LikesDbType = {
+    _id?: ObjectId
+    createdAt: string
+    commentId: string
+    userId: string
+    userLogin: string
+    status: likeStatus
+}
+
+export enum likeStatus {
+    None = 'None',
+    Like = 'Like',
+    Dislike = 'Dislike'
 }

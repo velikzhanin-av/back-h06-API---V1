@@ -1,14 +1,11 @@
-import {blogsRepository} from "../repositories/blogs/blogsRepository";
-import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
-import {commentsRepository} from "../repositories/comments/commentsRepository";
+import {CommentsRepository} from "../repositories/comments/commentsRepository";
 import {findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
-import {postCollection} from "../db/mongoDb";
 import {findPostById} from "../repositories/posts/postsRepository";
 import {postsServices} from "./postsServices";
 import {WithId} from "mongodb";
-import {CommentDbType} from "../types/dbTypes";
-import {STATUS_CODES} from "http";
+import {CommentDbType, LikesDbType, likeStatus, UserDbType} from "../types/dbTypes";
 import {StatusCodeHttp} from "../types/resultCode";
+import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 
 export class CommentsServices {
 
@@ -33,7 +30,7 @@ export class CommentsServices {
             isOwner: true,
             action: false
         }
-        const comment = await commentsQueryRepository.findCommentById(id)
+        const comment = await CommentsQueryRepository.findCommentById(id)
         if (!comment) {
             return result
         }
@@ -41,7 +38,7 @@ export class CommentsServices {
             result.isOwner = false
             return result
         }
-        result.action = await commentsRepository.editComment(id, content)
+        result.action = await CommentsRepository.editComment(id, content)
         return result
     }
 
@@ -50,7 +47,7 @@ export class CommentsServices {
             isOwner: true,
             action: false
         }
-        const comment = await commentsQueryRepository.findCommentById(id)
+        const comment = await CommentsQueryRepository.findCommentById(id)
         if (!comment) {
             return result
         }
@@ -58,7 +55,7 @@ export class CommentsServices {
             result.isOwner = false
             return result
         }
-        result.action = await commentsRepository.deleteComment(id)
+        result.action = await CommentsRepository.deleteComment(id)
         return result
     }
 
@@ -67,11 +64,29 @@ export class CommentsServices {
 
     }
 
-    static async editCommentLikeStatus(commentId: string, status: string)  {
-        const comment: WithId<CommentDbType> | undefined = await commentsRepository.getCommentById(commentId)
+    static async editCommentLikeStatus(commentId: string, user:UserDbType, status: likeStatus)  {
+        const comment: WithId<CommentDbType> | undefined = await CommentsRepository.getCommentById(commentId)
         if (!comment) return {
             statusCode: StatusCodeHttp.NotFound,
             data: null
+        }
+
+        const findLike: LikesDbType | undefined | null = await CommentsRepository.findLikeByCommentAndUser(user._id!.toString(), commentId)
+        if (!findLike) {
+            // if (status === likeStatus.Like) comment.likesCount.likesCount++
+            // else if (status === likeStatus.Dislike) comment.likesCount.dislikesCount++
+
+            const newLike: LikesDbType = {
+                createdAt: new Date().toISOString(),
+                commentId,
+                userId: user._id!.toString(),
+                userLogin: user.login,
+                status
+            }
+
+            const createLike = await CommentsRepository.createLike(newLike)
+            
+
         }
 
         return {

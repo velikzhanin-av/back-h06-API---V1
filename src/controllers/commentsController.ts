@@ -1,11 +1,12 @@
 import {Request, Response} from "express";
-import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
+import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
+import {ResultCode} from "../types/resultCode";
 
 export class CommentsController {
     static async getCommentById(req: Request, res: Response) {
-        const comment: any = await commentsQueryRepository.findCommentById(req.params.id)
+        const comment: any = await CommentsQueryRepository.findCommentById(req.params.id)
         if (!comment) {
             res.sendStatus(404)
             return
@@ -47,7 +48,7 @@ export class CommentsController {
     }
 
     static async putCommentLikeStatus(req: RequestWithUser, res: Response) {
-        const result = await CommentsServices.editCommentLikeStatus(req.params.commentId, req.body.likeStatus)
+        const result: ResultCode<null> = await CommentsServices.editCommentLikeStatus(req.params.commentId, req.user!, req.body.likeStatus)
 
         res.sendStatus(result.statusCode)
     }

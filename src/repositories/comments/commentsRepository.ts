@@ -1,11 +1,14 @@
-import {blogCollection, commentCollection, postCollection} from "../../db/mongoDb";
-import {mapToOutputBlogs} from "../blogs/blogsQueryRepository";
+import {commentCollection} from "../../db/mongoDb";
 import {ObjectId, WithId} from "mongodb";
-import {CommentDbType} from "../../types/dbTypes";
+import {CommentDbType, LikesDbType} from "../../types/dbTypes";
+import {LikesModel} from "../../models/likesModel";
 
-export const commentsRepository = {
 
-    async deleteComment(id: string) {
+
+// перевести на CommentModel mongoose
+export class CommentsRepository {
+
+    static async deleteComment(id: string) {
         try {
             await commentCollection.deleteOne({_id: new ObjectId(id)})
             return true
@@ -13,9 +16,9 @@ export const commentsRepository = {
             console.log(err)
             return false
         }
-    },
+    }
 
-    async getCommentById(commentId: string) {
+    static async getCommentById(commentId: string) {
         try {
             const comment: WithId<CommentDbType> | null = await commentCollection.findOne({_id: new ObjectId(commentId)})
             if (!comment) return
@@ -25,9 +28,9 @@ export const commentsRepository = {
             console.log(err)
             return
         }
-    },
+    }
 
-    async editComment(id: string, content: string) {
+    static async editComment(id: string, content: string) {
         try {
             const res = await commentCollection.updateOne({_id: new ObjectId(id)}, {
                 $set: {
@@ -38,6 +41,24 @@ export const commentsRepository = {
         } catch (err) {
             console.log(err)
             return false
+        }
+    }
+
+    static async findLikeByCommentAndUser(userId: string, commentId: string) {
+        try {
+            return await LikesModel.findOne({userId, commentId})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async createLike(newLike: LikesDbType) {
+        try {
+            return await LikesModel.create(newLike)
+        } catch (e) {
+            console.log(e)
+            return
         }
     }
 }

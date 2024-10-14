@@ -1,8 +1,6 @@
 import {Request, Response} from "express";
 import {findAllPosts, findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
-import {postsServices} from "../services/postsServices";
-import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 

@@ -2,9 +2,9 @@ import {commentCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
 import {mapToOutputComment} from "../posts/postsRepository";
 
-export const commentsQueryRepository = {
+export class CommentsQueryRepository {
 
-    async findCommentById(id: string) {
+    static async findCommentById(id: string) {
         try {
             const comment: any = await commentCollection.findOne({_id: new ObjectId(id)})
             if (!comment) return
@@ -13,5 +13,5 @@ export const commentsQueryRepository = {
             console.log(err)
             return
         }
-    },
+    }
 }
