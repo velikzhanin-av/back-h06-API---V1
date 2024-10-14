@@ -10,25 +10,25 @@ import {CommentDbType} from "../types/dbTypes";
 import {STATUS_CODES} from "http";
 import {StatusCodeHttp} from "../types/resultCode";
 
-export const commentsServices = {
+export class CommentsServices {
 
-    async findComments(query: any, id: string) {
+    static async findComments(query: any, id: string) {
         const result = await findPostById(id)
         if (!result) {
             return false
         }
         return await findCommentsByPostId(query, id)
-    },
+    }
 
-    async createComment(postId: string, content: string, user: any) {
+    static async createComment(postId: string, content: string, user: any) {
         const result = await findPostById(postId)
         if (!result) {
             return false
         }
         return await postsServices.createCommentByPostId(postId, content, user)
-    },
+    }
 
-    async editComment(id: string, userId: string, content: string)  {
+    static async editComment(id: string, userId: string, content: string)  {
         const result = {
             isOwner: true,
             action: false
@@ -43,9 +43,9 @@ export const commentsServices = {
         }
         result.action = await commentsRepository.editComment(id, content)
         return result
-    },
+    }
 
-    async deleteComment(id: string, userId: string)  {
+    static async deleteComment(id: string, userId: string)  {
         const result = {
             isOwner: true,
             action: false
@@ -60,14 +60,14 @@ export const commentsServices = {
         }
         result.action = await commentsRepository.deleteComment(id)
         return result
-    },
+    }
 
-    async checkAction(userId: string, commentUserId: string) {
+    static async checkAction(userId: string, commentUserId: string) {
         return commentUserId === userId;
 
-    },
+    }
 
-    async editCommentLikeStatus(commentId: string, status: string)  {
+    static async editCommentLikeStatus(commentId: string, status: string)  {
         const comment: WithId<CommentDbType> | undefined = await commentsRepository.getCommentById(commentId)
         if (!comment) return {
             statusCode: StatusCodeHttp.NotFound,
@@ -78,7 +78,7 @@ export const commentsServices = {
             statusCode: StatusCodeHttp.NoContent,
             data: null
         }
-    },
+    }
 
 
 }

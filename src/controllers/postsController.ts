@@ -3,7 +3,7 @@ import {findAllPosts, findCommentsByPostId} from "../repositories/posts/postsQue
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
 import {postsServices} from "../services/postsServices";
 import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
-import {commentsServices} from "../services/commentsServices";
+import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 
 export const postsController = {
@@ -53,7 +53,7 @@ export const postsController = {
     },
 
     async postCommentsByPostId(req: RequestWithUser, res: Response) {
-        const result = await commentsServices.createComment(req.params.postId, req.body.content, req.user)
+        const result = await CommentsServices.createComment(req.params.postId, req.body.content, req.user)
         if (!result) {
             res.sendStatus(404)
             return
@@ -65,7 +65,7 @@ export const postsController = {
     },
 
     async getCommentsByPostId(req: Request, res: Response) {
-        const comments: any = await commentsServices.findComments(req.query, req.params.postId)
+        const comments: any = await CommentsServices.findComments(req.query, req.params.postId)
         if (!comments) {
             res.sendStatus(404)
             return
