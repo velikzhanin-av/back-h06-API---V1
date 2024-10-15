@@ -2,15 +2,16 @@ import {commentCollection} from "../../db/mongoDb";
 import {ObjectId, WithId} from "mongodb";
 import {CommentDbType, LikesDbType} from "../../types/dbTypes";
 import {LikesModel} from "../../models/likesModel";
-
-
+import {CommentsModel} from "../../models/commentsModel";
+import {findPostById} from "../posts/postsRepository";
+import {findCommentsByPostId} from "../posts/postsQueryRepository";
 
 // перевести на CommentModel mongoose
 export class CommentsRepository {
 
     static async deleteComment(id: string) {
         try {
-            await commentCollection.deleteOne({_id: new ObjectId(id)})
+            await CommentsModel.deleteOne({_id: new ObjectId(id)})
             return true
         } catch (err) {
             console.log(err)
@@ -20,7 +21,7 @@ export class CommentsRepository {
 
     static async getCommentById(commentId: string) {
         try {
-            const comment: WithId<CommentDbType> | null = await commentCollection.findOne({_id: new ObjectId(commentId)})
+            const comment: WithId<CommentDbType> | null = await CommentsModel.findOne({_id: new ObjectId(commentId)})
             if (!comment) return
 
             return comment
@@ -32,7 +33,7 @@ export class CommentsRepository {
 
     static async editComment(id: string, content: string) {
         try {
-            const res = await commentCollection.updateOne({_id: new ObjectId(id)}, {
+            const res = await CommentsModel.updateOne({_id: new ObjectId(id)}, {
                 $set: {
                     content,
                 }
@@ -56,6 +57,39 @@ export class CommentsRepository {
     static async createLike(newLike: LikesDbType) {
         try {
             return await LikesModel.create(newLike)
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async updateLikesCountComment(commentId: string, likesCount: number, dislikesCount: number) {
+        try {
+            return await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {
+                $set: {
+                    "likesCount.likesCount": likesCount,
+                    "likesCount.dislikesCount": dislikesCount,
+                }
+            })
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async updateLike(_id: ObjectId, status: string) {
+        try {
+            return await LikesModel.updateOne({_id}, {status})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    // TODO откуда вызывать???
+    static async findLikeByUserId(_id: ObjectId) {
+        try {
+            return await LikesModel.findOne({_id})
         } catch (e) {
             console.log(e)
             return

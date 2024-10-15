@@ -22,9 +22,9 @@ describe('E2E Tests', () => {
 
     it('Success put like status', async () => {
         const res = await req
-            .put(SETTINGS.PATH.COMMENTS + '/670ce9db68561ffe78245dca' + '/like-status')
-            .send({"likeStatus": "Like"})
-            .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBkMjg3ZWZlN2FiNDAwY2IxOWYyZWIiLCJkZXZpY2VJZCI6IjA3MmFkMjIxLWExMTctNDYxZi04MTM1LTI4NWExYzg0ZjFlNiIsImlhdCI6MTcyODkxNjE2OSwiZXhwIjoxNzI4OTE4NTY5fQ.i9_WujIAOt30Gq3bmDcxJF8dNc2By-UrK3vcnBYeVfc')
+            .put(SETTINGS.PATH.COMMENTS + '/670e0e46025438bdcf5149ad' + '/like-status')
+            .send({"likeStatus": "None"})
+            .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzBlMTg3NTdhODA3ZjhiYTc1MzI5NmIiLCJkZXZpY2VJZCI6ImFjZjQ0MDFjLTYyMTctNGQ1YS04MWE2LTdkOWE2MTI1MjFlZCIsImlhdCI6MTcyODk5NjU5MiwiZXhwIjoxNzI4OTk4OTkyfQ.V4LZ5_6009rC2ioF5USXVoV6ao9_3vAe__CJBVnwBXg')
             .expect(204)
         console.log(res.body);
     })

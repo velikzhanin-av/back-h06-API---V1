@@ -3,6 +3,7 @@ import {ObjectId} from "mongodb";
 import {CommentDbType, PostDbType} from "../../types/dbTypes";
 import {db} from "../../db/db";
 import {Request} from "express";
+import {CommentsModel, CommentsSchema} from "../../models/commentsModel";
 
 export type UserInfoType = {
     _id?: ObjectId
@@ -90,8 +91,8 @@ export const deletePost = async (id: string) => {
 
 export const createCommentByPostId = async (newComment: CommentDbType) => {
     try {
-        const res = await commentCollection.insertOne(newComment)
-        return mapToOutputComment(newComment)
+        const res = await CommentsModel.create(newComment)
+        return mapToOutputComment(res)
     } catch (err) {
         console.log(err)
         return false

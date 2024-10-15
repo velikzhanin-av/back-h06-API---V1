@@ -78,7 +78,6 @@ export type CommentUserView = {
     commentatorInfo: CommentatorInfo
     createdAt: string
     postId: string
-    likesCount: LikesCount
     likesInfo: LikesInfo
 }
 
@@ -90,6 +89,7 @@ export type CommentatorInfo = {
 export type LikesInfo = {
     likesCount: number
     dislikesCount: number
+    myStatus: likeStatus
 }
 
 export type LikesCount = {

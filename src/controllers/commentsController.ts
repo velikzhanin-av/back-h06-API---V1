@@ -3,10 +3,11 @@ import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRep
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
+import {CommentUserView} from "../types/dbTypes";
 
 export class CommentsController {
     static async getCommentById(req: Request, res: Response) {
-        const comment: any = await CommentsQueryRepository.findCommentById(req.params.id)
+        const comment: CommentUserView | undefined = await CommentsQueryRepository.findCommentById(req.params.id)
         if (!comment) {
             res.sendStatus(404)
             return

@@ -20,7 +20,7 @@ export const CommentsSchema = new mongoose.Schema<CommentDbType>({
     commentatorInfo: CommentatorInfoSchema,
     createdAt: {type: String, require: true},
     postId: {type: String, require: true},
-    likesCount: LikesInfoSchema
+    likesCount: {type: LikesInfoSchema, required: true}
     // myStatus: {type: String, enam: Object.values(likeStatus),  required: true, default: likeStatus.None}
 })
 export const CommentsModel = mongoose.model<CommentDbType>('comments', CommentsSchema)

@@ -73,8 +73,8 @@ export class CommentsServices {
 
         const findLike: LikesDbType | undefined | null = await CommentsRepository.findLikeByCommentAndUser(user._id!.toString(), commentId)
         if (!findLike) {
-            // if (status === likeStatus.Like) comment.likesCount.likesCount++
-            // else if (status === likeStatus.Dislike) comment.likesCount.dislikesCount++
+            if (status === likeStatus.Like) comment.likesCount.likesCount++
+            else if (status === likeStatus.Dislike) comment.likesCount.dislikesCount++
 
             const newLike: LikesDbType = {
                 createdAt: new Date().toISOString(),
@@ -85,7 +85,55 @@ export class CommentsServices {
             }
 
             const createLike = await CommentsRepository.createLike(newLike)
-            
+
+            let updateComment = await CommentsRepository.updateLikesCountComment(commentId,
+                comment.likesCount.likesCount,
+                comment.likesCount.dislikesCount)
+        } else {
+            if (findLike.status !== status) {
+                switch (findLike.status) {
+
+                    case likeStatus.Like:
+                        switch (status) {
+                            case likeStatus.Dislike:
+                                comment.likesCount.likesCount--
+                                comment.likesCount.dislikesCount++
+                                break
+                            case likeStatus.None:
+                                comment.likesCount.likesCount--
+                                break
+                        }
+                        break
+
+                    case likeStatus.Dislike:
+                        switch (status) {
+                            case likeStatus.Like:
+                                comment.likesCount.dislikesCount--
+                                comment.likesCount.likesCount++
+                                break
+                            case likeStatus.None:
+                                comment.likesCount.dislikesCount--
+                                break
+                        }
+                        break
+
+                    case likeStatus.None:
+                        switch (status) {
+                            case likeStatus.Like:
+                                comment.likesCount.likesCount++
+                                break
+                            case likeStatus.Dislike:
+                                comment.likesCount.dislikesCount++
+                                break
+                        }
+                        break
+                }
+                findLike.status = status
+                const updateLike = await CommentsRepository.updateLike(findLike._id!, status)
+                const  updateComment = await CommentsRepository.updateLikesCountComment(commentId,
+                    comment.likesCount.likesCount,
+                    comment.likesCount.dislikesCount)
+            }
 
         }
 
@@ -94,6 +142,7 @@ export class CommentsServices {
             data: null
         }
     }
+
 
 
 }

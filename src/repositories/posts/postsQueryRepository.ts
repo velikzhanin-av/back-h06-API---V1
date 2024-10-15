@@ -35,7 +35,7 @@ const getPostsFromBD = async (params: any, filter: any) => {
         .toArray() as any[] /*SomePostType[]*/
 }
 
-export const findCommentsByPostId = async (query: any, id: string) => {
+export const  findCommentsByPostId = async (query: any, id: string) => {
     const params: any = helper(query)
     const filter = {postId: id}
     let comments: any = await getCommentsFromBD(params, filter)
