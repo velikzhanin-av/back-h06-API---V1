@@ -1,21 +1,21 @@
 import {Request, Response} from "express";
-import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
 import {CommentUserView} from "../types/dbTypes";
 
 export class CommentsController {
-    static async getCommentById(req: Request, res: Response) {
-        const comment: CommentUserView | undefined = await CommentsQueryRepository.findCommentById(req.params.id)
-        if (!comment) {
-            res.sendStatus(404)
+    static async getCommentById(req: RequestWithUser, res: Response) {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const result: ResultCode<null | CommentUserView> = await CommentsServices.findCommentById(req.params.id, userId)
+        if (!result.data) {
+            res.sendStatus(result.statusCode)
             return
         }
+
         res
-            .status(200)
-            .json(comment)
-        return
+            .status(result.statusCode)
+            .json(result.data)
     }
 
     static async deleteCommentById(req: Request, res: Response) {

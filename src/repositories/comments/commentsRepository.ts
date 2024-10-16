@@ -1,10 +1,7 @@
-import {commentCollection} from "../../db/mongoDb";
 import {ObjectId, WithId} from "mongodb";
 import {CommentDbType, LikesDbType} from "../../types/dbTypes";
 import {LikesModel} from "../../models/likesModel";
 import {CommentsModel} from "../../models/commentsModel";
-import {findPostById} from "../posts/postsRepository";
-import {findCommentsByPostId} from "../posts/postsQueryRepository";
 
 // перевести на CommentModel mongoose
 export class CommentsRepository {
@@ -86,13 +83,13 @@ export class CommentsRepository {
         }
     }
 
-    // TODO откуда вызывать???
-    static async findLikeByUserId(_id: ObjectId) {
+    static async findLikeByUserId(userId: string) {
         try {
-            return await LikesModel.findOne({_id})
+            return await LikesModel.findOne({_id: new ObjectId(userId)})
         } catch (e) {
             console.log(e)
             return
         }
     }
+
 }
