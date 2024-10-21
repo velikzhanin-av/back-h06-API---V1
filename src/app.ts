@@ -31,5 +31,3 @@ app.use(SETTINGS.PATH.SECURITY, securityRouter)
 app.get('/', async (req: Request, res: Response) => {
     res.sendStatus(200)
 })
-
-// test
