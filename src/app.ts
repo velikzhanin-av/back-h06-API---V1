@@ -2,7 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from "cookie-parser";
 import {Request, Response} from "express";
-import session from "express-session";
 import {SETTINGS} from "./settings";
 import {blogsRouter} from "./routes/blogsRoutes";
 import {postsRouter} from "./routes/postsRoutes";

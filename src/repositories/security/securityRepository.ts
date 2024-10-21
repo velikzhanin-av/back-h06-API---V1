@@ -1,7 +1,5 @@
-import {ObjectId, WithId} from "mongodb";
+import {ObjectId} from "mongodb";
 import {sessionsCollection} from "../../db/mongoDb";
-import {SessionsDbType} from "../../types/dbTypes";
-import {mapToOutputSessions} from "./securityQueryRepository";
 
 export const securityRepository = {
 

@@ -1,6 +1,6 @@
-import {blogCollection, postCollection} from "../../db/mongoDb";
+import {postCollection} from "../../db/mongoDb";
 import {BlogDbType, PostDbType} from "../../types/dbTypes";
-import {ObjectId, SortDirection} from "mongodb";
+import {ObjectId} from "mongodb";
 import {mapToOutputPosts} from "../posts/postsRepository";
 import {getTotalCount, helper} from "../utils";
 import {BlogModel} from "../../models/blogsModel";

@@ -1,5 +1,4 @@
 import {ObjectId} from "mongodb";
-import {mapToOutputComment} from "../posts/postsRepository";
 import {CommentsModel} from "../../models/commentsModel";
 import {CommentDbType} from "../../types/dbTypes";
 
@@ -27,8 +26,8 @@ export const mapToUserViewComment = (comment: CommentDbType) => { //
         },
         createdAt: comment.createdAt,
         likesCount: {
-            likesCount: comment.likesCount.likesCount,
-            dislikesCount: comment.likesCount.dislikesCount
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount
         }
     }
 }

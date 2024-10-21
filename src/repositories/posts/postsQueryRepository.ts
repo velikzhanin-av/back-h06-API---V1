@@ -1,12 +1,10 @@
-import {BlogDbType, PostDbType} from "../../types/dbTypes";
+import {PostDbType} from "../../types/dbTypes";
 import {
-    mapToOutputBlogs,
     searchNameTerm
 } from "../blogs/blogsQueryRepository";
 import {mapToOutputComment, mapToOutputPosts} from "./postsRepository";
-import {blogCollection, commentCollection, postCollection} from "../../db/mongoDb";
+import {commentCollection, postCollection} from "../../db/mongoDb";
 import {getTotalCount, helper} from "../utils";
-import {ObjectId} from "mongodb";
 
 export const findAllPosts = async (query: any) => {
     const params: any = helper(query)

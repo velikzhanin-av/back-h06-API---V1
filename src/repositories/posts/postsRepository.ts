@@ -1,9 +1,8 @@
-import {commentCollection, postCollection} from "../../db/mongoDb";
+import {postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {CommentDbType, PostDbType} from "../../types/dbTypes";
-import {db} from "../../db/db";
+import {CommentDbType} from "../../types/dbTypes";
 import {Request} from "express";
-import {CommentsModel, CommentsSchema} from "../../models/commentsModel";
+import {CommentsModel} from "../../models/commentsModel";
 
 export type UserInfoType = {
     _id?: ObjectId

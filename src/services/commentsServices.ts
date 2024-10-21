@@ -3,7 +3,7 @@ import {findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
 import {findPostById} from "../repositories/posts/postsRepository";
 import {postsServices} from "./postsServices";
 import {WithId} from "mongodb";
-import {CommentDbType, CommentUserView, LikesDbType, likeStatus, UserDbType} from "../types/dbTypes";
+import {CommentDbType, LikesDbType, likeStatus, UserDbType} from "../types/dbTypes";
 import {StatusCodeHttp} from "../types/resultCode";
 import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 

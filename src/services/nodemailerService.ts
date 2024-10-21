@@ -1,4 +1,3 @@
-import nodemailer from 'nodemailer';
 import {nodemailerAdapter} from "../adapters/nodemailerAdapter";
 
 export const nodemailerService = {

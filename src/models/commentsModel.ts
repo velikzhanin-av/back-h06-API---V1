@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
-import {CommentatorInfo, CommentDbType, LikesCount, LikesDbType, LikesInfo, likeStatus} from "../types/dbTypes";
-import {ObjectId} from "mongodb";
+import {CommentatorInfo, CommentDbType, LikesInfo} from "../types/dbTypes";
 
 export const LikesInfoSchema = new mongoose.Schema<LikesInfo>({
         likesCount: {type: Number, require: true, default: 0},
