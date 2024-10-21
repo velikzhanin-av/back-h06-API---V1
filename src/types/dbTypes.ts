@@ -69,7 +69,7 @@ export type CommentDbType = {
     commentatorInfo: CommentatorInfo
     createdAt: string
     postId: string
-    likesCount: LikesCount
+    likesInfo: LikesCount
 }
 
 export type CommentUserView = {

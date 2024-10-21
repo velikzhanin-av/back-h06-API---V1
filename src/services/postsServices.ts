@@ -12,7 +12,7 @@ export const postsServices = {
             },
             createdAt: new Date().toISOString(),
             postId: id,
-            likesCount: {
+            likesInfo: {
                 likesCount: 0,
                 dislikesCount: 0,
             }
