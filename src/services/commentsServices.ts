@@ -11,7 +11,7 @@ export class CommentsServices {
 
 
 
-    static async findComments(query: any, id: string) {
+    static async findComments(query: any, id: string, userId: string | null) {
         const result = await findPostById(id)
         if (!result) {
             return false
@@ -34,7 +34,7 @@ export class CommentsServices {
             data: null
         }
         // TODO поправить any
-        let commentOut: any = await this.mapToUserViewComment(comment, 'None')
+        let commentOut: any = this.mapToUserViewComment(comment, 'None')
 
         if (!userId) return {
             statusCode: StatusCodeHttp.Ok,
@@ -43,8 +43,8 @@ export class CommentsServices {
 
         const like: LikesDbType | undefined | null = await CommentsRepository.findLikeByUserId(commentId, userId)
         if (!like) return {
-            statusCode: StatusCodeHttp.NotFound,
-            data: null
+            statusCode: StatusCodeHttp.Ok,
+            data: commentOut
         }
 
         commentOut = this.mapToUserViewComment(comment, like.status)

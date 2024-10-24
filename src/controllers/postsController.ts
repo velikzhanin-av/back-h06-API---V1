@@ -62,8 +62,9 @@ export const postsController = {
         return
     },
 
-    async getCommentsByPostId(req: Request, res: Response) {
-        const comments: any = await CommentsServices.findComments(req.query, req.params.postId)
+    async getCommentsByPostId(req: RequestWithUser, res: Response) {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const comments: any = await CommentsServices.findComments(req.query, req.params.postId, userId)
         if (!comments) {
             res.sendStatus(404)
             return
