@@ -12,9 +12,6 @@ export class CommentsController {
             res.sendStatus(result.statusCode)
             return
         }
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
-        console.log(result.data);
-        console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
 
         res
             .status(result.statusCode)

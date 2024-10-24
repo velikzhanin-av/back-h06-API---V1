@@ -64,8 +64,8 @@ export class CommentsRepository {
         try {
             return await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {
                 $set: {
-                    "likesCount.likesCount": likesCount,
-                    "likesCount.dislikesCount": dislikesCount,
+                    "likesInfo.likesCount": likesCount,
+                    "likesInfo.dislikesCount": dislikesCount,
                 }
             })
         } catch (e) {
@@ -83,9 +83,9 @@ export class CommentsRepository {
         }
     }
 
-    static async findLikeByUserId(userId: string) {
+    static async findLikeByUserId(commentId: string, userId: string) {
         try {
-            return await LikesModel.findOne({_id: new ObjectId(userId)})
+            return await LikesModel.findOne({commentId, userId})
         } catch (e) {
             console.log(e)
             return

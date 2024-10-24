@@ -22,11 +22,20 @@ describe('E2E Tests', () => {
 
     it('Success put like status', async () => {
         const res = await req
-            .put(SETTINGS.PATH.COMMENTS + '/671a4fdba386453d4aa22fc2' + '/like-status')
+            .put(SETTINGS.PATH.COMMENTS + '/671a59c52287c699a96f5e90' + '/like-status')
             .send({"likeStatus": "Dislike"})
-            .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzFhNTBjZmU1NTEzZDRlOGFmY2U0NGMiLCJkZXZpY2VJZCI6IjIxMTQ5NDBlLWMwZDItNDc3MS1hMDJiLTA4Y2E3N2RhZTk0YSIsImlhdCI6MTcyOTc3Nzg3NCwiZXhwIjoxNzI5NzgwMjc0fQ.ibBHcBdCXbBPFKbVeuBfrCAF_miNw_dtRLbHfoKNwc0')
+            .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzFhNjJlZTJlYTk2ZTIzOWFkYWMxYTkiLCJkZXZpY2VJZCI6ImI4MmFkMzIwLTdmOWYtNGM2ZC1hZGZmLTBiYjcxOTUxODEwZSIsImlhdCI6MTcyOTc4MjUxMiwiZXhwIjoxNzI5Nzg0OTEyfQ.KlemsU8lmyZ_iz90unwGlxTuzy4SZBl9Wj8VJjd8TIg')
             .expect(204)
+    })
+
+    it('Success get comment by id', async () => {
+        const res = await req
+            .get(SETTINGS.PATH.COMMENTS + '/671a59c52287c699a96f5e90')
+            .set('Authorization', 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzFhNjJlZTJlYTk2ZTIzOWFkYWMxYTkiLCJkZXZpY2VJZCI6ImI4MmFkMzIwLTdmOWYtNGM2ZC1hZGZmLTBiYjcxOTUxODEwZSIsImlhdCI6MTcyOTc4MjUxMiwiZXhwIjoxNzI5Nzg0OTEyfQ.KlemsU8lmyZ_iz90unwGlxTuzy4SZBl9Wj8VJjd8TIg')
+            .expect(200)
         console.log(res.body);
     })
+
+
 
 })

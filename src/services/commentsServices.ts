@@ -41,7 +41,7 @@ export class CommentsServices {
             data: commentOut
         }
 
-        const like: LikesDbType | undefined | null = await CommentsRepository.findLikeByUserId(userId)
+        const like: LikesDbType | undefined | null = await CommentsRepository.findLikeByUserId(commentId, userId)
         if (!like) return {
             statusCode: StatusCodeHttp.NotFound,
             data: null
@@ -55,7 +55,7 @@ export class CommentsServices {
         }
     }
 
-    static async mapToUserViewComment(comment: CommentDbType, likeStatus: string ) { //
+    static mapToUserViewComment(comment: CommentDbType, likeStatus: string ) { //
         return {
             id: comment._id?.toString(),
             content: comment.content,
@@ -147,7 +147,8 @@ export class CommentsServices {
                                 comment.likesInfo.dislikesCount++
                                 break
                             case likeStatus.None:
-                                comment.likesInfo.likesCount--
+                                comment.likesInfo.likesCount = 0
+                                comment.likesInfo.dislikesCount = 0
                                 break
                         }
                         break
@@ -159,7 +160,8 @@ export class CommentsServices {
                                 comment.likesInfo.likesCount++
                                 break
                             case likeStatus.None:
-                                comment.likesInfo.dislikesCount--
+                                comment.likesInfo.likesCount = 0
+                                comment.likesInfo.dislikesCount = 0
                                 break
                         }
                         break

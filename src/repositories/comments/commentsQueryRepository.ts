@@ -25,7 +25,7 @@ export const mapToUserViewComment = (comment: CommentDbType) => { //
             userLogin: comment.commentatorInfo.userLogin
         },
         createdAt: comment.createdAt,
-        likesCount: {
+        likesInfo: {
             likesCount: comment.likesInfo.likesCount,
             dislikesCount: comment.likesInfo.dislikesCount
         }
