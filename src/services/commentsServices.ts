@@ -58,12 +58,11 @@ export class CommentsServices {
     static async mapToUserViewComment(comment: CommentDbType, likeStatus: string ) { //
         return {
             id: comment._id?.toString(),
-            userLogin: comment.commentatorInfo.userLogin,
             content: comment.content,
-            // commentatorInfo: {
-            //     userId: comment.commentatorInfo.userId,
-            //     userLogin: comment.commentatorInfo.userLogin
-            // },
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
             createdAt: comment.createdAt,
             likesInfo: {
                 likesCount: comment.likesInfo.likesCount,
@@ -178,7 +177,7 @@ export class CommentsServices {
                 }
                 findLike.status = status
                 const updateLike = await CommentsRepository.updateLike(findLike._id!, status)
-                const  updateComment = await CommentsRepository.updateLikesCountComment(commentId,
+                const updateComment = await CommentsRepository.updateLikesCountComment(commentId,
                     comment.likesInfo.likesCount,
                     comment.likesInfo.dislikesCount)
             }

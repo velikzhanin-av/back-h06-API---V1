@@ -17,6 +17,7 @@ export const postsServices = {
                 dislikesCount: 0,
             }
         }
+
         return createCommentByPostId(newComment)
     }
 }

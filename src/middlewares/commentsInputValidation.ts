@@ -1,5 +1,6 @@
 import {body, validationResult} from 'express-validator'
 import {NextFunction, Request, Response} from "express";
+import {likeStatus} from "../types/dbTypes";
 
 
 export const commentContentValidation = body("content")
@@ -10,6 +11,7 @@ export const commentContentValidation = body("content")
 export const commentLikeStatusValidation = body("likeStatus")
     .trim().not().isEmpty()
     .isString()
+    .isIn(Object.values(likeStatus))
 
 export const commentsInputValidation = (req: Request, res: Response, next: NextFunction) => {
     const errors = validationResult(req)

@@ -37,6 +37,23 @@ export const mapToOutputComment = (comment: any) => { // TODO не работа�
     }
 }
 
+export const mapToOutputPostComment = (comment: any) => { // TODO не работает с типизацией!!!
+    return {
+        id: comment._id?.toString(),
+        content: comment.content,
+        commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin
+        },
+        createdAt: comment.createdAt,
+        likesInfo: {
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount,
+            myStatus: 'None'
+        }
+    }
+}
+
 export const createPost = async (req: Request) => {
     const newPost =
         {
@@ -91,7 +108,7 @@ export const deletePost = async (id: string) => {
 export const createCommentByPostId = async (newComment: CommentDbType) => {
     try {
         const res = await CommentsModel.create(newComment)
-        return mapToOutputComment(res)
+        return mapToOutputPostComment(res)
     } catch (err) {
         console.log(err)
         return false
