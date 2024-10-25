@@ -10,6 +10,7 @@ import {
 import {postsController} from "../controllers/postsController";
 import {authTokenMiddleware} from "../middlewares/authTokenMiddleware";
 import {commentContentValidation, commentsInputValidation} from "../middlewares/commentsInputValidation";
+import {userFromAccessToken} from "../middlewares/userFromAccessToken";
 
 export const postsRouter = Router()
 
@@ -36,4 +37,5 @@ postsRouter.post('/:postId/comments', authTokenMiddleware,
     commentContentValidation,
     commentsInputValidation,
     postsController.postCommentsByPostId)
-postsRouter.get('/:postId/comments', postsController.getCommentsByPostId)
+postsRouter.get('/:postId/comments', userFromAccessToken,
+    postsController.getCommentsByPostId)

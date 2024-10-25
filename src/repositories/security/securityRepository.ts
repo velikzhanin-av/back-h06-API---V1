@@ -1,7 +1,5 @@
-import {ObjectId, WithId} from "mongodb";
+import {ObjectId} from "mongodb";
 import {sessionsCollection} from "../../db/mongoDb";
-import {SessionsDbType} from "../../types/dbTypes";
-import {mapToOutputSessions} from "./securityQueryRepository";
 
 export const securityRepository = {
 
@@ -35,7 +33,6 @@ export const securityRepository = {
 
     async findSessionByIatAndDeviceId(iat: Date, deviceId: string) {
         const result = await sessionsCollection.findOne({iat, deviceId})
-        console.log(result);
         return result
     },
 

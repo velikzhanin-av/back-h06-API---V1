@@ -2,7 +2,7 @@ import mongoose from 'mongoose'
 import {Collection, Db, MongoClient} from "mongodb";
 import {SETTINGS} from "../settings";
 import {
-    BlogDbType,
+    BlogDbType, CommentDbType,
     PostDbType,
     RateLimitDbType,
     SessionsDbType,
@@ -18,7 +18,7 @@ export const db: Db = client.db(SETTINGS.DB_NAME);
 export const blogCollection: Collection<BlogDbType> = db.collection<any>(SETTINGS.BLOG_COLLECTION_NAME)
 export const postCollection: Collection<PostDbType> = db.collection<any>(SETTINGS.POST_COLLECTION_NAME)
 export const userCollection: Collection<UserDbType> = db.collection<any>(SETTINGS.USER_COLLECTION_NAME)
-export const commentCollection: Collection<UserDbType> = db.collection<any>(SETTINGS.COMMENTS_COLLECTION_NAME)
+export const commentCollection: Collection<CommentDbType> = db.collection<any>(SETTINGS.COMMENTS_COLLECTION_NAME)
 export const tokenBlackListCollection: Collection<TokenBlackListDbType> = db.collection<any>(SETTINGS.TOKEN_BLACK_LIST)
 export const sessionsCollection: Collection<SessionsDbType> = db.collection<any>(SETTINGS.SESSIONS_COLLECTION_NAME)
 export const rateLimitCollection: Collection<RateLimitDbType> = db.collection<any>(SETTINGS.RATE_LIMIT_COLLECTION_NAME)

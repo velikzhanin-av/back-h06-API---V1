@@ -7,7 +7,6 @@ import {
 } from "../middlewares/blogsInputValidation";
 import {authMiddleware} from "../middlewares/authMiddleware";
 import {
-    blogIdValidation,
     contentValidation, postsInputValidation,
     shortDescriptionValidation,
     titleValidation

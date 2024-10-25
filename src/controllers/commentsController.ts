@@ -1,24 +1,26 @@
 import {Request, Response} from "express";
-import {findAllUsers} from "../repositories/users/usersQueryRepository";
-import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
-import {commentsServices} from "../services/commentsServices";
+import {CommentsServices} from "../services/commentsServices";
+import {RequestWithUser} from "../types/usersTypes";
+import {ResultCode} from "../types/resultCode";
+import {CommentUserView} from "../types/dbTypes";
 
-export const commentsController = {
-    async getCommentById(req: Request, res: Response) {
-        const comment: any = await commentsQueryRepository.findCommentById(req.params.id)
-        if (!comment) {
-            res.sendStatus(404)
+export class CommentsController {
+    static async getCommentById(req: RequestWithUser, res: Response) {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const result: ResultCode<null | CommentUserView> = await CommentsServices.findCommentById(req.params.id, userId)
+        if (!result.data) {
+            res.sendStatus(result.statusCode)
             return
         }
+
         res
-            .status(200)
-            .json(comment)
-        return
-    },
+            .status(result.statusCode)
+            .json(result.data)
+    }
 
-    async deleteCommentById(req: Request, res: Response) {
+    static async deleteCommentById(req: Request, res: Response) {
         // @ts-ignore
-        const result = await commentsServices.deleteComment(req.params.commentId, req.user._id.toString())
+        const result = await CommentsServices.deleteComment(req.params.commentId, req.user._id.toString())
         if (!result.isOwner) {
             res.sendStatus(403)
             return
@@ -29,11 +31,11 @@ export const commentsController = {
         }
         res.sendStatus(204)
         return
-    },
+    }
 
-    async putCommentById(req: Request, res: Response) {
+    static async putCommentById(req: Request, res: Response) {
         // @ts-ignore
-        const result = await commentsServices.editComment(req.params.commentId, req.user._id.toString(), req.body.content)
+        const result = await CommentsServices.editComment(req.params.commentId, req.user._id.toString(), req.body.content)
         if (!result.isOwner) {
             res.sendStatus(403)
             return
@@ -44,5 +46,11 @@ export const commentsController = {
         }
         res.sendStatus(204)
         return
-    },
+    }
+
+    static async putCommentLikeStatus(req: RequestWithUser, res: Response) {
+        const result: ResultCode<null> = await CommentsServices.editCommentLikeStatus(req.params.commentId, req.user!, req.body.likeStatus)
+
+        res.sendStatus(result.statusCode)
+    }
 }

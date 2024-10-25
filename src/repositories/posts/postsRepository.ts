@@ -1,8 +1,8 @@
-import {commentCollection, postCollection} from "../../db/mongoDb";
+import {postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {PostDbType} from "../../types/dbTypes";
-import {db} from "../../db/db";
+import {CommentDbType} from "../../types/dbTypes";
 import {Request} from "express";
+import {CommentsModel} from "../../models/commentsModel";
 
 export type UserInfoType = {
     _id?: ObjectId
@@ -25,7 +25,7 @@ export const mapToOutputPosts = (post: any) => { // TODO не работает �
     }
 }
 
-export const mapToOutputComment = (comment: any) => { // TODO не работает с типизацией!!!
+export const mapToOutputComment = (comment: any, likeStatus: string) => { // TODO не работает с типизацией!!!
     return {
         id: comment._id?.toString(),
         content: comment.content,
@@ -34,6 +34,28 @@ export const mapToOutputComment = (comment: any) => { // TODO не работа�
             userLogin: comment.commentatorInfo.userLogin
         },
         createdAt: comment.createdAt,
+        likesInfo: {
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount,
+            myStatus: likeStatus
+        }
+    }
+}
+
+export const mapToOutputPostComment = (comment: any) => { // TODO не работает с типизацией!!!
+    return {
+        id: comment._id?.toString(),
+        content: comment.content,
+        commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin
+        },
+        createdAt: comment.createdAt,
+        likesInfo: {
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount,
+            myStatus: 'None'
+        }
     }
 }
 
@@ -88,19 +110,10 @@ export const deletePost = async (id: string) => {
     }
 }
 
-export const createCommentByPostId = async (id: string, comment: string, user: UserInfoType) => {
-    const newComment: any = {
-        content: comment,
-        commentatorInfo: {
-            userId: user._id?.toString(),
-            userLogin: user.login
-        },
-        createdAt: new Date().toISOString(),
-        postId: id
-    }
+export const createCommentByPostId = async (newComment: CommentDbType) => {
     try {
-        const res = await commentCollection.insertOne(newComment)
-        return mapToOutputComment(newComment)
+        const res = await CommentsModel.create(newComment)
+        return mapToOutputPostComment(res)
     } catch (err) {
         console.log(err)
         return false

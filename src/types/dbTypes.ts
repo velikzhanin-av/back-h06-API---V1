@@ -62,3 +62,51 @@ export type RateLimitDbType = {
     url: string
     date: number
 }
+
+export type CommentDbType = {
+    _id?: ObjectId
+    content: string
+    commentatorInfo: CommentatorInfo
+    createdAt: string
+    postId: string
+    likesInfo: LikesCount
+}
+
+export type CommentUserView = {
+    _id?: ObjectId
+    content: string
+    commentatorInfo: CommentatorInfo
+    createdAt: string
+    likesCount: LikesInfo
+}
+
+export type CommentatorInfo = {
+    userId: string
+    userLogin: string
+}
+
+export type LikesInfo = {
+    likesCount: number
+    dislikesCount: number
+    myStatus: string
+}
+
+export type LikesCount = {
+    likesCount: number,
+    dislikesCount: number,
+}
+
+export type LikesDbType = {
+    _id?: ObjectId
+    createdAt: string
+    commentId: string
+    userId: string
+    userLogin: string
+    status: likeStatus
+}
+
+export enum likeStatus {
+    None = 'None',
+    Like = 'Like',
+    Dislike = 'Dislike'
+}

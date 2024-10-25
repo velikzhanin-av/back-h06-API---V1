@@ -1,8 +1,6 @@
-import {BlogDbType, UserDbType} from "../../types/dbTypes";
-import {mapToOutputBlogs, searchNameTerm} from "../blogs/blogsQueryRepository";
+import {UserDbType} from "../../types/dbTypes";
 import {getFromBD, getTotalCount, helper} from "../utils";
 import {mapToOutputUsers} from "./usersRepository";
-import {userCollection} from "../../db/mongoDb";
 
 type UsersOutType = {
     "pagesCount": number,

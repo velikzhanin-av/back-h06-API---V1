@@ -1,9 +1,9 @@
 import {Request, Response} from "express";
 import {findAllPosts, findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
-import {postsServices} from "../services/postsServices";
-import {commentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
-import {commentsServices} from "../services/commentsServices";
+import {CommentsServices} from "../services/commentsServices";
+import {RequestWithUser} from "../types/usersTypes";
+import {ResultCode} from "../types/resultCode";
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
@@ -51,9 +51,8 @@ export const postsController = {
         }
     },
 
-    async postCommentsByPostId(req: Request, res: Response) {
-        // @ts-ignore
-        const result = await commentsServices.createComment(req.params.postId, req.body.content, req.user)
+    async postCommentsByPostId(req: RequestWithUser, res: Response) {
+        const result = await CommentsServices.createComment(req.params.postId, req.body.content, req.user)
         if (!result) {
             res.sendStatus(404)
             return
@@ -64,15 +63,26 @@ export const postsController = {
         return
     },
 
-    async getCommentsByPostId(req: Request, res: Response) {
-        const comments: any = await commentsServices.findComments(req.query, req.params.postId)
-        if (!comments) {
-            res.sendStatus(404)
+    async getCommentsByPostId(req: RequestWithUser, res: Response) {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const result: ResultCode<object|null> = await CommentsServices.findComments(req.query, req.params.postId, userId)
+
+        if (!result.data) {
+            res.sendStatus(result.statusCode)
             return
         }
+
         res
-            .status(200)
-            .json(comments)
+            .status(result.statusCode)
+            .json(result.data)
+
+        // if (!comments) {
+        //     res.sendStatus(404)
+        //     return
+        // }
+        // res
+        //     .status(200)
+        //     .json(comments)
         return
     }
 }

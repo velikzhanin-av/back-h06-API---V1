@@ -1,16 +1,33 @@
-import {commentCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {mapToOutputComment} from "../posts/postsRepository";
+import {CommentsModel} from "../../models/commentsModel";
+import {CommentDbType} from "../../types/dbTypes";
 
-export const commentsQueryRepository = {
+export class CommentsQueryRepository {
 
-    async findCommentById(id: string) {
+    static async findCommentById(id: string) {
         try {
-            const comment: any = await commentCollection.findOne({_id: new ObjectId(id)})
-            return mapToOutputComment(comment)
+            const comment: any = await CommentsModel.findOne({_id: new ObjectId(id)})
+            if (!comment) return
+            return mapToUserViewComment(comment)
         } catch (err) {
             console.log(err)
             return
         }
-    },
+    }
+}
+
+export const mapToUserViewComment = (comment: CommentDbType) => { //
+    return {
+        id: comment._id?.toString(),
+        content: comment.content,
+        commentatorInfo: {
+            userId: comment.commentatorInfo.userId,
+            userLogin: comment.commentatorInfo.userLogin
+        },
+        createdAt: comment.createdAt,
+        likesInfo: {
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount
+        }
+    }
 }

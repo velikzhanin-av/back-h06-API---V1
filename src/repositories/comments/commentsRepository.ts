@@ -1,22 +1,36 @@
-import {blogCollection, commentCollection, postCollection} from "../../db/mongoDb";
-import {mapToOutputBlogs} from "../blogs/blogsQueryRepository";
-import {ObjectId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
+import {CommentDbType, LikesDbType} from "../../types/dbTypes";
+import {LikesModel} from "../../models/likesModel";
+import {CommentsModel} from "../../models/commentsModel";
 
-export const commentsRepository = {
+// перевести на CommentModel mongoose
+export class CommentsRepository {
 
-    async deleteComment(id: string) {
+    static async deleteComment(id: string) {
         try {
-            await commentCollection.deleteOne({_id: new ObjectId(id)})
+            await CommentsModel.deleteOne({_id: new ObjectId(id)})
             return true
         } catch (err) {
             console.log(err)
             return false
         }
-    },
+    }
 
-    async editComment(id: string, content: string) {
+    static async getCommentById(commentId: string) {
         try {
-            const res = await commentCollection.updateOne({_id: new ObjectId(id)}, {
+            const comment: WithId<CommentDbType> | null = await CommentsModel.findOne({_id: new ObjectId(commentId)})
+            if (!comment) return
+
+            return comment
+        } catch (err) {
+            console.log(err)
+            return
+        }
+    }
+
+    static async editComment(id: string, content: string) {
+        try {
+            const res = await CommentsModel.updateOne({_id: new ObjectId(id)}, {
                 $set: {
                     content,
                 }
@@ -27,4 +41,55 @@ export const commentsRepository = {
             return false
         }
     }
+
+    static async findLikeByCommentAndUser(userId: string, commentId: string) {
+        try {
+            return await LikesModel.findOne({userId, commentId})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async createLike(newLike: LikesDbType) {
+        try {
+            return await LikesModel.create(newLike)
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async updateLikesCountComment(commentId: string, likesCount: number, dislikesCount: number) {
+        try {
+            return await CommentsModel.updateOne({_id: new ObjectId(commentId)}, {
+                $set: {
+                    "likesInfo.likesCount": likesCount,
+                    "likesInfo.dislikesCount": dislikesCount,
+                }
+            })
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async updateLike(_id: ObjectId, status: string) {
+        try {
+            return await LikesModel.updateOne({_id}, {status})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    static async findLikeByUserId(commentId: string, userId: string) {
+        try {
+            return await LikesModel.findOne({commentId, userId})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
 }
