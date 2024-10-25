@@ -25,7 +25,7 @@ export const mapToOutputPosts = (post: any) => { // TODO не работает �
     }
 }
 
-export const mapToOutputComment = (comment: any) => { // TODO не работает с типизацией!!!
+export const mapToOutputComment = (comment: any, likeStatus: string) => { // TODO не работает с типизацией!!!
     return {
         id: comment._id?.toString(),
         content: comment.content,
@@ -34,6 +34,11 @@ export const mapToOutputComment = (comment: any) => { // TODO не работа�
             userLogin: comment.commentatorInfo.userLogin
         },
         createdAt: comment.createdAt,
+        likesInfo: {
+            likesCount: comment.likesInfo.likesCount,
+            dislikesCount: comment.likesInfo.dislikesCount,
+            myStatus: likeStatus
+        }
     }
 }
 

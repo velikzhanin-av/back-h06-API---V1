@@ -3,6 +3,7 @@ import {findAllPosts, findCommentsByPostId} from "../repositories/posts/postsQue
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
+import {ResultCode} from "../types/resultCode";
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
@@ -64,14 +65,24 @@ export const postsController = {
 
     async getCommentsByPostId(req: RequestWithUser, res: Response) {
         const userId: string | null = req.user ? req.user._id.toString() : null
-        const comments: any = await CommentsServices.findComments(req.query, req.params.postId, userId)
-        if (!comments) {
-            res.sendStatus(404)
+        const result: ResultCode<object|null> = await CommentsServices.findComments(req.query, req.params.postId, userId)
+
+        if (!result.data) {
+            res.sendStatus(result.statusCode)
             return
         }
+
         res
-            .status(200)
-            .json(comments)
+            .status(result.statusCode)
+            .json(result.data)
+
+        // if (!comments) {
+        //     res.sendStatus(404)
+        //     return
+        // }
+        // res
+        //     .status(200)
+        //     .json(comments)
         return
     }
 }

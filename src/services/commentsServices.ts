@@ -9,14 +9,28 @@ import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRep
 
 export class CommentsServices {
 
-
-
     static async findComments(query: any, id: string, userId: string | null) {
-        const result = await findPostById(id)
-        if (!result) {
-            return false
+
+        const post = await findPostById(id)
+        if (!post) {
+            return {
+                statusCode: StatusCodeHttp.NotFound,
+                data: null
+            }
         }
-        return await findCommentsByPostId(query, id)
+
+        const result = await findCommentsByPostId(query, id, userId)
+        if (!result.items) {
+            return {
+                statusCode: StatusCodeHttp.NotFound,
+                data: null
+            }
+        }
+
+        return {
+            statusCode: StatusCodeHttp.Ok,
+            data: result
+        }
     }
 
     static async createComment(postId: string, content: string, user: any) {
