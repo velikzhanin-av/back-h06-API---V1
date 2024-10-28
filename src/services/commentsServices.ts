@@ -8,6 +8,8 @@ import {StatusCodeHttp} from "../types/resultCode";
 import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 
 export class CommentsServices {
+
+
     async findComments(query: any, id: string, userId: string | null) {
 
         const post = await findPostById(id)
@@ -204,7 +206,5 @@ export class CommentsServices {
             data: null
         }
     }
-
-
 
 }
