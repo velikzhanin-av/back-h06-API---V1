@@ -8,8 +8,7 @@ import {StatusCodeHttp} from "../types/resultCode";
 import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 
 export class CommentsServices {
-
-    static async findComments(query: any, id: string, userId: string | null) {
+    async findComments(query: any, id: string, userId: string | null) {
 
         const post = await findPostById(id)
         if (!post) {
@@ -33,7 +32,7 @@ export class CommentsServices {
         }
     }
 
-    static async createComment(postId: string, content: string, user: any) {
+    async createComment(postId: string, content: string, user: any) {
         const result = await findPostById(postId)
         if (!result) {
             return false
@@ -41,7 +40,7 @@ export class CommentsServices {
         return await postsServices.createCommentByPostId(postId, content, user)
     }
 
-    static async findCommentById(commentId: string, userId: string | null) {
+    async findCommentById(commentId: string, userId: string | null) {
         const comment: WithId<CommentDbType> | undefined = await CommentsRepository.getCommentById(commentId)
         if (!comment) return {
             statusCode: StatusCodeHttp.NotFound,
@@ -69,7 +68,7 @@ export class CommentsServices {
         }
     }
 
-    static mapToUserViewComment(comment: CommentDbType, likeStatus: string ) { //
+    mapToUserViewComment(comment: CommentDbType, likeStatus: string ) { //
         return {
             id: comment._id?.toString(),
             content: comment.content,
@@ -86,7 +85,7 @@ export class CommentsServices {
         }
     }
 
-    static async editComment(id: string, userId: string, content: string)  {
+    async editComment(id: string, userId: string, content: string)  {
         const result = {
             isOwner: true,
             action: false
@@ -103,7 +102,7 @@ export class CommentsServices {
         return result
     }
 
-    static async deleteComment(id: string, userId: string)  {
+    async deleteComment(id: string, userId: string)  {
         const result = {
             isOwner: true,
             action: false
@@ -125,7 +124,7 @@ export class CommentsServices {
 
     }
 
-    static async editCommentLikeStatus(commentId: string, user:UserDbType, status: likeStatus)  {
+    async editCommentLikeStatus(commentId: string, user:UserDbType, status: likeStatus)  {
         const comment: WithId<CommentDbType> | undefined = await CommentsRepository.getCommentById(commentId)
         if (!comment) return {
             statusCode: StatusCodeHttp.NotFound,
