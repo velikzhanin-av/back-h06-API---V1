@@ -9,14 +9,22 @@ import {
 } from "../middlewares/commentsInputValidation";
 import {userFromAccessToken} from "../middlewares/userFromAccessToken";
 
+const commentsController = new CommentsController()
+
+
 export const commentsRouter = Router()
 
 commentsRouter.get('/:id', userFromAccessToken,
-    CommentsController.getCommentById)
-commentsRouter.delete('/:commentId', authTokenMiddleware, CommentsController.deleteCommentById)
+    commentsController.getCommentById.bind(commentsController))
+commentsRouter.delete('/:commentId', authTokenMiddleware,
+    commentsController.deleteCommentById.bind(commentsController))
 commentsRouter.put('/:commentId', authTokenMiddleware,
     commentContentValidation,
-    commentsInputValidation, CommentsController.putCommentById)
+    commentsInputValidation,
+    commentsController.putCommentById.bind(commentsController))
 commentsRouter.put('/:commentId/like-status', authTokenMiddleware,
     commentLikeStatusValidation,
-    commentsInputValidation, CommentsController.putCommentLikeStatus)
+    commentsInputValidation,
+    commentsController.putCommentLikeStatus.bind(commentsController))
+
+

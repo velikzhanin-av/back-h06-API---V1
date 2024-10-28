@@ -10,14 +10,14 @@ type UsersOutType = {
     "items": any[]
 }
 
-export const usersController = {
+class UsersController {
     async getAllUsers(req: Request, res: Response) {
         const users: UsersOutType = await findAllUsers(req.query)
         res
             .status(200)
             .json(users)
         return
-    },
+    }
 
     async postUser(req: Request, res: Response) {
         const result = await usersServices.createUser(req.body)
@@ -26,7 +26,7 @@ export const usersController = {
             .status(201)
             .json(result)
 
-    },
+    }
 
     async deleteUserById(req: Request, res: Response) {
         const result = await usersServices.deleteUser(req.params.id)
@@ -34,5 +34,7 @@ export const usersController = {
             res.sendStatus(404)
             return
         } else {res.sendStatus(204)}
-    },
+    }
 }
+
+export const usersController = new UsersController()

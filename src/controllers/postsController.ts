@@ -5,6 +5,8 @@ import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
 
+const commentsServices = new CommentsServices()
+
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
         const db = await findAllPosts(req.query)
@@ -52,7 +54,7 @@ export const postsController = {
     },
 
     async postCommentsByPostId(req: RequestWithUser, res: Response) {
-        const result = await CommentsServices.createComment(req.params.postId, req.body.content, req.user)
+        const result = await commentsServices.createComment(req.params.postId, req.body.content, req.user)
         if (!result) {
             res.sendStatus(404)
             return
@@ -65,7 +67,7 @@ export const postsController = {
 
     async getCommentsByPostId(req: RequestWithUser, res: Response) {
         const userId: string | null = req.user ? req.user._id.toString() : null
-        const result: ResultCode<object|null> = await CommentsServices.findComments(req.query, req.params.postId, userId)
+        const result: ResultCode<object|null> = await commentsServices.findComments(req.query, req.params.postId, userId)
 
         if (!result.data) {
             res.sendStatus(result.statusCode)
