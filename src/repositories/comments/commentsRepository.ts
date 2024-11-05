@@ -2,8 +2,11 @@ import {ObjectId, WithId} from "mongodb";
 import {CommentDbType, LikesDbType} from "../../types/dbTypes";
 import {LikesModel} from "../../models/likesModel";
 import {CommentsModel} from "../../models/commentsModel";
+import {injectable} from "inversify";
 
 // перевести на CommentModel mongoose
+
+@injectable()
 export class CommentsRepository {
 
     async deleteComment(id: string) {

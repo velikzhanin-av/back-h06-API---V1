@@ -4,11 +4,12 @@ import {createPost, deletePost, editPost, findPostById} from "../repositories/po
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
-import {CommentsRepository} from "../repositories/comments/commentsRepository";
-import {ioc} from "../compositionRoot";
+import {container} from "../compositionRoot";
 
-const commentsServices = ioc.getInstance<CommentsServices>(CommentsServices)
-const postsQueryRepository = ioc.getInstance<PostsQueryRepository>(PostsQueryRepository)
+const commentsServices = container.resolve<CommentsServices>(CommentsServices)
+const postsQueryRepository = container.resolve<PostsQueryRepository>(PostsQueryRepository)
+
+
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {

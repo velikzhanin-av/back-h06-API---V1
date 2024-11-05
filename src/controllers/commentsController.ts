@@ -1,10 +1,11 @@
+import { injectable, inject } from "inversify"
 import {Request, Response} from "express";
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
 import {CommentUserView} from "../types/dbTypes";
-import {ioc} from "../compositionRoot";
 
+@injectable()
 export class CommentsController {
 
     constructor(protected commentsServices: CommentsServices) {

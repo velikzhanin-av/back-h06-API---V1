@@ -6,7 +6,9 @@ import {CommentDbType, LikesDbType, likeStatus, UserDbType} from "../types/dbTyp
 import {StatusCodeHttp} from "../types/resultCode";
 import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {CommentsRepository} from "../repositories/comments/commentsRepository";
+import {injectable} from "inversify";
 
+@injectable()
 export class CommentsServices {
     constructor(protected commentsRepository: CommentsRepository, protected postsQueryRepository: PostsQueryRepository) {
     }

@@ -6,7 +6,9 @@ import {mapToOutputComment, mapToOutputPosts} from "./postsRepository";
 import {commentCollection, postCollection} from "../../db/mongoDb";
 import {getTotalCount, helper} from "../utils";
 import {CommentsRepository} from "../comments/commentsRepository";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostsQueryRepository {
 
     constructor(protected commentsRepository: CommentsRepository) {

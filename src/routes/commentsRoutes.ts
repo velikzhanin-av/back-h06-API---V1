@@ -8,9 +8,9 @@ import {
     commentsInputValidation
 } from "../middlewares/commentsInputValidation";
 import {userFromAccessToken} from "../middlewares/userFromAccessToken";
-import {ioc} from "../compositionRoot";
+import {container} from "../compositionRoot";
 
-const commentsController = ioc.getInstance<CommentsController>(CommentsController)
+const commentsController: CommentsController = container.resolve<CommentsController>(CommentsController)
 
 export const commentsRouter = Router()
 
