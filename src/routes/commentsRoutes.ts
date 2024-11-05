@@ -8,9 +8,9 @@ import {
     commentsInputValidation
 } from "../middlewares/commentsInputValidation";
 import {userFromAccessToken} from "../middlewares/userFromAccessToken";
+import {ioc} from "../compositionRoot";
 
-const commentsController = new CommentsController()
-
+const commentsController = ioc.getInstance<CommentsController>(CommentsController)
 
 export const commentsRouter = Router()
 
@@ -26,5 +26,3 @@ commentsRouter.put('/:commentId/like-status', authTokenMiddleware,
     commentLikeStatusValidation,
     commentsInputValidation,
     commentsController.putCommentLikeStatus.bind(commentsController))
-
-

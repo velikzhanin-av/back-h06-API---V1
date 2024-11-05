@@ -1,15 +1,18 @@
 import {Request, Response} from "express";
-import {findAllPosts, findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
+import {PostsQueryRepository} from "../repositories/posts/postsQueryRepository";
 import {createPost, deletePost, editPost, findPostById} from "../repositories/posts/postsRepository";
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
+import {CommentsRepository} from "../repositories/comments/commentsRepository";
+import {ioc} from "../compositionRoot";
 
-const commentsServices = new CommentsServices()
+const commentsServices = ioc.getInstance<CommentsServices>(CommentsServices)
+const postsQueryRepository = ioc.getInstance<PostsQueryRepository>(PostsQueryRepository)
 
 export const postsController = {
     async getAllPosts(req: Request, res: Response) {
-        const db = await findAllPosts(req.query)
+        const db = await postsQueryRepository.findAllPosts(req.query)
         res
             .status(200)
             .json(db)

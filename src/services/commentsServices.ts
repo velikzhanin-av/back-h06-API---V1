@@ -1,14 +1,15 @@
-import {CommentsRepository} from "../repositories/comments/commentsRepository";
-import {findCommentsByPostId} from "../repositories/posts/postsQueryRepository";
+import {PostsQueryRepository} from "../repositories/posts/postsQueryRepository";
 import {findPostById} from "../repositories/posts/postsRepository";
 import {postsServices} from "./postsServices";
 import {WithId} from "mongodb";
 import {CommentDbType, LikesDbType, likeStatus, UserDbType} from "../types/dbTypes";
 import {StatusCodeHttp} from "../types/resultCode";
 import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
+import {CommentsRepository} from "../repositories/comments/commentsRepository";
 
 export class CommentsServices {
-
+    constructor(protected commentsRepository: CommentsRepository, protected postsQueryRepository: PostsQueryRepository) {
+    }
 
     async findComments(query: any, id: string, userId: string | null) {
 
@@ -20,7 +21,7 @@ export class CommentsServices {
             }
         }
 
-        const result = await findCommentsByPostId(query, id, userId)
+        const result = await this.postsQueryRepository.findCommentsByPostId(query, id, userId)
         if (!result.items) {
             return {
                 statusCode: StatusCodeHttp.NotFound,
@@ -43,7 +44,7 @@ export class CommentsServices {
     }
 
     async findCommentById(commentId: string, userId: string | null) {
-        const comment: WithId<CommentDbType> | undefined = await CommentsRepository.getCommentById(commentId)
+        const comment: WithId<CommentDbType> | undefined = await this.commentsRepository.getCommentById(commentId)
         if (!comment) return {
             statusCode: StatusCodeHttp.NotFound,
             data: null
@@ -56,7 +57,7 @@ export class CommentsServices {
             data: commentOut
         }
 
-        const like: LikesDbType | undefined | null = await CommentsRepository.findLikeByUserId(commentId, userId)
+        const like: LikesDbType | undefined | null = await this.commentsRepository.findLikeByUserId(commentId, userId)
         if (!like) return {
             statusCode: StatusCodeHttp.Ok,
             data: commentOut
@@ -100,7 +101,7 @@ export class CommentsServices {
             result.isOwner = false
             return result
         }
-        result.action = await CommentsRepository.editComment(id, content)
+        result.action = await this.commentsRepository.editComment(id, content)
         return result
     }
 
@@ -117,7 +118,7 @@ export class CommentsServices {
             result.isOwner = false
             return result
         }
-        result.action = await CommentsRepository.deleteComment(id)
+        result.action = await this.commentsRepository.deleteComment(id)
         return result
     }
 
@@ -127,13 +128,13 @@ export class CommentsServices {
     }
 
     async editCommentLikeStatus(commentId: string, user:UserDbType, status: likeStatus)  {
-        const comment: WithId<CommentDbType> | undefined = await CommentsRepository.getCommentById(commentId)
+        const comment: WithId<CommentDbType> | undefined = await this.commentsRepository.getCommentById(commentId)
         if (!comment) return {
             statusCode: StatusCodeHttp.NotFound,
             data: null
         }
 
-        const findLike: LikesDbType | undefined | null = await CommentsRepository.findLikeByCommentAndUser(user._id!.toString(), commentId)
+        const findLike: LikesDbType | undefined | null = await this.commentsRepository.findLikeByCommentAndUser(user._id!.toString(), commentId)
         if (!findLike) {
             if (status === likeStatus.Like) comment.likesInfo.likesCount++
             else if (status === likeStatus.Dislike) comment.likesInfo.dislikesCount++
@@ -146,9 +147,9 @@ export class CommentsServices {
                 status
             }
 
-            const createLike = await CommentsRepository.createLike(newLike)
+            const createLike = await this.commentsRepository.createLike(newLike)
 
-            let updateComment = await CommentsRepository.updateLikesCountComment(commentId,
+            let updateComment = await this.commentsRepository.updateLikesCountComment(commentId,
                 comment.likesInfo.likesCount,
                 comment.likesInfo.dislikesCount)
         } else {
@@ -193,8 +194,8 @@ export class CommentsServices {
                         break
                 }
                 findLike.status = status
-                const updateLike = await CommentsRepository.updateLike(findLike._id!, status)
-                const updateComment = await CommentsRepository.updateLikesCountComment(commentId,
+                const updateLike = await this.commentsRepository.updateLike(findLike._id!, status)
+                const updateComment = await this.commentsRepository.updateLikesCountComment(commentId,
                     comment.likesInfo.likesCount,
                     comment.likesInfo.dislikesCount)
             }

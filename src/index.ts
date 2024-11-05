@@ -1,6 +1,7 @@
 import {SETTINGS} from "./settings";
 import {app} from "./app";
 import {connectToDB} from "./db/mongoDb";
+import {CommentsController} from "./controllers/commentsController";
 
 const start = async () => {
 

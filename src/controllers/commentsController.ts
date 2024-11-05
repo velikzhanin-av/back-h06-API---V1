@@ -3,13 +3,13 @@ import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
 import {CommentUserView} from "../types/dbTypes";
+import {ioc} from "../compositionRoot";
 
 export class CommentsController {
 
-    private commentsServices: CommentsServices
-    constructor() {
-        this.commentsServices = new CommentsServices()
+    constructor(protected commentsServices: CommentsServices) {
     }
+
     async getCommentById(req: RequestWithUser, res: Response) {
         const userId: string | null = req.user ? req.user._id.toString() : null
         const result: ResultCode<null | CommentUserView> = await this.commentsServices.findCommentById(req.params.id, userId)
