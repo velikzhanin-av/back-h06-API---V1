@@ -7,35 +7,38 @@ import {
     shortDescriptionValidation,
     titleValidation
 } from "../middlewares/postsInputValidation";
-import {postsController} from "../controllers/postsController";
+import {PostsController} from "../controllers/postsController";
 import {authTokenMiddleware} from "../middlewares/authTokenMiddleware";
 import {commentContentValidation, commentsInputValidation} from "../middlewares/commentsInputValidation";
 import {userFromAccessToken} from "../middlewares/userFromAccessToken";
+import {container} from "../compositionRoot";
+
+const postsController: PostsController = container.resolve<PostsController>(PostsController)
 
 export const postsRouter = Router()
 
-postsRouter.get('/', postsController.getAllPosts)
+postsRouter.get('/', postsController.getAllPosts.bind(postsController))
 postsRouter.post('/', authMiddleware,
     shortDescriptionValidation,
     blogIdValidation,
     titleValidation,
     contentValidation,
     postsInputValidation,
-    postsController.postPost)
-postsRouter.get('/:id', postsController.getPostById)
+    postsController.postPost.bind(postsController))
+postsRouter.get('/:id', postsController.getPostById.bind(postsController))
 postsRouter.put('/:id', authMiddleware,
     shortDescriptionValidation,
     blogIdValidation,
     titleValidation,
     contentValidation,
     postsInputValidation,
-    postsController.putPostById)
+    postsController.putPostById.bind(postsController))
 postsRouter.delete('/:id', authMiddleware,
-    postsController.deletePostById)
-postsRouter.get('/:id', postsController.getPostById)
+    postsController.deletePostById.bind(postsController))
+postsRouter.get('/:id', postsController.getPostById.bind(postsController))
 postsRouter.post('/:postId/comments', authTokenMiddleware,
     commentContentValidation,
     commentsInputValidation,
-    postsController.postCommentsByPostId)
+    postsController.postCommentsByPostId.bind(postsController))
 postsRouter.get('/:postId/comments', userFromAccessToken,
-    postsController.getCommentsByPostId)
+    postsController.getCommentsByPostId.bind(postsController))

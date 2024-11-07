@@ -4,8 +4,7 @@ import {PostsRepository, UserInfoType} from "../repositories/posts/postsReposito
 
 export class PostsServices {
 
-    constructor(postsRepository: PostsRepository) {
-
+    constructor(protected postsRepository: PostsRepository) {
     }
 
     async createCommentByPostId (id: string, comment: string, user: UserInfoType) {
@@ -22,7 +21,7 @@ export class PostsServices {
                 dislikesCount: 0,
             }
         }
-        return PostsRepository.createCommentByPostId(newComment)
+        return this.postsRepository.createCommentByPostId(newComment)
     }
 
     async createPost(post: any) {
@@ -40,10 +39,7 @@ export class PostsServices {
                 }
 
             }
-        const result = await PostsRepository.createPost
+        const result = await this.postsRepository.createPost
     }
 
 }
-
-
-export const postsServices = new PostsServices()

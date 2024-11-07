@@ -3,6 +3,9 @@ import {CommentsController} from "./controllers/commentsController";
 import {CommentsServices} from "./services/commentsServices";
 import {CommentsRepository} from "./repositories/comments/commentsRepository";
 import {PostsQueryRepository} from "./repositories/posts/postsQueryRepository";
+import {PostsController} from "./controllers/postsController";
+import {PostsServices} from "./services/postsServices";
+import {PostsRepository} from "./repositories/posts/postsRepository";
 
 
 export const container = new Container()
@@ -11,6 +14,9 @@ container.bind(CommentsRepository).to(CommentsRepository)
 container.bind(PostsQueryRepository).to(PostsQueryRepository)
 container.bind(CommentsServices).to(CommentsServices)
 container.bind(CommentsController).to(CommentsController)
+container.bind(PostsController).to(PostsController)
+container.bind(PostsServices).to(PostsServices)
+container.bind(PostsRepository).to(PostsRepository)
 
 
 
