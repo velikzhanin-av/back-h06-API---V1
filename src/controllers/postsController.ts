@@ -32,10 +32,10 @@ export const postsController = {
     },
 
     async postPost(req: Request, res: Response) {
-        const newPost = await createPost(req)
+        const result = await postsServices.createPost(req.body)
         res
             .status(201)
-            .json(newPost)
+            .json(result)
     },
 
     async putPostById(req: Request, res: Response) {

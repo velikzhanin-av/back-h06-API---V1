@@ -9,16 +9,6 @@ export type BlogDbType = {
     isMembership: boolean
 }
 
-export type PostDbType = {
-    _id?: ObjectId
-    title: string
-    shortDescription: string
-    content: string
-    blogId: string
-    blogName: string
-    createdAt: string
-}
-
 export type UserDbType = {
     _id?: ObjectId
     login: string,
@@ -109,4 +99,24 @@ export enum likeStatus {
     None = 'None',
     Like = 'Like',
     Dislike = 'Dislike'
+}
+
+export type PostDbType = {
+    _id?: ObjectId
+    title: string
+    shortDescription: string
+    content: string
+    blogId: string
+    blogName: string
+    createdAt: string
+    extendedLikesInfo: LikesCount
+}
+
+export type PostsLikesDbType = {
+    _id?: ObjectId
+    addedAt: string
+    postId: string
+    userId: string
+    login: string
+    status: likeStatus
 }

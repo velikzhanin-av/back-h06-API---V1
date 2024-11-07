@@ -1,8 +1,13 @@
-import {createCommentByPostId, UserInfoType} from "../repositories/posts/postsRepository";
 import {CommentDbType} from "../types/dbTypes";
+import {PostsRepository, UserInfoType} from "../repositories/posts/postsRepository";
 
 
-export const postsServices = {
+export class PostsServices {
+
+    constructor(postsRepository: PostsRepository) {
+
+    }
+
     async createCommentByPostId (id: string, comment: string, user: UserInfoType) {
         const newComment: CommentDbType = {
             content: comment,
@@ -17,7 +22,28 @@ export const postsServices = {
                 dislikesCount: 0,
             }
         }
-
-        return createCommentByPostId(newComment)
+        return PostsRepository.createCommentByPostId(newComment)
     }
+
+    async createPost(post: any) {
+        const newPost =
+            {
+                title: post.title,
+                shortDescription: post.shortDescription,
+                content: post.content,
+                blogId: post.blogId,
+                blogName: "string",
+                createdAt: new Date().toISOString(),
+                extendedLikesInfo: {
+                    likesCount: 0,
+                    dislikesCount: 0,
+                }
+
+            }
+        const result = await PostsRepository.createPost
+    }
+
 }
+
+
+export const postsServices = new PostsServices()

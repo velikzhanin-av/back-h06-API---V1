@@ -24,8 +24,7 @@ describe('Auth E2E Tests', () => {
         const dataBody = {
             "login": "velik",
             "password": "string",
-            "email": "a.velikzhanin90@gmail.com"
-            // "email": "useremail@company.com"
+            "email": "example@gmail.com"
         }
 
         const res = await req

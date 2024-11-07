@@ -1,8 +1,9 @@
 import {postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {CommentDbType} from "../../types/dbTypes";
+import {CommentDbType, PostDbType} from "../../types/dbTypes";
 import {Request} from "express";
 import {CommentsModel} from "../../models/commentsModel";
+import {PostsModel} from "../../models/postsModel";
 
 export type UserInfoType = {
     _id?: ObjectId
@@ -13,110 +14,126 @@ export type UserInfoType = {
     jwtToken: string
 }
 
-export const mapToOutputPosts = (post: any) => { // TODO не работает с типизацией!!!
-    return {
-        id: post._id?.toString(),
-        title: post.title,
-        shortDescription: post.shortDescription,
-        content: post.content,
-        blogId: post.blogId,
-        blogName: post.blogName,
-        createdAt: post.createdAt
-    }
-}
+export class PostsRepository {
 
-export const mapToOutputComment = (comment: any, likeStatus: string) => { // TODO не работает с типизацией!!!
-    return {
-        id: comment._id?.toString(),
-        content: comment.content,
-        commentatorInfo: {
-            userId: comment.commentatorInfo.userId,
-            userLogin: comment.commentatorInfo.userLogin
-        },
-        createdAt: comment.createdAt,
-        likesInfo: {
-            likesCount: comment.likesInfo.likesCount,
-            dislikesCount: comment.likesInfo.dislikesCount,
-            myStatus: likeStatus
+    mapToOutputPosts(post: PostDbType) {
+        return {
+            id: post._id?.toString(),
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt,
+            extendedLikesInfo: {
+                dislikesCount: post.extendedLikesInfo.dislikesCount,
+                likesCount: post.extendedLikesInfo.likesCount,
+                myStatus: 'None',
+
+            },
         }
     }
-}
 
-export const mapToOutputPostComment = (comment: any) => { // TODO не работает с типизацией!!!
-    return {
-        id: comment._id?.toString(),
-        content: comment.content,
-        commentatorInfo: {
-            userId: comment.commentatorInfo.userId,
-            userLogin: comment.commentatorInfo.userLogin
-        },
-        createdAt: comment.createdAt,
-        likesInfo: {
-            likesCount: comment.likesInfo.likesCount,
-            dislikesCount: comment.likesInfo.dislikesCount,
-            myStatus: 'None'
-        }
-    }
-}
-
-export const createPost = async (req: Request) => {
-    const newPost =
-        {
-            title: req.body.title,
-            shortDescription: req.body.shortDescription,
-            content: req.body.content,
-            blogId: req.body.blogId,
-            blogName: "string",
-            createdAt: new Date().toISOString()
-        }
-    let result = await postCollection.insertOne(newPost)
-    // TODO проверить позже изменение переменной
-    return mapToOutputPosts(newPost)
-}
-
-export const findPostById = async (id: string) => {
-    try {
-        const post = await postCollection.findOne({_id: new ObjectId(id)})
-        return mapToOutputPosts(post)
-    } catch (err) {
-        return false
-    }
-}
-
-export const editPost = async (id: string, body: any) => {
-    try {
-        const res = await postCollection.updateOne({_id: new ObjectId(id)}, {
-            $set: {
-                title: body.title,
-                shortDescription: body.shortDescription,
-                content: body.content,
-                blogId: body.blogId
+    mapToOutputComment(comment: any, likeStatus: string) { // TODO не работает с типизацией!!!
+        return {
+            id: comment._id?.toString(),
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: comment.likesInfo.likesCount,
+                dislikesCount: comment.likesInfo.dislikesCount,
+                myStatus: likeStatus
             }
-        })
-        return res.matchedCount !== 0
-    } catch (err) {
-        console.log(err)
-        return false
+        }
+    }
+
+    mapToOutputPostComment(comment: any) { // TODO не работает с типизацией!!!
+        return {
+            id: comment._id?.toString(),
+            content: comment.content,
+            commentatorInfo: {
+                userId: comment.commentatorInfo.userId,
+                userLogin: comment.commentatorInfo.userLogin
+            },
+            createdAt: comment.createdAt,
+            likesInfo: {
+                likesCount: comment.likesInfo.likesCount,
+                dislikesCount: comment.likesInfo.dislikesCount,
+                myStatus: 'None'
+            }
+        }
+    }
+
+    async createPost(newPost: PostDbType) {
+        const result = await PostsModel.create(newPost)
+        return this.mapToOutputPosts(result)
+    }
+
+    async findPostById(id: string) {
+        try {
+            const post = await PostsModel.findOne({_id: new ObjectId(id)})
+            if (!post) return
+            return this.mapToOutputPosts(post)
+        } catch (err) {
+            return false
+        }
+    }
+
+    async editPost(id: string, body: any) {
+        try {
+            const res = await PostsModel.updateOne({_id: new ObjectId(id)}, {
+                $set: {
+                    title: body.title,
+                    shortDescription: body.shortDescription,
+                    content: body.content,
+                    blogId: body.blogId
+                }
+            })
+            return res.matchedCount !== 0
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    }
+
+    async deletePost(id: string) {
+        try {
+            const res = await PostsModel.deleteOne({_id: new ObjectId(id)})
+            return res.deletedCount !== 0
+        } catch (err) {
+            console.log(err)
+            return false
+        }
+    }
+
+    async createCommentByPostId(newComment: CommentDbType) {
+        try {
+            const res = await CommentsModel.create(newComment)
+            return this.mapToOutputPostComment(res)
+        } catch (err) {
+            console.log(err)
+            return false
+        }
     }
 }
 
-export const deletePost = async (id: string) => {
-    try {
-        const res = await postCollection.deleteOne({_id: new ObjectId(id)})
-        return res.deletedCount !== 0
-    } catch (err) {
-        console.log(err)
-        return false
-    }
-}
 
-export const createCommentByPostId = async (newComment: CommentDbType) => {
-    try {
-        const res = await CommentsModel.create(newComment)
-        return mapToOutputPostComment(res)
-    } catch (err) {
-        console.log(err)
-        return false
-    }
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
