@@ -4,6 +4,7 @@ import {createPost, deletePost, editPost, findPostById} from "../repositories/po
 import {CommentsServices} from "../services/commentsServices";
 import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
+import {postsServices} from "../services/postsServices";
 
 const commentsServices = new CommentsServices()
 
@@ -28,10 +29,10 @@ export const postsController = {
     },
 
     async postPost(req: Request, res: Response) {
-        const newPost = await createPost(req)
+        const result = await postsServices.createPost(req.body)
         res
             .status(201)
-            .json(newPost)
+            .json(result)
     },
 
     async putPostById(req: Request, res: Response) {
