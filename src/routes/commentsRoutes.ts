@@ -8,9 +8,9 @@ import {
     commentsInputValidation
 } from "../middlewares/commentsInputValidation";
 import {userFromAccessToken} from "../middlewares/userFromAccessToken";
+import {container} from "../compositionRoot";
 
-const commentsController = new CommentsController()
-
+const commentsController: CommentsController = container.resolve<CommentsController>(CommentsController)
 
 export const commentsRouter = Router()
 
@@ -26,5 +26,3 @@ commentsRouter.put('/:commentId/like-status', authTokenMiddleware,
     commentLikeStatusValidation,
     commentsInputValidation,
     commentsController.putCommentLikeStatus.bind(commentsController))
-
-
