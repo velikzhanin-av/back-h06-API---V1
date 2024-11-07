@@ -14,8 +14,6 @@ container.bind(CommentsController).to(CommentsController)
 
 
 
-
-
 // const objects: any[] = []
 //
 // const commentsRepository: CommentsRepository = new CommentsRepository()
