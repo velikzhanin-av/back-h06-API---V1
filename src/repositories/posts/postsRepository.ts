@@ -4,6 +4,8 @@ import {CommentDbType, PostDbType} from "../../types/dbTypes";
 import {Request} from "express";
 import {CommentsModel} from "../../models/commentsModel";
 import {PostsModel} from "../../models/postsModel";
+import {injectable} from "inversify";
+import Any = jasmine.Any;
 
 export type UserInfoType = {
     _id?: ObjectId
@@ -14,6 +16,7 @@ export type UserInfoType = {
     jwtToken: string
 }
 
+@injectable()
 export class PostsRepository {
 
     mapToOutputPosts(post: PostDbType) {
@@ -29,7 +32,25 @@ export class PostsRepository {
                 dislikesCount: post.extendedLikesInfo.dislikesCount,
                 likesCount: post.extendedLikesInfo.likesCount,
                 myStatus: 'None',
+                newestLikes: []
+            },
+        }
+    }
 
+    mapToOutputPostsFromBd(post: PostDbType, likeStatus: string, newestLikes: Array<Any>) {
+        return {
+            id: post._id?.toString(),
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt,
+            extendedLikesInfo: {
+                dislikesCount: post.extendedLikesInfo.dislikesCount,
+                likesCount: post.extendedLikesInfo.likesCount,
+                myStatus: likeStatus,
+                newestLikes: []
             },
         }
     }

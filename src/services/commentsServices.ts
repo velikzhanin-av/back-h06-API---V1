@@ -1,21 +1,24 @@
 import {PostsQueryRepository} from "../repositories/posts/postsQueryRepository";
-import {findPostById} from "../repositories/posts/postsRepository";
-import {postsServices} from "./postsServices";
 import {WithId} from "mongodb";
 import {CommentDbType, LikesDbType, likeStatus, UserDbType} from "../types/dbTypes";
 import {StatusCodeHttp} from "../types/resultCode";
 import {CommentsQueryRepository} from "../repositories/comments/commentsQueryRepository";
 import {CommentsRepository} from "../repositories/comments/commentsRepository";
 import {injectable} from "inversify";
+import {PostsRepository} from "../repositories/posts/postsRepository";
+import {PostsServices} from "./postsServices";
 
 @injectable()
 export class CommentsServices {
-    constructor(protected commentsRepository: CommentsRepository, protected postsQueryRepository: PostsQueryRepository) {
+    constructor(protected commentsRepository: CommentsRepository,
+                protected postsServices: PostsServices,
+                protected postsQueryRepository: PostsQueryRepository,
+                protected postsRepository: PostsRepository) {
     }
 
     async findComments(query: any, id: string, userId: string | null) {
 
-        const post = await findPostById(id)
+        const post = await this.postsRepository.findPostById(id)
         if (!post) {
             return {
                 statusCode: StatusCodeHttp.NotFound,
@@ -38,11 +41,11 @@ export class CommentsServices {
     }
 
     async createComment(postId: string, content: string, user: any) {
-        const result = await findPostById(postId)
+        const result = await this.postsRepository.findPostById(postId)
         if (!result) {
             return false
         }
-        return await postsServices.createCommentByPostId(postId, content, user)
+        return await this.postsServices.createCommentByPostId(postId, content, user)
     }
 
     async findCommentById(commentId: string, userId: string | null) {

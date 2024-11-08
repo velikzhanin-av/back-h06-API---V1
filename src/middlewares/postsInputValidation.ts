@@ -1,6 +1,9 @@
 import {body, validationResult} from 'express-validator'
 import {Request, Response, NextFunction} from "express";
-import {findBlogById} from "../repositories/blogs/blogsRepository";
+import {container} from "../compositionRoot";
+import {BlogsRepository} from "../repositories/blogs/blogsRepository";
+
+const blogsRepository = container.resolve(BlogsRepository)
 
 export const shortDescriptionValidation = body("shortDescription")
     .trim().not().isEmpty()
@@ -19,7 +22,7 @@ export const contentValidation = body("content")
 
 export const blogIdValidation = body('blogId')
     .custom(async (blogId, { req }) => {
-            const blog = await findBlogById(blogId)
+            const blog = await blogsRepository.findBlogById(blogId)
             if (!blog) {
                 throw new Error('no exist blog')
             }

@@ -5,8 +5,9 @@ import {RequestWithUser} from "../types/usersTypes";
 import {ResultCode} from "../types/resultCode";
 import {PostsRepository} from "../repositories/posts/postsRepository";
 import {PostsServices} from "../services/postsServices";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class PostsController {
 
     constructor(protected commentsServices: CommentsServices,
@@ -36,9 +37,10 @@ export class PostsController {
 
     async postPost(req: Request, res: Response) {
         const result = await this.postsServices.createPost(req.body)
+        console.log(result.data)
         res
-            .status(201)
-            .json(result)
+            .status(result.statusCode)
+            .json(result.data)
     }
 
     async putPostById(req: Request, res: Response) {
@@ -93,5 +95,11 @@ export class PostsController {
         //     .status(200)
         //     .json(comments)
         return
+    }
+
+    async putPostLikeStatus(req: RequestWithUser, res: Response) {
+        const result: ResultCode<null> = await this.postsServices.editPostLikeStatus(req.params.postId, req.user!, req.body.likeStatus)
+
+        res.sendStatus(result.statusCode)
     }
 }

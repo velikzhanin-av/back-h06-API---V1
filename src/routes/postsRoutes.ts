@@ -9,7 +9,11 @@ import {
 } from "../middlewares/postsInputValidation";
 import {PostsController} from "../controllers/postsController";
 import {authTokenMiddleware} from "../middlewares/authTokenMiddleware";
-import {commentContentValidation, commentsInputValidation} from "../middlewares/commentsInputValidation";
+import {
+    commentContentValidation,
+    commentLikeStatusValidation,
+    commentsInputValidation
+} from "../middlewares/commentsInputValidation";
 import {userFromAccessToken} from "../middlewares/userFromAccessToken";
 import {container} from "../compositionRoot";
 
@@ -42,3 +46,7 @@ postsRouter.post('/:postId/comments', authTokenMiddleware,
     postsController.postCommentsByPostId.bind(postsController))
 postsRouter.get('/:postId/comments', userFromAccessToken,
     postsController.getCommentsByPostId.bind(postsController))
+postsRouter.put('/:postId/like-status', authTokenMiddleware,
+    commentLikeStatusValidation,
+    commentsInputValidation,
+    postsController.putPostLikeStatus.bind(postsController))

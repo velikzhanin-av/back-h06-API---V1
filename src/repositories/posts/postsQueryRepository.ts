@@ -1,8 +1,6 @@
 import {CommentDbType, LikesDbType, PostDbType} from "../../types/dbTypes";
-import {
-    searchNameTerm
-} from "../blogs/blogsQueryRepository";
-import {mapToOutputComment, mapToOutputPosts} from "./postsRepository";
+import {BlogsQueryRepository} from "../blogs/blogsQueryRepository";
+import {PostsRepository} from "./postsRepository";
 import {commentCollection, postCollection} from "../../db/mongoDb";
 import {getTotalCount, helper} from "../utils";
 import {CommentsRepository} from "../comments/commentsRepository";
@@ -11,12 +9,14 @@ import {injectable} from "inversify";
 @injectable()
 export class PostsQueryRepository {
 
-    constructor(protected commentsRepository: CommentsRepository) {
+    constructor(protected commentsRepository: CommentsRepository,
+                protected postsRepository: PostsRepository,
+                protected blogsQueryRepository: BlogsQueryRepository) {
     }
 
     async findAllPosts(query: any) {
         const params: any = helper(query)
-        const filter = searchNameTerm(params.searchNameTerm)
+        const filter = this.blogsQueryRepository.searchNameTerm(params.searchNameTerm)
         let posts: PostDbType[] = await this.getPostsFromBD(params, filter)
         const totalCount: number = await getTotalCount(filter, 'post')
         return {
@@ -25,7 +25,7 @@ export class PostsQueryRepository {
             pageSize: params.pageSize,
             totalCount: totalCount,
             items: posts.map((post: PostDbType) => {
-                return mapToOutputPosts(post)
+                return this.postsRepository.mapToOutputPosts(post)
             })
         }
     }
@@ -46,10 +46,10 @@ export class PostsQueryRepository {
         const filter = {postId: id}
         let comments: any = await this.getCommentsFromBD(params, filter)
         const items: CommentDbType[] = await Promise.all( comments.map(async(comment: any) => {
-                if (!userId) return mapToOutputComment(comment, "None")
+                if (!userId) return this.postsRepository.mapToOutputComment(comment, "None")
                 const like: LikesDbType | undefined | null = await this.commentsRepository.findLikeByUserId(comment._id.toString(), userId)
-                if (!like) return mapToOutputComment(comment, "None")
-                return mapToOutputComment(comment, like.status)
+                if (!like) return this.postsRepository.mapToOutputComment(comment, "None")
+                return this.postsRepository.mapToOutputComment(comment, like.status)
             })
         )
 

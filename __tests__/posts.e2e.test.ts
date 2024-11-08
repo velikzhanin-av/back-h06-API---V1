@@ -8,6 +8,7 @@ describe('E2E tests posts', () => {
     let accessToken: any
     let deviceId: string
     let blogId: string
+    let postId: string
 
     beforeAll(async () => {
         await mongoose.connect(SETTINGS.MONGO_URL)
@@ -98,8 +99,15 @@ describe('E2E tests posts', () => {
             title: expect.any(String),
         })
 
-        console.log(res.body)
+        postId = res.body.id
+    })
 
+    it('Success put like status', async () => {
+        const res = await req
+            .put(SETTINGS.PATH.POSTS + '/' + postId + '/like-status')
+            .send({"likeStatus": "Like"})
+            .set('Authorization', `Bearer ${accessToken}`)
+            .expect(204)
     })
 
 
