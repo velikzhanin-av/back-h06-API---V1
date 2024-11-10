@@ -1,11 +1,13 @@
 import {postCollection} from "../../db/mongoDb";
 import {ObjectId} from "mongodb";
-import {CommentDbType, PostDbType} from "../../types/dbTypes";
+import {CommentDbType, LikesDbType, PostDbType, PostsLikesDbType} from "../../types/dbTypes";
 import {Request} from "express";
 import {CommentsModel} from "../../models/commentsModel";
 import {PostsModel} from "../../models/postsModel";
 import {injectable} from "inversify";
 import Any = jasmine.Any;
+import {LikesModel} from "../../models/likesModel";
+import {PostsLikesModel} from "../../models/postsLikesModel";
 
 export type UserInfoType = {
     _id?: ObjectId
@@ -37,21 +39,11 @@ export class PostsRepository {
         }
     }
 
-    mapToOutputPostsFromBd(post: PostDbType, likeStatus: string, newestLikes: Array<Any>) {
+    mapToOutputNewestLikes(like: PostsLikesDbType) {
         return {
-            id: post._id?.toString(),
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName: post.blogName,
-            createdAt: post.createdAt,
-            extendedLikesInfo: {
-                dislikesCount: post.extendedLikesInfo.dislikesCount,
-                likesCount: post.extendedLikesInfo.likesCount,
-                myStatus: likeStatus,
-                newestLikes: []
-            },
+            addedAt: like.addedAt,
+            userId: like.userId,
+            login: like.login
         }
     }
 
@@ -100,7 +92,7 @@ export class PostsRepository {
             if (!post) return
             return this.mapToOutputPosts(post)
         } catch (err) {
-            return false
+            return
         }
     }
 
@@ -138,6 +130,70 @@ export class PostsRepository {
         } catch (err) {
             console.log(err)
             return false
+        }
+    }
+
+    async findLikeByPostAndUser(userId: string, postId: string) {
+        try {
+            return await PostsLikesModel.findOne({userId, postId})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    async createLike(newLike: PostsLikesDbType) {
+        try {
+            return await PostsLikesModel.create(newLike)
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    async updateLikesCountComment(postId: string, likesCount: number, dislikesCount: number) {
+        try {
+            return await CommentsModel.updateOne({_id: new ObjectId(postId)}, {
+                $set: {
+                    "likesInfo.likesCount": likesCount,
+                    "likesInfo.dislikesCount": dislikesCount,
+                }
+            })
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    async updateLike(_id: ObjectId, status: string) {
+        try {
+            return await PostsLikesModel.updateOne({_id}, {status})
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    async findNewestLikes(postId: string) {
+        try {
+            const result = await PostsLikesModel.find({ postId })
+                .sort({ addedAt: -1 })
+                .limit(3)
+            return result.map((like: PostsLikesDbType) => {
+                return this.mapToOutputNewestLikes(like)
+            })
+        } catch (e) {
+            console.log(e)
+            return
+        }
+    }
+
+    async findLikeByPostIdAndUserId(postId: string, userId: string) {
+        try {
+            return await PostsLikesModel.findOne({postId, userId})
+        } catch (e) {
+            console.log(e)
+            return
         }
     }
 }

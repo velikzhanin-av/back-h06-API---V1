@@ -1,4 +1,12 @@
-import {CommentDbType, LikesDbType, likeStatus, PostDbType, UserDbType} from "../types/dbTypes";
+import {
+    CommentDbType,
+    LikesCount,
+    LikesDbType,
+    likeStatus,
+    PostDbType,
+    PostsLikesDbType,
+    UserDbType
+} from "../types/dbTypes";
 import {PostsRepository, UserInfoType} from "../repositories/posts/postsRepository";
 import {injectable} from "inversify";
 import {StatusCodeHttp} from "../types/resultCode";
@@ -49,31 +57,31 @@ export class PostsServices {
         }
     }
 
-    async editPostLikeStatus(postId: string, user:UserDbType, status: likeStatus)  {
-        const post: WithId<PostDbType> | undefined = await this.postsRepository.findPostById(postId)
-        if (!comment) return {
+    async editPostLikeStatus(postId: string, user: UserDbType, status: likeStatus)  {
+        const post: PostDbType | undefined = await this.postsRepository.findPostById(postId)
+        if (!post) return {
             statusCode: StatusCodeHttp.NotFound,
             data: null
         }
 
-        const findLike: LikesDbType | undefined | null = await this.commentsRepository.findLikeByCommentAndUser(user._id!.toString(), postId)
+        const findLike: PostsLikesDbType | undefined | null = await this.postsRepository.findLikeByPostAndUser(user._id!.toString(), postId)
         if (!findLike) {
-            if (status === likeStatus.Like) comment.likesInfo.likesCount++
-            else if (status === likeStatus.Dislike) comment.likesInfo.dislikesCount++
+            if (status === likeStatus.Like) post.extendedLikesInfo.likesCount++
+            else if (status === likeStatus.Dislike) post.extendedLikesInfo.dislikesCount++
 
-            const newLike: LikesDbType = {
-                createdAt: new Date().toISOString(),
+            const newLike: PostsLikesDbType = {
+                addedAt: new Date().toISOString(),
                 postId,
                 userId: user._id!.toString(),
-                userLogin: user.login,
-                status
+                login: user.login,
+                status,
             }
 
-            const createLike = await this.commentsRepository.createLike(newLike)
+            const createLike = await this.postsRepository.createLike(newLike)
 
-            let updateComment = await this.commentsRepository.updateLikesCountComment(postId,
-                comment.likesInfo.likesCount,
-                comment.likesInfo.dislikesCount)
+            let updateComment = await this.postsRepository.updateLikesCountComment(postId,
+                post.extendedLikesInfo.likesCount,
+                post.extendedLikesInfo.dislikesCount)
         } else {
             if (findLike.status !== status) {
                 switch (findLike.status) {
@@ -81,12 +89,12 @@ export class PostsServices {
                     case likeStatus.Like:
                         switch (status) {
                             case likeStatus.Dislike:
-                                comment.likesInfo.likesCount--
-                                comment.likesInfo.dislikesCount++
+                                post.extendedLikesInfo.likesCount--
+                                post.extendedLikesInfo.dislikesCount++
                                 break
                             case likeStatus.None:
-                                comment.likesInfo.likesCount = 0
-                                comment.likesInfo.dislikesCount = 0
+                                post.extendedLikesInfo.likesCount = 0
+                                post.extendedLikesInfo.dislikesCount = 0
                                 break
                         }
                         break
@@ -94,12 +102,12 @@ export class PostsServices {
                     case likeStatus.Dislike:
                         switch (status) {
                             case likeStatus.Like:
-                                comment.likesInfo.dislikesCount--
-                                comment.likesInfo.likesCount++
+                                post.extendedLikesInfo.dislikesCount--
+                                post.extendedLikesInfo.likesCount++
                                 break
                             case likeStatus.None:
-                                comment.likesInfo.likesCount = 0
-                                comment.likesInfo.dislikesCount = 0
+                                post.extendedLikesInfo.likesCount = 0
+                                post.extendedLikesInfo.dislikesCount = 0
                                 break
                         }
                         break
@@ -107,19 +115,19 @@ export class PostsServices {
                     case likeStatus.None:
                         switch (status) {
                             case likeStatus.Like:
-                                comment.likesInfo.likesCount++
+                                post.extendedLikesInfo.likesCount++
                                 break
                             case likeStatus.Dislike:
-                                comment.likesInfo.dislikesCount++
+                                post.extendedLikesInfo.dislikesCount++
                                 break
                         }
                         break
                 }
                 findLike.status = status
-                const updateLike = await this.commentsRepository.updateLike(findLike._id!, status)
-                const updateComment = await this.commentsRepository.updateLikesCountComment(postId,
-                    comment.likesInfo.likesCount,
-                    comment.likesInfo.dislikesCount)
+                const updateLike = await this.postsRepository.updateLike(findLike._id!, status)
+                const updateComment = await this.postsRepository.updateLikesCountComment(postId,
+                    post.extendedLikesInfo.likesCount,
+                    post.extendedLikesInfo.dislikesCount)
             }
 
         }
@@ -127,6 +135,54 @@ export class PostsServices {
         return {
             statusCode: StatusCodeHttp.NoContent,
             data: null
+        }
+    }
+
+    async findPostById(postId: string, userId: string | null) {
+        const post: PostDbType | undefined = await this.postsRepository.findPostById(postId)
+        if (!post) return {
+            statusCode: StatusCodeHttp.NotFound,
+            data: null
+        }
+
+        const newestLikes: Array<any> | undefined = await this.postsRepository.findNewestLikes(postId)
+        // TODO поправить any
+        let postOut: any = this.mapToOutputPostsFromBd(post, 'None', newestLikes)
+
+        if (!userId) return {
+            statusCode: StatusCodeHttp.Ok,
+            data: postOut
+        }
+
+        const like: PostsLikesDbType | undefined | null = await this.postsRepository.findLikeByPostIdAndUserId(postId, userId)
+        if (!like) return {
+            statusCode: StatusCodeHttp.Ok,
+            data: postOut
+        }
+
+        postOut = this.mapToOutputPostsFromBd(post, like.status, newestLikes)
+
+        return {
+            statusCode: StatusCodeHttp.Ok,
+            data: postOut
+        }
+    }
+
+    mapToOutputPostsFromBd(post: any, likeStatus: string, newestLikes: Array<any> | undefined)  {
+        return {
+            id: post.id,
+            title: post.title,
+            shortDescription: post.shortDescription,
+            content: post.content,
+            blogId: post.blogId,
+            blogName: post.blogName,
+            createdAt: post.createdAt,
+            extendedLikesInfo: {
+                dislikesCount: post.extendedLikesInfo.dislikesCount,
+                likesCount: post.extendedLikesInfo.likesCount,
+                myStatus: likeStatus,
+                newestLikes
+            },
         }
     }
 

@@ -9,6 +9,6 @@ export const postsLikesSchema = new mongoose.Schema<PostsLikesDbType>({
     login: { type: String, require: true },
     status: {type: String, enam: Object.values(likeStatus),  required: true, default: likeStatus.None}
 })
-export const LikesModel = mongoose.model<PostsLikesDbType>('postsLikes', postsLikesSchema)
+export const PostsLikesModel = mongoose.model<PostsLikesDbType>('postsLikes', postsLikesSchema)
 
 

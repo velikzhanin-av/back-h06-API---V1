@@ -21,7 +21,8 @@ const postsController: PostsController = container.resolve<PostsController>(Post
 
 export const postsRouter = Router()
 
-postsRouter.get('/', postsController.getAllPosts.bind(postsController))
+postsRouter.get('/', userFromAccessToken,
+    postsController.getAllPosts.bind(postsController))
 postsRouter.post('/', authMiddleware,
     shortDescriptionValidation,
     blogIdValidation,
@@ -29,7 +30,8 @@ postsRouter.post('/', authMiddleware,
     contentValidation,
     postsInputValidation,
     postsController.postPost.bind(postsController))
-postsRouter.get('/:id', postsController.getPostById.bind(postsController))
+postsRouter.get('/:id', userFromAccessToken,
+    postsController.getPostById.bind(postsController))
 postsRouter.put('/:id', authMiddleware,
     shortDescriptionValidation,
     blogIdValidation,
@@ -39,7 +41,7 @@ postsRouter.put('/:id', authMiddleware,
     postsController.putPostById.bind(postsController))
 postsRouter.delete('/:id', authMiddleware,
     postsController.deletePostById.bind(postsController))
-postsRouter.get('/:id', postsController.getPostById.bind(postsController))
+// postsRouter.get('/:id', postsController.getPostById.bind(postsController))
 postsRouter.post('/:postId/comments', authTokenMiddleware,
     commentContentValidation,
     commentsInputValidation,

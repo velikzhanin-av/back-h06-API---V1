@@ -23,16 +23,17 @@ export class PostsController {
             .json(db)
     }
 
-    async getPostById(req: Request, res: Response) {
-        const post = await this.postsRepository.findPostById(req.params.id)
-        if (!post) {
+    async getPostById(req: RequestWithUser, res: Response) {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const result = await this.postsServices.findPostById(req.params.id, userId)
+        if (!result.data) {
             res
-                .sendStatus(404)
+                .sendStatus(result.statusCode)
             return
         }
         res
-            .status(200)
-            .json(post)
+            .status(result.statusCode)
+            .json(result.data)
     }
 
     async postPost(req: Request, res: Response) {
@@ -102,4 +103,5 @@ export class PostsController {
 
         res.sendStatus(result.statusCode)
     }
+
 }
