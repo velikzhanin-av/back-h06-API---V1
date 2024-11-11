@@ -1,8 +1,13 @@
 import {BlogDbType} from "../types/dbTypes";
-import {blogsRepository} from "../repositories/blogs/blogsRepository";
+import {BlogsRepository} from "../repositories/blogs/blogsRepository";
+import {injectable} from "inversify";
 
+@injectable()
+export class BlogsServices {
 
-export const blogsServices = {
+    constructor(protected blogsRepository: BlogsRepository) {
+    }
+
     async createBlog(body: any) {
         const newBlog: BlogDbType = {
             name: body.name,
@@ -11,16 +16,15 @@ export const blogsServices = {
             createdAt: new Date().toISOString(),
             isMembership: false
         }
-        return await blogsRepository.createBlog(newBlog)
-    },
+        return await this.blogsRepository.createBlog(newBlog)
+    }
 
     async editBlog(id: string, body: any) {
-        return await blogsRepository.editBlog(id, body)
-    },
+        return await this.blogsRepository.editBlog(id, body)
+    }
 
     async deleteBlog(id: string)  {
-        return await blogsRepository.deleteBlog(id)
-    },
-
+        return await this.blogsRepository.deleteBlog(id)
+    }
 
 }
