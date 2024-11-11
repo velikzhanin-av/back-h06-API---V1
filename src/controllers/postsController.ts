@@ -16,8 +16,9 @@ export class PostsController {
                 protected postsServices: PostsServices) {
     }
 
-    async getAllPosts(req: Request, res: Response) {
-        const db = await this.postsQueryRepository.findAllPosts(req.query)
+    async getAllPosts(req: RequestWithUser, res: Response) {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const db = await this.postsQueryRepository.findAllPosts(req.query, userId)
         res
             .status(200)
             .json(db)

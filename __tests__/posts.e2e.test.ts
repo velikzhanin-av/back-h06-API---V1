@@ -112,7 +112,7 @@ describe('E2E tests posts', () => {
 
     it('Success put like status', async () => {
         const res = await req
-            .get(SETTINGS.PATH.POSTS + '/6731233be4d9a40eff29b4f3')
+            .get(SETTINGS.PATH.POSTS + '/6731accc7d8288e2de792be0')
             .expect(200)
         console.log(res.body);
     })

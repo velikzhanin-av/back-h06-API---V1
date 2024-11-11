@@ -79,7 +79,7 @@ export class PostsServices {
 
             const createLike = await this.postsRepository.createLike(newLike)
 
-            let updateComment = await this.postsRepository.updateLikesCountComment(postId,
+            let updatePost = await this.postsRepository.updateLikesCountComment(postId,
                 post.extendedLikesInfo.likesCount,
                 post.extendedLikesInfo.dislikesCount)
         } else {

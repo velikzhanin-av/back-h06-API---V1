@@ -153,10 +153,10 @@ export class PostsRepository {
 
     async updateLikesCountComment(postId: string, likesCount: number, dislikesCount: number) {
         try {
-            return await CommentsModel.updateOne({_id: new ObjectId(postId)}, {
+            return await PostsModel.updateOne({_id: new ObjectId(postId)}, {
                 $set: {
-                    "likesInfo.likesCount": likesCount,
-                    "likesInfo.dislikesCount": dislikesCount,
+                    "extendedLikesInfo.likesCount": likesCount,
+                    "extendedLikesInfo.dislikesCount": dislikesCount,
                 }
             })
         } catch (e) {
@@ -176,7 +176,7 @@ export class PostsRepository {
 
     async findNewestLikes(postId: string) {
         try {
-            const result = await PostsLikesModel.find({ postId })
+            const result = await PostsLikesModel.find({ postId, status: 'Like' })
                 .sort({ addedAt: -1 })
                 .limit(3)
             return result.map((like: PostsLikesDbType) => {

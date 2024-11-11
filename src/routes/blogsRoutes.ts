@@ -14,6 +14,7 @@ import {
 import {BlogsController} from "../controllers/blogsController";
 import {CommentsController} from "../controllers/commentsController";
 import {container} from "../compositionRoot";
+import {userFromAccessToken} from "../middlewares/userFromAccessToken";
 
 const blogsController: BlogsController = container.resolve<BlogsController>(BlogsController)
 
@@ -35,7 +36,8 @@ blogsRouter.put('/:id', authMiddleware,
     blogsController.updateBlogById.bind(blogsController))
 blogsRouter.delete('/:id', authMiddleware,
     blogsController.deleteBlogById.bind(blogsController))
-blogsRouter.get('/:blogId/posts', blogsController.getPostsByBlogId.bind(blogsController))
+blogsRouter.get('/:blogId/posts', userFromAccessToken,
+    blogsController.getPostsByBlogId.bind(blogsController))
 blogsRouter.post('/:blogId/posts', authMiddleware,
     shortDescriptionValidation,
     titleValidation,

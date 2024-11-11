@@ -3,6 +3,7 @@ import {BlogsQueryRepository} from "../repositories/blogs/blogsQueryRepository";
 import {BlogsRepository} from "../repositories/blogs/blogsRepository";
 import {injectable} from "inversify";
 import {BlogsServices} from "../services/blogsServices";
+import {RequestWithUser} from "../types/usersTypes";
 
 @injectable()
 export class BlogsController {
@@ -32,8 +33,9 @@ export class BlogsController {
             .json(blog)
     }
 
-    async getPostsByBlogId(req: Request, res: Response)  {
-        const posts = await this.blogsQueryRepository.findPostsByBlogId(req.params.blogId, req.query)
+    async getPostsByBlogId(req: RequestWithUser, res: Response)  {
+        const userId: string | null = req.user ? req.user._id.toString() : null
+        const posts = await this.blogsQueryRepository.findPostsByBlogId(req.params.blogId, req.query, userId)
         if (!posts) {
             res
                 .sendStatus(404)
